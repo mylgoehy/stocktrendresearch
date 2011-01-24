@@ -38,11 +38,11 @@ namespace BUS
             double dblSigma2 = 0.0;
 
             //Tính giá trị trung bình
-            for (int i = 0; i < forecastValues.Length; i++)
+            for (int i = 0; i < actualValues.Length; i++)
             {
-                dblAvgValue = dblAvgValue + forecastValues[i];
+                dblAvgValue = dblAvgValue + actualValues[i];
             }
-            dblAvgValue = dblAvgValue / forecastValues.Length;
+            dblAvgValue = dblAvgValue / actualValues.Length;
 
             //Tính giá trị sigma2
             for (int i = 0; i < actualValues.Length; i++)
