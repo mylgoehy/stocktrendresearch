@@ -49,8 +49,8 @@ namespace BUS
         {
             double[] result = new double[arr.Length];
 
-            int iTemp = numDaysPeriod > arr.Length ? numDaysPeriod : arr.Length;
-            for (int i = 0; i < iTemp - 1; i++)
+            int iTemp = numDaysPeriod < arr.Length ? numDaysPeriod : arr.Length;
+            for (int i = 0; i < iTemp; i++)
             {
                 double sum = 0;
                 for (int j = 0; j <= i; j++)
@@ -315,6 +315,100 @@ namespace BUS
             return dblResults;
         }
 
+        /// <summary>
+        /// Xác định xu hướng dựa trên giá đóng cửa và 2 đường sma
+        /// </summary>
+        /// <param name="closingPrices">Giá đóng cửa</param>
+        /// <param name="shortSMAs">đường trung bình trượt ngắn</param>
+        /// <param name="longSMAs">đường trung bình trượt dài</param>
+        /// <param name="index">chỉ số ngày hiện tại</param>
+        /// <param name="refDayInShortSMA">số ngày tham khảo cho shortSMAs</param>
+        /// <param name="refDayInLongSMA">số ngày tham khảo cho longSMAs</param>
+        /// <returns>-1 0 1</returns>
+        public static int DetermineTrend(double[] closingPrices, double[] shortSMAs, double[] longSMAs, int index, int refDayInShortSMA, int refDayInLongSMA)
+        {
+            if (closingPrices[index] > shortSMAs[index])
+            {
+                if (shortSMAs[index] > longSMAs[index])
+                {
+                    if (shortSMAs[index] > shortSMAs[index - refDayInShortSMA])
+                    {
+                        if (longSMAs[index] > longSMAs[index - refDayInLongSMA])
+                        {
+                            return 1;
+                        }
+                    }
+                }
+            }
+            else if(closingPrices[index] < shortSMAs[index])
+            {
+                if (shortSMAs[index] < longSMAs[index])
+                {
+                    if (shortSMAs[index] < shortSMAs[index - refDayInShortSMA])
+                    {
+                        if (longSMAs[index] < longSMAs[index - refDayInLongSMA])
+                        {
+                            return -1;
+                        }
+                    }
+                }
+            }
+
+            return 0;
+
+        }
+
+        /// <summary>
+        /// Tính chỉ số Aroon
+        /// </summary>
+        /// <param name="closingPrices">Giá đóng cửa</param>
+        /// <param name="numDaysPeriod">Chu kỳ cho chỉ số Aroon</param>
+        /// <param name="isUp">Xác định là AroonUp hay AroonDown</param>
+        /// <returns>mảng chứa chỉ số Aroon tương ứng</returns>
+        public double[] CalculateAroon(double[] closingPrices, int numDaysPeriod, bool isUp)
+        {
+            double[] results = new double[closingPrices.Length];
+
+            int iTemp = numDaysPeriod < closingPrices.Length ? numDaysPeriod : closingPrices.Length;
+            for (int i = 0; i < iTemp; i++)
+            {
+                results[i] = (double)((i + 1) - FindNumDaysSinceOptimal(closingPrices, i, i + 1, isUp)) / (i + 1);
+            }
+
+            for (int i = numDaysPeriod - 1; i < closingPrices.Length; i++)
+            {
+                results[i] = (double)(numDaysPeriod - FindNumDaysSinceOptimal(closingPrices, i, numDaysPeriod, isUp)) / numDaysPeriod;
+            }
+
+            return results;
+        }
+
+        private int FindNumDaysSinceOptimal(double[] closingPrices, int end, int numDaysPeriod, bool isMax)
+        {
+            int iStart = end - numDaysPeriod + 1;
+            double dblOptimal = closingPrices[iStart];
+            int iOptIndex = iStart;
+            for (int i = iStart + 1; i <= end; i++)
+            {
+                if(isMax)
+                {
+                    if(closingPrices[i] > dblOptimal)
+                    {
+                        dblOptimal = closingPrices[i];
+                        iOptIndex = i;
+                    }
+                }
+                else
+                {
+                    if (closingPrices[i] < dblOptimal)
+                    {
+                        dblOptimal = closingPrices[i];
+                        iOptIndex = i;
+                    }
+                }
+            }
+            return end - iOptIndex;
+        }
         #endregion
     }
 }
