@@ -58,7 +58,7 @@ namespace BUS
         /// <param name="closePrices">Giá đóng cửa</param>
         /// <param name="numDaysPeriod">chu kỳ</param>
         /// <returns>mảng chứa chỉ số SMA tương ứng</returns>
-        public double[] CalculateSMA(double[] closePrices, int numDaysPeriod)
+        public static double[] CalculateSMA(double[] closePrices, int numDaysPeriod)
         {
             double[] result = new double[closePrices.Length];
 
@@ -91,7 +91,7 @@ namespace BUS
         /// <param name="closePrices">Giá đóng cửa</param>
         /// <param name="numDaysPeriod">chu kỳ</param>
         /// <returns>mảng chứa chỉ số EMA tương ứng</returns>
-        public double[] CalculateEMA(double[] closePrices, int numDaysPeriod)
+        public static double[] CalculateEMA(double[] closePrices, int numDaysPeriod)
         {
             double[] result = new double[closePrices.Length];
             double alpha = 2 * 1.0d / (numDaysPeriod + 1);
@@ -112,6 +112,28 @@ namespace BUS
             return result;
         }
 
+        public static double[] CalculateMACDHist(double[] closePrices, int fastPeriod, int lowPeriod, int signalPeriod)
+        {
+            double[] fastEMAs = CalculateEMA(closePrices, fastPeriod);
+            double[] lowEMAs = CalculateEMA(closePrices, lowPeriod);
+            double[] MACDHist = new double[closePrices.Length];
+            for (int i = 0; i < closePrices.Length; i++)
+            {
+                MACDHist[i] = fastEMAs[i] - lowEMAs[i];
+            }
+
+            if (signalPeriod > 1)
+            {
+                double[] signalLine = CalculateEMA(MACDHist, signalPeriod);
+                for (int i = 0; i < MACDHist.Length; i++)
+                {
+                    MACDHist[i] = MACDHist[i] - signalLine[i];
+                }
+            }
+
+            return MACDHist;
+        }
+
         /// <summary>
         /// Tính chỉ số Aroon
         /// </summary>
@@ -119,7 +141,7 @@ namespace BUS
         /// <param name="numDaysPeriod">Chu kỳ cho chỉ số Aroon</param>
         /// <param name="isUp">Xác định là AroonUp hay AroonDown</param>
         /// <returns>mảng chứa chỉ số Aroon tương ứng</returns>
-        public double[] CalculateAroon(double[] closingPrices, int numDaysPeriod, bool isUp)
+        public static double[] CalculateAroon(double[] closingPrices, int numDaysPeriod, bool isUp)
         {
             double[] results = new double[closingPrices.Length];
 
@@ -138,9 +160,37 @@ namespace BUS
         }
 
         /// <summary>
+        /// Tính đường bollingerBand upper hoặc lower
+        /// </summary>
+        /// <param name="closingPrices">Giá đóng cửa</param>
+        /// <param name="numDaysPeriod">Chu kỳ cho chỉ số (thường 20)</param>
+        /// <param name="isUpper">Xác định là Upper hay lower bollinger band</param>
+        /// <param name="width">Độ rộng của band(thường 2)</param>
+        /// <returns>mảng chứa chỉ số bollinger band tương ứng</returns>
+        public static double[] CalculateBollingerband(double[] closePrices, int numDaysPeriod, int width, bool isUpper)
+        {
+            double[] bands = CalculateSMA(closePrices, numDaysPeriod);
+            if (isUpper)
+            {
+                for (int i = 0; i < bands.Length; i++)
+                {
+                    bands[i] = bands[i] + width * FindStandardDeviation(closePrices, i, numDaysPeriod);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < bands.Length; i++)
+                {
+                    bands[i] = bands[i] - width * FindStandardDeviation(closePrices, i, numDaysPeriod);
+                }
+            }
+            return bands;
+        }
+
+        /// <summary>
         /// Tìm số ngày tính từ ngày cao (thấp) nhất đến ngày end (dùng cho Aroon)
         /// </summary>
-        private int FindNumDaysSinceOptimal(double[] closingPrices, int end, int numDaysPeriod, bool isMax)
+        private static int FindNumDaysSinceOptimal(double[] closingPrices, int end, int numDaysPeriod, bool isMax)
         {
             int iStart = end - numDaysPeriod + 1;
             double dblOptimal = closingPrices[iStart];
@@ -170,16 +220,45 @@ namespace BUS
         /// <summary>
         /// Tính giá trị EMA từ baseIndex đến index
         /// </summary>
-        private double EMA(double[] closePrices, int index, double alpha, int baseIndex)
+        private static double EMA(double[] closePrices, int index, double alpha, int baseIndex)
         {
             if (index == baseIndex)
             {
-                return alpha * closePrices[baseIndex];
+                return closePrices[baseIndex];
             }
             else
             {
                 return alpha * closePrices[index] + (1 - alpha) * EMA(closePrices, index - 1, alpha, baseIndex);
             }
+        }
+
+        /// <summary>
+        /// Tính giá trị độ lệch chuẩn của numDaysPeriod từ ngày end về trước
+        /// </summary>
+        private static double FindStandardDeviation(double[] closePrices, int end, int numDaysPeriod)
+        {
+            int iStart = end - numDaysPeriod + 1;
+            if (iStart < 0)
+            {
+                iStart = 0;
+            }
+            int iPeriod = end - iStart + 1;
+            double dblAverage = 0;
+            double dblVar = 0;
+
+            for(int i = iStart;i <= end;i++)
+            {
+                dblAverage += closePrices[i];
+            }
+            dblAverage = dblAverage / iPeriod;
+
+            for (int i = iStart; i <= end; i++)
+            {
+                dblVar += Math.Pow(closePrices[i] - dblAverage, 2);
+            }
+            dblVar = dblVar / (iPeriod - 1);
+
+            return Math.Pow(dblVar, 0.5);
         }
 
         #endregion
