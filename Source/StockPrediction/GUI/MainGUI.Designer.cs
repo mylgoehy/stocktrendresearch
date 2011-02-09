@@ -55,9 +55,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.lblTrainingMeasure = new System.Windows.Forms.Label();
             this.clbMeasures = new System.Windows.Forms.CheckedListBox();
-            this.tbxNumDaysPredicted = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
-            this.cmbPreprocess = new System.Windows.Forms.ComboBox();
             this.gbAnnSetting = new System.Windows.Forms.GroupBox();
             this.tbxAccuracy = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
@@ -71,9 +69,6 @@
             this.label12 = new System.Windows.Forms.Label();
             this.tbxLearningRate = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.tbxNumInputNode = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.btnBrowser = new System.Windows.Forms.Button();
             this.tbxCsvFilePath = new System.Windows.Forms.TextBox();
@@ -123,6 +118,7 @@
             this.dtpFrom = new System.Windows.Forms.DateTimePicker();
             this.cmbStockID = new System.Windows.Forms.ComboBox();
             this.zg1 = new ZedGraph.ZedGraphControl();
+            this.cmbNumDaysPredicted = new System.Windows.Forms.ComboBox();
             this.tabOption.SuspendLayout();
             this.tabExperiment.SuspendLayout();
             this.groupBox9.SuspendLayout();
@@ -275,19 +271,15 @@
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.cmbNumDaysPredicted);
             this.groupBox7.Controls.Add(this.ckbImproveDirection);
             this.groupBox7.Controls.Add(this.cmbTrainingMeasure);
             this.groupBox7.Controls.Add(this.gbSVRSetting);
             this.groupBox7.Controls.Add(this.label4);
             this.groupBox7.Controls.Add(this.lblTrainingMeasure);
             this.groupBox7.Controls.Add(this.clbMeasures);
-            this.groupBox7.Controls.Add(this.tbxNumDaysPredicted);
             this.groupBox7.Controls.Add(this.label10);
-            this.groupBox7.Controls.Add(this.cmbPreprocess);
             this.groupBox7.Controls.Add(this.gbAnnSetting);
-            this.groupBox7.Controls.Add(this.label3);
-            this.groupBox7.Controls.Add(this.tbxNumInputNode);
-            this.groupBox7.Controls.Add(this.label2);
             this.groupBox7.Controls.Add(this.label18);
             this.groupBox7.Controls.Add(this.btnBrowser);
             this.groupBox7.Controls.Add(this.tbxCsvFilePath);
@@ -323,7 +315,7 @@
             "NMSE",
             "RMSE",
             "Sign"});
-            this.cmbTrainingMeasure.Location = new System.Drawing.Point(117, 176);
+            this.cmbTrainingMeasure.Location = new System.Drawing.Point(117, 127);
             this.cmbTrainingMeasure.Name = "cmbTrainingMeasure";
             this.cmbTrainingMeasure.Size = new System.Drawing.Size(140, 21);
             this.cmbTrainingMeasure.TabIndex = 31;
@@ -442,7 +434,7 @@
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.Black;
-            this.label4.Location = new System.Drawing.Point(8, 243);
+            this.label4.Location = new System.Drawing.Point(8, 193);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(116, 13);
             this.label4.TabIndex = 43;
@@ -453,7 +445,7 @@
             this.lblTrainingMeasure.AutoSize = true;
             this.lblTrainingMeasure.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTrainingMeasure.ForeColor = System.Drawing.Color.Black;
-            this.lblTrainingMeasure.Location = new System.Drawing.Point(8, 180);
+            this.lblTrainingMeasure.Location = new System.Drawing.Point(8, 130);
             this.lblTrainingMeasure.Name = "lblTrainingMeasure";
             this.lblTrainingMeasure.Size = new System.Drawing.Size(89, 13);
             this.lblTrainingMeasure.TabIndex = 32;
@@ -475,45 +467,21 @@
             "MAPE",
             "WDS",
             "Sign"});
-            this.clbMeasures.Location = new System.Drawing.Point(136, 209);
+            this.clbMeasures.Location = new System.Drawing.Point(136, 174);
             this.clbMeasures.Name = "clbMeasures";
-            this.clbMeasures.Size = new System.Drawing.Size(120, 79);
+            this.clbMeasures.Size = new System.Drawing.Size(120, 109);
             this.clbMeasures.TabIndex = 42;
-            // 
-            // tbxNumDaysPredicted
-            // 
-            this.tbxNumDaysPredicted.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbxNumDaysPredicted.ForeColor = System.Drawing.Color.Black;
-            this.tbxNumDaysPredicted.Location = new System.Drawing.Point(117, 143);
-            this.tbxNumDaysPredicted.Name = "tbxNumDaysPredicted";
-            this.tbxNumDaysPredicted.Size = new System.Drawing.Size(139, 20);
-            this.tbxNumDaysPredicted.TabIndex = 41;
             // 
             // label10
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label10.ForeColor = System.Drawing.Color.Black;
-            this.label10.Location = new System.Drawing.Point(8, 146);
+            this.label10.Location = new System.Drawing.Point(8, 82);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(101, 13);
             this.label10.TabIndex = 40;
             this.label10.Text = "Num days predicted";
-            // 
-            // cmbPreprocess
-            // 
-            this.cmbPreprocess.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbPreprocess.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cmbPreprocess.ForeColor = System.Drawing.Color.Black;
-            this.cmbPreprocess.FormattingEnabled = true;
-            this.cmbPreprocess.Items.AddRange(new object[] {
-            "ScaleByMinMax",
-            "Return[-1,1]"});
-            this.cmbPreprocess.Location = new System.Drawing.Point(117, 109);
-            this.cmbPreprocess.Name = "cmbPreprocess";
-            this.cmbPreprocess.Size = new System.Drawing.Size(139, 21);
-            this.cmbPreprocess.TabIndex = 37;
-            this.cmbPreprocess.SelectedIndexChanged += new System.EventHandler(this.cmbPreprocess_SelectedIndexChanged);
             // 
             // gbAnnSetting
             // 
@@ -653,37 +621,6 @@
             this.label13.Size = new System.Drawing.Size(69, 13);
             this.label13.TabIndex = 26;
             this.label13.Text = "Learning rate";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.ForeColor = System.Drawing.Color.Black;
-            this.label3.Location = new System.Drawing.Point(8, 112);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(60, 13);
-            this.label3.TabIndex = 36;
-            this.label3.Text = "Preprocess";
-            // 
-            // tbxNumInputNode
-            // 
-            this.tbxNumInputNode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbxNumInputNode.ForeColor = System.Drawing.Color.Black;
-            this.tbxNumInputNode.Location = new System.Drawing.Point(117, 78);
-            this.tbxNumInputNode.Name = "tbxNumInputNode";
-            this.tbxNumInputNode.Size = new System.Drawing.Size(139, 20);
-            this.tbxNumInputNode.TabIndex = 39;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.Color.Black;
-            this.label2.Location = new System.Drawing.Point(8, 79);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 13);
-            this.label2.TabIndex = 38;
-            this.label2.Text = "Num input node";
             // 
             // label18
             // 
@@ -1223,6 +1160,21 @@
             this.zg1.Size = new System.Drawing.Size(904, 414);
             this.zg1.TabIndex = 1;
             // 
+            // cmbNumDaysPredicted
+            // 
+            this.cmbNumDaysPredicted.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbNumDaysPredicted.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbNumDaysPredicted.FormattingEnabled = true;
+            this.cmbNumDaysPredicted.Items.AddRange(new object[] {
+            "1",
+            "5",
+            "10",
+            "30"});
+            this.cmbNumDaysPredicted.Location = new System.Drawing.Point(116, 80);
+            this.cmbNumDaysPredicted.Name = "cmbNumDaysPredicted";
+            this.cmbNumDaysPredicted.Size = new System.Drawing.Size(141, 21);
+            this.cmbNumDaysPredicted.TabIndex = 46;
+            // 
             // MainGUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1288,9 +1240,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label lblTrainingMeasure;
         private System.Windows.Forms.CheckedListBox clbMeasures;
-        private System.Windows.Forms.TextBox tbxNumDaysPredicted;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.ComboBox cmbPreprocess;
         private System.Windows.Forms.GroupBox gbAnnSetting;
         private System.Windows.Forms.TextBox tbxAccuracy;
         private System.Windows.Forms.Label label15;
@@ -1304,9 +1254,6 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox tbxLearningRate;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox tbxNumInputNode;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Button btnBrowser;
         private System.Windows.Forms.TextBox tbxCsvFilePath;
@@ -1360,6 +1307,7 @@
         private System.Windows.Forms.RadioButton rdNotShuffle;
         private System.Windows.Forms.RadioButton rdShuffle;
         private System.Windows.Forms.CheckBox ckbImproveDirection;
+        private System.Windows.Forms.ComboBox cmbNumDaysPredicted;
     }
 }
 

@@ -21,6 +21,8 @@ namespace GUI
         public const int RMSE = 3;
         public const int SIGN = 4;
 
+        public const int NUM_NODE = 10;
+
         private StockRecordDTO _stockRecordDTO;
         private StockRecordBUS _stockRecordBUS;
         private string strStockPath;
@@ -218,7 +220,7 @@ namespace GUI
                 #region ANN
                 else//Mô hình ANN
                 {
-                    ANNParameterBUS.InputNode = int.Parse(tbxNumInputNode.Text);
+                    ANNParameterBUS.InputNode = NUM_NODE;
                     ANNParameterBUS.HiddenNode = int.Parse(tbxANNHiddenNode.Text);
                     ANNParameterBUS.OutputNode = 1;
                     ANNParameterBUS.MaxEpoch = int.Parse(tbxMaxLoops.Text);
@@ -313,7 +315,7 @@ namespace GUI
                     string strModelFile = tbxTrainFilePath.Text.Remove(iPos + 1) + "model.txt";
 
                     //khởi tạo các tham số cho mạng
-                    ANNParameterBUS.InputNode = int.Parse(tbxNumInputNode.Text);
+                    ANNParameterBUS.InputNode = NUM_NODE;
                     ANNParameterBUS.HiddenNode = int.Parse(tbxANNHiddenNode.Text);
                     ANNParameterBUS.OutputNode = 1;
                     ANNParameterBUS.MaxEpoch = int.Parse(tbxMaxLoops.Text);
@@ -547,7 +549,7 @@ namespace GUI
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            if (tbxCsvFilePath.Text == "" || cmbPreprocess.SelectedIndex < 0 || tbxNumInputNode.Text == "" || tbxTrainingRatio.Text == "")
+            if (tbxCsvFilePath.Text == "" || tbxTrainingRatio.Text == "")
             {
                 MessageBox.Show("Error: You must fill all required inputs!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -562,89 +564,23 @@ namespace GUI
                 dblSource[i] = entryDTO.ClosePrice;
                 i++;
             }
-            PreprocessBUS preprocessBUS = new PreprocessBUS();
-            #region Phần riêng
-            if (rdPricePrediction.Checked)//Dự đoán giá
-            {
-                if (rdSVR.Checked)//Mô hình SVR
-                {
-                    if (cmbPreprocess.SelectedItem.ToString() == "ScaleByMinMax")
-                    {
-                        preprocessBUS.FindMinMax(dblSource);
-                        dblSource = preprocessBUS.PreprocessByMinMax(dblSource);
-                    }
-                }
-                else//Mô hình ANN
-                {
-                    if (cmbPreprocess.SelectedItem.ToString() == "ScaleByMinMax")
-                    {
-                        preprocessBUS.FindMinMax(dblSource);
-                        dblSource = preprocessBUS.PreprocessByMinMax(dblSource);
-                    }
-                }
-            }
-            else//Dự đoán xu hướng
-            {
-                if (rdSVR.Checked)//Mô hình SVR
-                {
-                    if (cmbPreprocess.SelectedItem.ToString() == "Return[-1,1]")
-                    {
-                        dblSource = preprocessBUS.Scale_SVR_Return(stockRecordDTO.Entries.Count, dblSource, 1, 1);
-                    }
-                }
-                else//Mô hình ANN
-                {
-                    if (cmbPreprocess.SelectedItem.ToString() == "Return[-1,1]")
-                    {
-                        dblSource = preprocessBUS.Scale_SVR_Return(stockRecordDTO.Entries.Count, dblSource, 1, 1);
-                    }
-                }
-            }
-            #endregion
             
             //2. Chuyển sang định dạng của LibSVM (dựa vào số node đầu vào)
             ConverterBUS converter = new ConverterBUS();
             int iPos = tbxCsvFilePath.Text.LastIndexOf('\\');
             string strFolderPath = tbxCsvFilePath.Text.Remove(iPos+1);
             string strTotalFile = strFolderPath + stockRecordDTO.ID + ".txt";
-            int iNumInputNode = Convert.ToInt32(tbxNumInputNode.Text);
-            int numDaysPredicted = 1;
+            int numDaysPredicted = Int32.Parse(cmbNumDaysPredicted.Text);
             int iNumLine = 0;
 
-            if (cmbPreprocess.SelectedItem.ToString() == "Return[-1,1]")
-            {
-                if (int.TryParse(tbxNumDaysPredicted.Text,out numDaysPredicted))
-                {
-                    converter.ConvertForTrend(int.Parse(tbxNumDaysPredicted.Text), iNumInputNode, dblSource, strTotalFile, out iNumLine, 2, false);
-                }
-                else
-                {
-                    MessageBox.Show("Please enter a number");
-                    return;
-                }  
-            }
-            else
-            {
-                if(ckbImproveDirection.Checked)
-                {
-                    double dblTrainPercent = Convert.ToDouble(tbxTrainingRatio.Text);
-                    converter.ConvertWImprovedDirection(iNumInputNode, dblSource, strTotalFile, dblTrainPercent, out iNumLine);
-                }
-                else
-                {
-                    converter.Convert(iNumInputNode, dblSource, strTotalFile, out iNumLine);    
-                }
-            }
+            ConverterBUS.Convert(dblSource, numDaysPredicted, strTotalFile, out iNumLine);
+
             //3. Từ file chứa toàn bộ dữ liệu ta phân phối vào 2 file train và test (dựa vào tỉ lệ bộ train)
             string strTrainFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_train.txt";
             string strTestFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_test.txt";
             StreamReader reader = new StreamReader(strTotalFile);
             StreamWriter trainWriter = new StreamWriter(strTrainFile);
             StreamWriter testWriter = new StreamWriter(strTestFile);
-
-            //Ghi phương thức xử lý vào dòng đầu tiên của file test
-            //Mục đích là để ta có thể chuyển về dữ liệu nguyên thủy
-            testWriter.WriteLine(cmbPreprocess.SelectedItem.ToString() + " " + preprocessBUS.Min.ToString() + " " + preprocessBUS.Max.ToString());
 
             double dblTrainingSetRatio = Convert.ToDouble(tbxTrainingRatio.Text);
             //int iBound = numDaysPredicted > iNumInputNode ? 2 * numDaysPredicted : numDaysPredicted + iNumInputNode;
@@ -671,14 +607,12 @@ namespace GUI
         private void MainGUI_Load(object sender, EventArgs e)
         {
             //Khởi gán
-            cmbPreprocess.SelectedIndex = 0;
-            tbxNumInputNode.Text = "5";
+            cmbNumDaysPredicted.SelectedIndex = 0;
             tbxTrainingRatio.Text = "80";
             cmbModelSelection.SelectedIndex = 0;
             cmbTrainingMeasure.SelectedIndex = 0;
 
             //Khởi gán tham số ANN
-            tbxNumInputNode.Text = 5.ToString();
             tbxANNHiddenNode.Text = 4.ToString();
             tbxLearningRate.Text = 0.3.ToString();
             tbxMaxLoops.Text = 2000.ToString();
@@ -771,17 +705,6 @@ namespace GUI
             }
         }
 
-        private void cmbPreprocess_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cmbPreprocess.SelectedItem.ToString() == "Return[-1,1]")
-            {
-                tbxNumDaysPredicted.ReadOnly = false;
-            }
-            else
-            {
-                tbxNumDaysPredicted.ReadOnly = true;
-            }
-        }
 
         private void rdANN_CheckedChanged(object sender, EventArgs e)
         {
@@ -815,9 +738,9 @@ namespace GUI
 
                 double[][] dblActual_Forecast = new double[2][];
                 StepTrainingBUS stepTrainingBUS = new StepTrainingBUS();
-                stepTrainingBUS.NumInputNode = Convert.ToInt16(tbxNumInputNode.Text);
+                stepTrainingBUS.NumInputNode = Convert.ToInt16(MainGUI.NUM_NODE);
                 stepTrainingBUS.TrainingSize = Convert.ToInt16(tbxTrainingSize.Text);
-                stepTrainingBUS.Preprocess = cmbPreprocess.SelectedItem.ToString();
+                //stepTrainingBUS.Preprocess = cmbPreprocess.SelectedItem.ToString();
                 stepTrainingBUS.ModelSelection = cmbModelSelection.SelectedItem.ToString();
                 stepTrainingBUS.NumFold = tbxNumFold.Text;
                 if(ckbImproveDirection.Checked)
@@ -1135,13 +1058,11 @@ namespace GUI
             if(rdPricePrediction.Checked)
             {
                 ckbImproveDirection.Enabled = true;
-                tbxNumDaysPredicted.ReadOnly = true;
                 btnStepTrainAndTest.Enabled = true;
             }
             else
             {
                 ckbImproveDirection.Enabled = false;
-                tbxNumDaysPredicted.ReadOnly = false;
                 btnStepTrainAndTest.Enabled = false;
             }
         }
