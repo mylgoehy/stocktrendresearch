@@ -13,11 +13,11 @@ namespace BUS
         /// Xác định xu hướng dựa trên giá đóng cửa và 2 đường sma
         /// </summary>
         /// <param name="closingPrices">Giá đóng cửa</param>
-        /// <param name="shortSMAs">đường trung bình trượt ngắn</param>
-        /// <param name="longSMAs">đường trung bình trượt dài</param>
+        /// <param name="shortSMAs">đường trung bình trượt ngắn 25</param>
+        /// <param name="longSMAs">đường trung bình trượt dài 65</param>
         /// <param name="index">chỉ số ngày hiện tại</param>
-        /// <param name="refDayInShortSMA">số ngày tham khảo cho shortSMAs</param>
-        /// <param name="refDayInLongSMA">số ngày tham khảo cho longSMAs</param>
+        /// <param name="refDayInShortSMA">số ngày tham khảo cho shortSMAs 5</param>
+        /// <param name="refDayInLongSMA">số ngày tham khảo cho longSMAs 1</param>
         /// <returns>-1 0 1</returns>
         public static int DetermineTrend(double[] closingPrices, double[] shortSMAs, double[] longSMAs, int index, int refDayInShortSMA, int refDayInLongSMA)
         {
@@ -112,6 +112,14 @@ namespace BUS
             return result;
         }
 
+        /// <summary>
+        /// Tính chỉ số MACD|MACD Histogram
+        /// </summary>
+        /// <param name="closePrices">Giá đóng cửa</param>
+        /// <param name="fastPeriod">chu kỳ đường ema nhanh</param>
+        /// <param name="lowPeriod"> chu kỳ đường ema chậm</param>
+        /// <param name="signalPeriod">chu kỳ đường macd signal - hiệu 2 đường ema. Nếu bằng 1: kết quả là đường MACD</param>
+        /// <returns>mảng chứa chỉ số MACD|MACD Histogram tương ứng</returns>
         public static double[] CalculateMACDHist(double[] closePrices, int fastPeriod, int lowPeriod, int signalPeriod)
         {
             double[] fastEMAs = CalculateEMA(closePrices, fastPeriod);
