@@ -169,7 +169,7 @@ namespace BUS.SVM
 
         private List<RankPair> _data;
         private List<ChangePoint> _changes;
-
+        private double _totalCorrectionRate;
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -186,7 +186,7 @@ namespace BUS.SVM
         /// <param name="model">Model to evaluate</param>
         /// <param name="problem">Problem to evaluate</param>
         /// <param name="category">Label to be evaluate for</param>
-        public PerformanceEvaluator(Model model, Problem problem, double category) : this(model, problem, category, "tmp.results") { }
+        public PerformanceEvaluator(Model model, Problem problem, double category) : this(model, problem, category, "tmp.results", false) { }
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -194,9 +194,9 @@ namespace BUS.SVM
         /// <param name="problem">Problem to evaluate</param>
         /// <param name="resultsFile">Results file for output</param>
         /// <param name="category">Category to evaluate for</param>
-        public PerformanceEvaluator(Model model, Problem problem, double category, string resultsFile)
+        public PerformanceEvaluator(Model model, Problem problem, double category, string resultsFile, bool predict_Probability)
         {
-            Prediction.Predict(problem, resultsFile, model, true);
+            _totalCorrectionRate = Prediction.Predict(problem, resultsFile, model, predict_Probability);
             parseResultsFile(resultsFile, problem.Y, category);
 
             computeStatistics();
@@ -310,26 +310,47 @@ namespace BUS.SVM
         /// <summary>
         /// Writes the Precision-Recall curve to a tab-delimited file.
         /// </summary>
-        /// <param name="filename">Filename for output</param>
-        public void WritePRCurve(string filename)
+        /// <param name="output">output</param>
+        public void WritePRCurve(StreamWriter output)
         {
-            StreamWriter output = new StreamWriter(filename);
+            output.WriteLine("PR Curve");
             output.WriteLine(_ap);
             for (int i = 0; i < _prCurve.Count; i++)
                 output.WriteLine("{0}\t{1}", _prCurve[i].X, _prCurve[i].Y);
-            output.Close();
         }
 
         /// <summary>
         /// Writes the Receiver Operating Characteristic curve to a tab-delimited file.
         /// </summary>
-        /// <param name="filename">Filename for output</param>
-        public void WriteROCCurve(string filename)
+        /// <param name="output">output</param>
+        public void WriteROCCurve(StreamWriter output)
         {
-            StreamWriter output = new StreamWriter(filename);
+            output.WriteLine("ROC Curve");
             output.WriteLine(_auc);
             for (int i = 0; i < _rocCurve.Count; i++)
                 output.WriteLine("{0}\t{1}", _rocCurve[i].X, _rocCurve[i].Y);
+        }
+
+        /// <summary>
+        /// Ghi tỷ lệ đúng toàn bộ
+        /// </summary>
+        /// <param name="output"></param>
+        public void WriteCorrectionRate(StreamWriter output)
+        {
+            output.WriteLine("Total Correction Rate");
+            output.WriteLine(_totalCorrectionRate);
+        }
+
+        /// <summary>
+        /// Ghi toàn bộ kết quả độ đo
+        /// </summary>
+        /// <param name="fileName">tên file</param>
+        public void Write(string fileName)
+        {
+            StreamWriter output = new StreamWriter(fileName);
+            WriteCorrectionRate(output);
+            WritePRCurve(output);
+            WriteROCCurve(output);
             output.Close();
         }
 

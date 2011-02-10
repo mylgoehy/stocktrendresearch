@@ -85,7 +85,7 @@ namespace BUS.SVM
                     v = Procedures.svm_predict_probability(model, x, prob_estimates);
                     if (output != null)
                     {
-                        output.Write(v + " ");
+                        output.Write(target + " " + v + " ");
                         for (int j = 0; j < nr_class; j++)
                         {
                             output.Write(prob_estimates[j] + " ");
@@ -97,7 +97,7 @@ namespace BUS.SVM
                 {
                     v = Procedures.svm_predict(model, x);
                     if (output != null)
-                        output.Write(v + "\n");
+                        output.Write(target + " " + v + "\n");
                 }
 
                 if (v == target)
