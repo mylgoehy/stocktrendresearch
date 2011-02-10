@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.IO;
 using DTO;
 using BUS;
+using BUS.SVM;
 using ZedGraph;
 
 namespace GUI
@@ -112,229 +113,56 @@ namespace GUI
                     iMeasureType = SIGN;
                     break;
             }
-            int iCrossValidationType;
-            if(rdShuffle.Checked)
-            {
-                iCrossValidationType = 0;
-            }
-            else if(rdNotShuffle.Checked)
-            {
-                iCrossValidationType = 1;
-            }
-            else
-            {
-                iCrossValidationType = 2;
-            }
 
-            #region Dự đoán giá
-            if (rdPricePrediction.Checked)//Dự đoán giá
+            #region Dự đoán xu hướng
+            if (rdSVR.Checked)//Mô hình SVR
             {
                 int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
                 string strMutualPath = tbxTrainFilePath.Text.Remove(iPos + 1);
                 string strModelFile = strMutualPath + "model.txt";
-                #region SVR
-                if (rdSVR.Checked)//Mô hình SVR
+
+                if (cmbModelSelection.SelectedItem.ToString() == "Grid search")
                 {
-                    string[] strArgs = new string[8];
-                    strArgs[0] = "-g";  //gama. Trong hàm Gauss kernel: exp(-gamma*|u-v|^2)
-                    strArgs[2] = "-c";
-                    strArgs[4] = "-p";  //epsilon
-                    strArgs[6] = tbxTrainFilePath.Text;
-                    strArgs[7] = strModelFile;
-
-                    if (cmbModelSelection.SelectedItem.ToString() == "Use default values")
-                    {
-                        strArgs[1] = "0";   //gama
-                        strArgs[3] = "1";   //c
-                        strArgs[5] = "0.1";   //epsilon
-                        //strArgs[1] = "0.686";   //gama
-                        //strArgs[3] = "68.4717";   //c
-                        //strArgs[5] = "0.00012124";   //epsilon
-                        //strArgs[1] = "2.5";   //gama
-                        //strArgs[3] = "0.01";   //c
-                        //strArgs[5] = "0.3";   //epsilon
-                        svm_train.Main(strArgs);
-                    }
-                    else if (cmbModelSelection.SelectedItem.ToString() == "Pattern search")
-                    {
-                        string[] strArgsModel = new string[4];
-                        strArgsModel[0] = "-v";
-                        strArgsModel[1] = tbxNumFold.Text;
-                        strArgsModel[2] = tbxTrainFilePath.Text;
-                        strArgsModel[3] = strModelFile;
-
-                        int iNumModel = 10;
-                        StreamWriter writer = new StreamWriter(strModelFile);
-                        writer.WriteLine("Multiple");
-                        writer.WriteLine(iNumModel.ToString());
-                        StreamWriter patternTime = new StreamWriter(strMutualPath + "PatternTime.txt");
-                        double dblTotalTime = 0;
-                        for (int i = 0; i < iNumModel; i++)
-                        {
-                            svm_modelSelection modelSelection = new svm_modelSelection();
-                            DateTime start = DateTime.Now;
-                            modelSelection.Run(strArgsModel, strMutualPath + "PatternSearchLog" + (i + 1).ToString() + ".txt", false, iMeasureType, iCrossValidationType);
-                            DateTime end = DateTime.Now;
-                            TimeSpan elapsedTime = end - start;
-                            dblTotalTime += elapsedTime.TotalMinutes;
-                            patternTime.WriteLine((i + 1).ToString() + ": " + elapsedTime.TotalMinutes.ToString() + " minutes");
-
-                            strArgs[1] = (Math.Pow(2, modelSelection.Y)).ToString();   //gama
-                            strArgs[3] = (Math.Pow(2, modelSelection.X)).ToString();   //c
-                            strArgs[5] = (Math.Pow(2, modelSelection.Z)).ToString();   //epsilon
-                            //strArgs[3] = (Math.Pow(2, 6.09743805699862)).ToString();
-                            //strArgs[1] = (Math.Pow(2, -3.86541887296616)).ToString();
-                            //strArgs[5] = (Math.Pow(2, -13.0097538228192)).ToString(); 
-                            strArgs[7] = strMutualPath + "model" + (i + 1).ToString() + ".txt";
-                            writer.WriteLine(strArgs[7]);
-                            svm_train.Main(strArgs);
-                        }
-                        writer.Close();
-                        patternTime.WriteLine("Total: " + dblTotalTime.ToString() + " minutes");
-                        patternTime.Close();
-                    }
-                    else if (cmbModelSelection.SelectedItem.ToString() == "Grid search")
-                    {
-                        svm_modelSelection modelSelection = new svm_modelSelection();
-                        string[] strArgsModel = new string[4];
-                        strArgsModel[0] = "-v";
-                        strArgsModel[1] = tbxNumFold.Text;
-                        strArgsModel[2] = tbxTrainFilePath.Text;
-                        strArgsModel[3] = strModelFile;
-                        DateTime start = DateTime.Now;
-                        modelSelection.Run(strArgsModel, strMutualPath + "GridSearchLog.txt", true, iMeasureType, iCrossValidationType);
-                        DateTime end = DateTime.Now;
-                        TimeSpan elapsedTime = end - start;
-                        StreamWriter gridTime = new StreamWriter(strMutualPath + "GridTime.txt");
-                        gridTime.WriteLine(elapsedTime.TotalMinutes.ToString() + " minutes");
-                        gridTime.Close();
-
-                        strArgs[1] = modelSelection.Y.ToString();   //gama
-                        strArgs[3] = modelSelection.X.ToString();   //c
-                        strArgs[5] = modelSelection.Z.ToString();   //epsilon
-                        svm_train.Main(strArgs);
-                    }
-                    MessageBox.Show("Finish!");
+                    string strLogFile = strMutualPath + "Grid.txt";
+                    Problem prob = Problem.Read(tbxTrainFilePath.Text);
+                    Parameter param = new Parameter();
+                    double dblC;
+                    double dblGamma;
+                    ParameterSelection paramSel = new ParameterSelection();
+                    paramSel.NFOLD = Int32.Parse(tbxNumFold.Text);
+                    paramSel.Grid(prob, param, strLogFile, out dblC, out dblGamma);
+                    param.C = dblC;
+                    param.Gamma = dblGamma;
+                    Model model = Training.Train(prob, param);
+                    Model.Write(strModelFile, model);
                 }
-                #endregion
-                #region ANN
-                else//Mô hình ANN
-                {
-                    ANNParameterBUS.InputNode = NUM_NODE;
-                    ANNParameterBUS.HiddenNode = int.Parse(tbxANNHiddenNode.Text);
-                    ANNParameterBUS.OutputNode = 1;
-                    ANNParameterBUS.MaxEpoch = int.Parse(tbxMaxLoops.Text);
-                    ANNParameterBUS.LearningRate = double.Parse(tbxLearningRate.Text);
-                    ANNParameterBUS.Momentum = double.Parse(tbxMomentum.Text);
-                    ANNParameterBUS.Bias = double.Parse(tbxBias.Text);
-
-                    ANNModelBUS.AnnModelFile = strModelFile;
-                    ANNTrainBUS annTrain = new ANNTrainBUS();
-                    annTrain.LoadDataSet(tbxTrainFilePath.Text);
-                    annTrain.Main();
-                    MessageBox.Show("Finish!");
-                }
-                #endregion
+                MessageBox.Show("Finish!");
             }
-            #endregion
-            #region Dự đoán xu hướng
-            else//Dự đoán xu hướng
+            else//Mô hình ANN
             {
-                if (rdSVR.Checked)//Mô hình SVR
-                {
-                    int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
-                    string strMutualPath = tbxTrainFilePath.Text.Remove(iPos + 1);
-                    string strModelFile = strMutualPath + "model.txt";
-                    string[] strArgs = new string[8];
-                    strArgs[0] = "-g";  //gama. Trong hàm Gauss kernel: exp(-gamma*|u-v|^2)
-                    strArgs[2] = "-c";
-                    strArgs[4] = "-p";  //epsilon
-                    strArgs[6] = tbxTrainFilePath.Text;
-                    strArgs[7] = strModelFile;
+                int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
+                string strModelFile = tbxTrainFilePath.Text.Remove(iPos + 1) + "model.txt";
 
-                    if (cmbModelSelection.SelectedItem.ToString() == "Use default values")
-                    {
-                        //strArgs[1] = "0";   //gama
-                        //strArgs[3] = "1";   //c
-                        //strArgs[5] = "0.1";   //epsilon
-                        strArgs[1] = "0.0110485434560398";   //gama
-                        strArgs[3] = "304.437021440697";   //c
-                        strArgs[5] = "0.000290333768311211";   //epsilon
-                        //strArgs[1] = "2.5";   //gama
-                        //strArgs[3] = "0.01";   //c
-                        //strArgs[5] = "0.3";   //epsilon
-                        svm_train.Main(strArgs);
-                    }
-                    else if (cmbModelSelection.SelectedItem.ToString() == "Pattern search")
-                    {
-                        string[] strArgsModel = new string[4];
-                        strArgsModel[0] = "-v";
-                        strArgsModel[1] = tbxNumFold.Text;
-                        strArgsModel[2] = tbxTrainFilePath.Text;
-                        strArgsModel[3] = strModelFile;
+                //khởi tạo các tham số cho mạng
+                ANNParameterBUS.InputNode = NUM_NODE;
+                ANNParameterBUS.HiddenNode = int.Parse(tbxANNHiddenNode.Text);
+                ANNParameterBUS.OutputNode = 1;
+                ANNParameterBUS.MaxEpoch = int.Parse(tbxMaxLoops.Text);
+                ANNParameterBUS.LearningRate = double.Parse(tbxLearningRate.Text);
+                ANNParameterBUS.Momentum = double.Parse(tbxMomentum.Text);
+                ANNParameterBUS.Bias = double.Parse(tbxBias.Text);
 
-                        int iNumModel = 10;
-                        StreamWriter writer = new StreamWriter(strModelFile);
-                        writer.WriteLine("Multiple");
-                        writer.WriteLine(iNumModel.ToString());
-                        for (int i = 0; i < iNumModel; i++)
-                        {
-                            svm_modelSelection modelSelection = new svm_modelSelection();
-                            modelSelection.Run(strArgsModel, strMutualPath + "PatternSearchLog" + (i + 1).ToString() + ".txt", false, iMeasureType, iCrossValidationType);
-                            strArgs[1] = (Math.Pow(2, modelSelection.Y)).ToString();   //gama
-                            strArgs[3] = (Math.Pow(2, modelSelection.X)).ToString();   //c
-                            strArgs[5] = (Math.Pow(2, modelSelection.Z)).ToString();   //epsilon
-                            //strArgs[3] = (Math.Pow(2, 6.09743805699862)).ToString();
-                            //strArgs[1] = (Math.Pow(2, -3.86541887296616)).ToString();
-                            //strArgs[5] = (Math.Pow(2, -13.0097538228192)).ToString(); 
-                            strArgs[7] = strMutualPath + "model" + (i + 1).ToString() + ".txt";
-                            writer.WriteLine(strArgs[7]);
-                            svm_train.Main(strArgs);
-                        }
-                        writer.Close();
-                    }
-                    else if (cmbModelSelection.SelectedItem.ToString() == "Grid search")
-                    {
-                        svm_modelSelection modelSelection = new svm_modelSelection();
-                        string[] strArgsModel = new string[4];
-                        strArgsModel[0] = "-v";
-                        strArgsModel[1] = tbxNumFold.Text;
-                        strArgsModel[2] = tbxTrainFilePath.Text;
-                        strArgsModel[3] = strModelFile;
-                        modelSelection.Run(strArgsModel, strMutualPath + "GridSearchLog.txt", true, iMeasureType, iCrossValidationType);
-                        strArgs[1] = modelSelection.Y.ToString();   //gama
-                        strArgs[3] = modelSelection.X.ToString();   //c
-                        strArgs[5] = modelSelection.Z.ToString();   //epsilon
-                        svm_train.Main(strArgs);
-                    }
-                    MessageBox.Show("Finish!");
-                }
-                else//Mô hình ANN
-                {
-                    int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
-                    string strModelFile = tbxTrainFilePath.Text.Remove(iPos + 1) + "model.txt";
+                ANNParameterBUS.Accuracy = double.Parse(tbxAccuracy.Text);
+                ANNParameterBUS.MeasureType = cmbTrainingMeasure.SelectedItem.ToString();
 
-                    //khởi tạo các tham số cho mạng
-                    ANNParameterBUS.InputNode = NUM_NODE;
-                    ANNParameterBUS.HiddenNode = int.Parse(tbxANNHiddenNode.Text);
-                    ANNParameterBUS.OutputNode = 1;
-                    ANNParameterBUS.MaxEpoch = int.Parse(tbxMaxLoops.Text);
-                    ANNParameterBUS.LearningRate = double.Parse(tbxLearningRate.Text);
-                    ANNParameterBUS.Momentum = double.Parse(tbxMomentum.Text);
-                    ANNParameterBUS.Bias = double.Parse(tbxBias.Text);
-
-                    ANNParameterBUS.Accuracy = double.Parse(tbxAccuracy.Text);
-                    ANNParameterBUS.MeasureType = cmbTrainingMeasure.SelectedItem.ToString();
-
-                    //Tiến hành train
-                    ANNModelBUS.AnnModelFile = strModelFile;
-                    ANNTrainBUS annTrain = new ANNTrainBUS();
-                    annTrain.LoadDataSet(tbxTrainFilePath.Text);
-                    annTrain.Main(iMeasureType);
-                    MessageBox.Show("Finish!");
-                }
-            #endregion
+                //Tiến hành train
+                ANNModelBUS.AnnModelFile = strModelFile;
+                ANNTrainBUS annTrain = new ANNTrainBUS();
+                annTrain.LoadDataSet(tbxTrainFilePath.Text);
+                annTrain.Main(iMeasureType);
+                MessageBox.Show("Finish!");
             }
+            #endregion
         }
 
         private void btnBrowser_Click(object sender, EventArgs e)
@@ -368,176 +196,35 @@ namespace GUI
             string strFolderPath = tbxTestFilePath.Text.Remove(iPos+1);
             #endregion
 
-            #region Phần riêng
-            #region Dự đoán giá
-            if (rdPricePrediction.Checked)//Dự đoán giá
+            #region Dự đoán xu hướng
+            if (rdSVR.Checked)//Mô hình SVR
             {
                 iPos = tbxTestFilePath.Text.LastIndexOf('_');
                 string strMutualPath = tbxTestFilePath.Text.Remove(iPos + 1);
                 string strPredictedFile = strMutualPath + "predict.txt";
-                #region SVR
-                if (rdSVR.Checked)//Mô hình SVR
-                {
-                    string[] strArgs = new string[3];
-                    strArgs[0] = tbxTestFilePath.Text;
-                    strArgs[1] = tbxModelFilePath.Text;
-                    strArgs[2] = strPredictedFile;
-                    StreamReader reader = new StreamReader(tbxModelFilePath.Text);
-                    string strLine = reader.ReadLine();
-                    if (strLine == "Multiple")  //Bag Pattern Search
-                    {
-                        StreamWriter measure = new StreamWriter(strMutualPath + "SingleModelMeasure.txt");
-                        strLine = reader.ReadLine();    //Số mô hình
-                        int iNumModel = Convert.ToInt32(strLine);
-                        double[][][] dblActual_ForecastSeries = new double[iNumModel][][];
-                        for (int i = 0; i < iNumModel; i++)
-                        {
-                            dblActual_ForecastSeries[i] = new double[2][];
-                            dblActual_ForecastSeries[i][0] = null;
-                            dblActual_ForecastSeries[i][1] = null;
-
-                            strLine = reader.ReadLine();    //Đường dẫn đến file model
-                            strArgs[1] = strLine;
-                            dblActual_ForecastSeries[i] = svm_predict.MainProcess(strArgs);
-                            MeasureBUS measureBUS = new MeasureBUS();
-                            double dblMSE = measureBUS.MSE(dblActual_ForecastSeries[i][0], dblActual_ForecastSeries[i][1]);
-                            double dblNMSE = measureBUS.NMSE(dblActual_ForecastSeries[i][0], dblActual_ForecastSeries[i][1]);
-                            double dblDS = measureBUS.DS(dblActual_ForecastSeries[i][0], dblActual_ForecastSeries[i][1]);
-                            measure.WriteLine((i + 1).ToString() + " " + dblMSE.ToString() + " " + dblNMSE.ToString() + " " + dblDS.ToString());
-                        }
-                        measure.Close();
-
-                        //Để có kết quả sau cùng, ta sẽ lấy trung bình kết quả dự đoán của tất cả các mô hình lại
-                        int iCounter = dblActual_ForecastSeries[0][0].Count();
-                        dblActual_Forecast[0] = new double[iCounter];
-                        dblActual_Forecast[1] = new double[iCounter];
-                        for (int i = 0; i < iCounter; i++)
-                        {
-                            //Giá thực
-                            dblActual_Forecast[0][i] = dblActual_ForecastSeries[0][0][i];
-                            //Giá dự đoán
-                            dblActual_Forecast[1][i] = 0;
-                            for (int j = 0; j < iNumModel; j++)
-                            {
-                                dblActual_Forecast[1][i] += dblActual_ForecastSeries[j][1][i];
-                            }
-                            dblActual_Forecast[1][i] /= iNumModel;
-                        }
-
-                        //Ghi kết quả cuối cùng ra file
-                        StreamWriter finalResult = new StreamWriter(strPredictedFile);
-                        for (int i = 0; i < iCounter; i++)
-                        {
-                            finalResult.WriteLine(dblActual_Forecast[0][i].ToString() + " " + dblActual_Forecast[1][i].ToString());
-                        }
-                        finalResult.Close();
-                        reader.Close();
-                    }
-                    else
-                    {
-                        reader.Close();
-                        dblActual_Forecast = svm_predict.MainProcess(strArgs);
-                    }
-                }
-                #endregion
-                #region ANN
-                else//Mô hình ANN
-                {
-                    ANNModelBUS.AnnModelFile = tbxModelFilePath.Text;
-
-                    ANNParameterBUS.LoadParameter();
-
-                    ANNPredictBUS annPredict = new ANNPredictBUS();
-                    annPredict.LoadDataSet(tbxTestFilePath.Text);
-                    dblActual_Forecast = annPredict.MainProcess();
-                    //dblActual_Forecast = annPredict.StepTrainingMethod();
-                    annPredict.WritePredictPrice(strPredictedFile);
-                }
-                #endregion
+                Problem prob = Problem.Read(tbxTestFilePath.Text);
+                Model model = Model.Read(tbxModelFilePath.Text);
+                PerformanceEvaluator performanceEval = new PerformanceEvaluator(model, prob, -1, strPredictedFile, true);
+                performanceEval.Write(strMutualPath + "_DownPerformance.txt");
+                performanceEval = new PerformanceEvaluator(strPredictedFile, prob.Y, 0);
+                performanceEval.Write(strMutualPath + "_NoPerformance.txt");
+                performanceEval = new PerformanceEvaluator(strPredictedFile, prob.Y, 1);
+                performanceEval.Write(strMutualPath + "_UpPerformance.txt");
+                
             }
-            #endregion
-            #region Dự đoán xu hướng
-            else//Dự đoán xu hướng
+            else//Mô hình ANN
             {
-                if (rdSVR.Checked)//Mô hình SVR
-                {
-                    iPos = tbxTestFilePath.Text.LastIndexOf('_');
-                    string strMutualPath = tbxTestFilePath.Text.Remove(iPos + 1);
-                    string strPredictedFile = strMutualPath + "predict.txt";
-                    string[] strArgs = new string[3];
-                    strArgs[0] = tbxTestFilePath.Text;
-                    strArgs[1] = tbxModelFilePath.Text;
-                    strArgs[2] = strPredictedFile;
-                    StreamReader reader = new StreamReader(tbxModelFilePath.Text);
-                    string strLine = reader.ReadLine();
-                    if (strLine == "Multiple")  //Bag Pattern Search
-                    {
-                        StreamWriter measure = new StreamWriter(strMutualPath + "SingleModelMeasure.txt");
-                        strLine = reader.ReadLine();    //Số mô hình
-                        int iNumModel = Convert.ToInt32(strLine);
-                        double[][][] dblActual_ForecastSeries = new double[iNumModel][][];
-                        for (int i = 0; i < iNumModel; i++)
-                        {
-                            dblActual_ForecastSeries[i] = new double[2][];
-                            dblActual_ForecastSeries[i][0] = null;
-                            dblActual_ForecastSeries[i][1] = null;
+                iPos = tbxTestFilePath.Text.LastIndexOf('_');
+                string strPredictedFile = tbxTestFilePath.Text.Remove(iPos + 1) + "predict.txt";
 
-                            strLine = reader.ReadLine();    //Đường dẫn đến file model
-                            strArgs[1] = strLine;
-                            dblActual_ForecastSeries[i] = svm_predict.MainProcess(strArgs);
-                            MeasureBUS measureBUS = new MeasureBUS();
-                            double dblNMSE = measureBUS.NMSE(dblActual_ForecastSeries[i][0], dblActual_ForecastSeries[i][1]);
-                            measure.WriteLine((i + 1).ToString() + " " + dblNMSE.ToString());
-                        }
-                        measure.Close();
+                ANNModelBUS.AnnModelFile = tbxModelFilePath.Text;
+                ANNParameterBUS.LoadParameter();
 
-                        //Để có kết quả sau cùng, ta sẽ lấy trung bình kết quả dự đoán của tất cả các mô hình lại
-                        int iCounter = dblActual_ForecastSeries[0][0].Count();
-                        dblActual_Forecast[0] = new double[iCounter];
-                        dblActual_Forecast[1] = new double[iCounter];
-                        for (int i = 0; i < iCounter; i++)
-                        {
-                            //Giá thực
-                            dblActual_Forecast[0][i] = dblActual_ForecastSeries[0][0][i];
-                            //Giá dự đoán
-                            dblActual_Forecast[1][i] = 0;
-                            for (int j = 0; j < iNumModel; j++)
-                            {
-                                dblActual_Forecast[1][i] += dblActual_ForecastSeries[j][1][i];
-                            }
-                            dblActual_Forecast[1][i] /= iNumModel;
-                        }
-
-                        //Ghi kết quả cuối cùng ra file
-                        StreamWriter finalResult = new StreamWriter(strPredictedFile);
-                        for (int i = 0; i < iCounter; i++)
-                        {
-                            finalResult.WriteLine(dblActual_Forecast[0][i].ToString() + " " + dblActual_Forecast[1][i].ToString());
-                        }
-                        finalResult.Close();
-                        reader.Close();
-                    }
-                    else
-                    {
-                        reader.Close();
-                        dblActual_Forecast = svm_predict.MainProcess(strArgs);
-                    }
-                }
-                else//Mô hình ANN
-                {
-                    iPos = tbxTestFilePath.Text.LastIndexOf('_');
-                    string strPredictedFile = tbxTestFilePath.Text.Remove(iPos + 1) + "predict.txt";
-
-                    ANNModelBUS.AnnModelFile = tbxModelFilePath.Text;
-                    ANNParameterBUS.LoadParameter();
-
-                    ANNPredictBUS annPredict = new ANNPredictBUS();
-                    annPredict.LoadDataSet(tbxTestFilePath.Text);
-                    dblActual_Forecast = annPredict.MainProcessTrend();
-                    annPredict.WritePredictPrice(strPredictedFile);
-                }
+                ANNPredictBUS annPredict = new ANNPredictBUS();
+                annPredict.LoadDataSet(tbxTestFilePath.Text);
+                dblActual_Forecast = annPredict.MainProcessTrend();
+                annPredict.WritePredictPrice(strPredictedFile);
             }
-            #endregion
             #endregion
 
             #region Phần chung
