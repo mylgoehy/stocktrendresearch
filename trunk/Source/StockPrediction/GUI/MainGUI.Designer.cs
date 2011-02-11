@@ -41,6 +41,7 @@
             this.tbxTrainingSize = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.cmbNumDaysPredicted = new System.Windows.Forms.ComboBox();
             this.ckbImproveDirection = new System.Windows.Forms.CheckBox();
             this.cmbTrainingMeasure = new System.Windows.Forms.ComboBox();
             this.gbSVRSetting = new System.Windows.Forms.GroupBox();
@@ -118,7 +119,10 @@
             this.dtpFrom = new System.Windows.Forms.DateTimePicker();
             this.cmbStockID = new System.Windows.Forms.ComboBox();
             this.zg1 = new ZedGraph.ZedGraphControl();
-            this.cmbNumDaysPredicted = new System.Windows.Forms.ComboBox();
+            this.tbxC = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.tbxGamma = new System.Windows.Forms.TextBox();
             this.tabOption.SuspendLayout();
             this.tabExperiment.SuspendLayout();
             this.groupBox9.SuspendLayout();
@@ -287,17 +291,32 @@
             this.groupBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
             this.groupBox7.Location = new System.Drawing.Point(0, 11);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(313, 647);
+            this.groupBox7.Size = new System.Drawing.Size(314, 647);
             this.groupBox7.TabIndex = 36;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "SETTING";
+            // 
+            // cmbNumDaysPredicted
+            // 
+            this.cmbNumDaysPredicted.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbNumDaysPredicted.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbNumDaysPredicted.FormattingEnabled = true;
+            this.cmbNumDaysPredicted.Items.AddRange(new object[] {
+            "1",
+            "5",
+            "10",
+            "30"});
+            this.cmbNumDaysPredicted.Location = new System.Drawing.Point(116, 75);
+            this.cmbNumDaysPredicted.Name = "cmbNumDaysPredicted";
+            this.cmbNumDaysPredicted.Size = new System.Drawing.Size(141, 21);
+            this.cmbNumDaysPredicted.TabIndex = 46;
             // 
             // ckbImproveDirection
             // 
             this.ckbImproveDirection.AutoSize = true;
             this.ckbImproveDirection.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ckbImproveDirection.ForeColor = System.Drawing.Color.Black;
-            this.ckbImproveDirection.Location = new System.Drawing.Point(66, 295);
+            this.ckbImproveDirection.Location = new System.Drawing.Point(15, 260);
             this.ckbImproveDirection.Name = "ckbImproveDirection";
             this.ckbImproveDirection.Size = new System.Drawing.Size(162, 17);
             this.ckbImproveDirection.TabIndex = 45;
@@ -315,13 +334,17 @@
             "NMSE",
             "RMSE",
             "Sign"});
-            this.cmbTrainingMeasure.Location = new System.Drawing.Point(117, 127);
+            this.cmbTrainingMeasure.Location = new System.Drawing.Point(117, 108);
             this.cmbTrainingMeasure.Name = "cmbTrainingMeasure";
             this.cmbTrainingMeasure.Size = new System.Drawing.Size(140, 21);
             this.cmbTrainingMeasure.TabIndex = 31;
             // 
             // gbSVRSetting
             // 
+            this.gbSVRSetting.Controls.Add(this.label3);
+            this.gbSVRSetting.Controls.Add(this.tbxGamma);
+            this.gbSVRSetting.Controls.Add(this.label2);
+            this.gbSVRSetting.Controls.Add(this.tbxC);
             this.gbSVRSetting.Controls.Add(this.rdTimeSeries);
             this.gbSVRSetting.Controls.Add(this.rdNotShuffle);
             this.gbSVRSetting.Controls.Add(this.rdShuffle);
@@ -332,9 +355,9 @@
             this.gbSVRSetting.Controls.Add(this.label6);
             this.gbSVRSetting.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbSVRSetting.ForeColor = System.Drawing.Color.Black;
-            this.gbSVRSetting.Location = new System.Drawing.Point(18, 514);
+            this.gbSVRSetting.Location = new System.Drawing.Point(8, 482);
             this.gbSVRSetting.Name = "gbSVRSetting";
-            this.gbSVRSetting.Size = new System.Drawing.Size(276, 128);
+            this.gbSVRSetting.Size = new System.Drawing.Size(299, 159);
             this.gbSVRSetting.TabIndex = 44;
             this.gbSVRSetting.TabStop = false;
             this.gbSVRSetting.Text = "SVR SETTING";
@@ -343,7 +366,7 @@
             // 
             this.rdTimeSeries.AutoSize = true;
             this.rdTimeSeries.Checked = true;
-            this.rdTimeSeries.Location = new System.Drawing.Point(99, 105);
+            this.rdTimeSeries.Location = new System.Drawing.Point(225, 82);
             this.rdTimeSeries.Name = "rdTimeSeries";
             this.rdTimeSeries.Size = new System.Drawing.Size(74, 17);
             this.rdTimeSeries.TabIndex = 42;
@@ -354,7 +377,7 @@
             // rdNotShuffle
             // 
             this.rdNotShuffle.AutoSize = true;
-            this.rdNotShuffle.Location = new System.Drawing.Point(165, 82);
+            this.rdNotShuffle.Location = new System.Drawing.Point(147, 82);
             this.rdNotShuffle.Name = "rdNotShuffle";
             this.rdNotShuffle.Size = new System.Drawing.Size(74, 17);
             this.rdNotShuffle.TabIndex = 41;
@@ -364,7 +387,7 @@
             // rdShuffle
             // 
             this.rdShuffle.AutoSize = true;
-            this.rdShuffle.Location = new System.Drawing.Point(100, 82);
+            this.rdShuffle.Location = new System.Drawing.Point(89, 82);
             this.rdShuffle.Name = "rdShuffle";
             this.rdShuffle.Size = new System.Drawing.Size(56, 17);
             this.rdShuffle.TabIndex = 40;
@@ -376,7 +399,7 @@
             this.label23.AutoSize = true;
             this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label23.ForeColor = System.Drawing.Color.Black;
-            this.label23.Location = new System.Drawing.Point(10, 84);
+            this.label23.Location = new System.Drawing.Point(6, 84);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(81, 13);
             this.label23.TabIndex = 39;
@@ -386,7 +409,7 @@
             // 
             this.tbxNumFold.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxNumFold.ForeColor = System.Drawing.Color.Black;
-            this.tbxNumFold.Location = new System.Drawing.Point(156, 55);
+            this.tbxNumFold.Location = new System.Drawing.Point(156, 53);
             this.tbxNumFold.Name = "tbxNumFold";
             this.tbxNumFold.Size = new System.Drawing.Size(101, 20);
             this.tbxNumFold.TabIndex = 38;
@@ -397,7 +420,7 @@
             this.label21.AutoSize = true;
             this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label21.ForeColor = System.Drawing.Color.Black;
-            this.label21.Location = new System.Drawing.Point(10, 58);
+            this.label21.Location = new System.Drawing.Point(6, 56);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(135, 13);
             this.label21.TabIndex = 21;
@@ -411,19 +434,19 @@
             this.cmbModelSelection.FormattingEnabled = true;
             this.cmbModelSelection.Items.AddRange(new object[] {
             "Grid search",
-            "Pattern search",
             "Use default values"});
             this.cmbModelSelection.Location = new System.Drawing.Point(100, 22);
             this.cmbModelSelection.Name = "cmbModelSelection";
             this.cmbModelSelection.Size = new System.Drawing.Size(157, 21);
             this.cmbModelSelection.TabIndex = 20;
+            this.cmbModelSelection.SelectedIndexChanged += new System.EventHandler(this.cmbModelSelection_SelectedIndexChanged);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.Color.Black;
-            this.label6.Location = new System.Drawing.Point(10, 25);
+            this.label6.Location = new System.Drawing.Point(6, 25);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(81, 13);
             this.label6.TabIndex = 19;
@@ -434,7 +457,7 @@
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.Black;
-            this.label4.Location = new System.Drawing.Point(8, 193);
+            this.label4.Location = new System.Drawing.Point(8, 156);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(116, 13);
             this.label4.TabIndex = 43;
@@ -445,7 +468,7 @@
             this.lblTrainingMeasure.AutoSize = true;
             this.lblTrainingMeasure.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTrainingMeasure.ForeColor = System.Drawing.Color.Black;
-            this.lblTrainingMeasure.Location = new System.Drawing.Point(8, 130);
+            this.lblTrainingMeasure.Location = new System.Drawing.Point(8, 112);
             this.lblTrainingMeasure.Name = "lblTrainingMeasure";
             this.lblTrainingMeasure.Size = new System.Drawing.Size(89, 13);
             this.lblTrainingMeasure.TabIndex = 32;
@@ -467,7 +490,7 @@
             "MAPE",
             "WDS",
             "Sign"});
-            this.clbMeasures.Location = new System.Drawing.Point(136, 174);
+            this.clbMeasures.Location = new System.Drawing.Point(136, 144);
             this.clbMeasures.Name = "clbMeasures";
             this.clbMeasures.Size = new System.Drawing.Size(120, 109);
             this.clbMeasures.TabIndex = 42;
@@ -477,7 +500,7 @@
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label10.ForeColor = System.Drawing.Color.Black;
-            this.label10.Location = new System.Drawing.Point(8, 82);
+            this.label10.Location = new System.Drawing.Point(8, 79);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(101, 13);
             this.label10.TabIndex = 40;
@@ -497,9 +520,9 @@
             this.gbAnnSetting.Controls.Add(this.label12);
             this.gbAnnSetting.Controls.Add(this.tbxLearningRate);
             this.gbAnnSetting.Controls.Add(this.label13);
-            this.gbAnnSetting.Location = new System.Drawing.Point(18, 321);
+            this.gbAnnSetting.Location = new System.Drawing.Point(8, 284);
             this.gbAnnSetting.Name = "gbAnnSetting";
-            this.gbAnnSetting.Size = new System.Drawing.Size(276, 187);
+            this.gbAnnSetting.Size = new System.Drawing.Size(299, 187);
             this.gbAnnSetting.TabIndex = 23;
             this.gbAnnSetting.TabStop = false;
             this.gbAnnSetting.Text = "ANN SETTING";
@@ -627,7 +650,7 @@
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label18.ForeColor = System.Drawing.Color.Black;
-            this.label18.Location = new System.Drawing.Point(8, 24);
+            this.label18.Location = new System.Drawing.Point(8, 19);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(80, 13);
             this.label18.TabIndex = 35;
@@ -638,7 +661,7 @@
             this.btnBrowser.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnBrowser.ForeColor = System.Drawing.Color.Black;
             this.btnBrowser.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnBrowser.Location = new System.Drawing.Point(224, 33);
+            this.btnBrowser.Location = new System.Drawing.Point(224, 30);
             this.btnBrowser.Name = "btnBrowser";
             this.btnBrowser.Size = new System.Drawing.Size(83, 34);
             this.btnBrowser.TabIndex = 19;
@@ -650,7 +673,7 @@
             // 
             this.tbxCsvFilePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxCsvFilePath.ForeColor = System.Drawing.Color.Black;
-            this.tbxCsvFilePath.Location = new System.Drawing.Point(10, 41);
+            this.tbxCsvFilePath.Location = new System.Drawing.Point(10, 38);
             this.tbxCsvFilePath.Name = "tbxCsvFilePath";
             this.tbxCsvFilePath.Size = new System.Drawing.Size(208, 20);
             this.tbxCsvFilePath.TabIndex = 18;
@@ -1160,20 +1183,37 @@
             this.zg1.Size = new System.Drawing.Size(904, 414);
             this.zg1.TabIndex = 1;
             // 
-            // cmbNumDaysPredicted
+            // tbxC
             // 
-            this.cmbNumDaysPredicted.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbNumDaysPredicted.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cmbNumDaysPredicted.FormattingEnabled = true;
-            this.cmbNumDaysPredicted.Items.AddRange(new object[] {
-            "1",
-            "5",
-            "10",
-            "30"});
-            this.cmbNumDaysPredicted.Location = new System.Drawing.Point(116, 80);
-            this.cmbNumDaysPredicted.Name = "cmbNumDaysPredicted";
-            this.cmbNumDaysPredicted.Size = new System.Drawing.Size(141, 21);
-            this.cmbNumDaysPredicted.TabIndex = 46;
+            this.tbxC.Location = new System.Drawing.Point(83, 105);
+            this.tbxC.Name = "tbxC";
+            this.tbxC.Size = new System.Drawing.Size(100, 20);
+            this.tbxC.TabIndex = 43;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(10, 108);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(38, 13);
+            this.label2.TabIndex = 44;
+            this.label2.Text = "C = 2^";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(10, 134);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(67, 13);
+            this.label3.TabIndex = 46;
+            this.label3.Text = "Gamma = 2^";
+            // 
+            // tbxGamma
+            // 
+            this.tbxGamma.Location = new System.Drawing.Point(83, 131);
+            this.tbxGamma.Name = "tbxGamma";
+            this.tbxGamma.Size = new System.Drawing.Size(100, 20);
+            this.tbxGamma.TabIndex = 45;
             // 
             // MainGUI
             // 
@@ -1308,6 +1348,10 @@
         private System.Windows.Forms.RadioButton rdShuffle;
         private System.Windows.Forms.CheckBox ckbImproveDirection;
         private System.Windows.Forms.ComboBox cmbNumDaysPredicted;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox tbxC;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox tbxGamma;
     }
 }
 
