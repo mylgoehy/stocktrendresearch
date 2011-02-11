@@ -120,12 +120,12 @@ namespace GUI
                 int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
                 string strMutualPath = tbxTrainFilePath.Text.Remove(iPos + 1);
                 string strModelFile = strMutualPath + "model.txt";
+                Problem prob = Problem.Read(tbxTrainFilePath.Text);
+                Parameter param = new Parameter();
 
                 if (cmbModelSelection.SelectedItem.ToString() == "Grid search")
                 {
                     string strLogFile = strMutualPath + "Grid.txt";
-                    Problem prob = Problem.Read(tbxTrainFilePath.Text);
-                    Parameter param = new Parameter();
                     double dblC;
                     double dblGamma;
                     ParameterSelection paramSel = new ParameterSelection();
@@ -133,6 +133,20 @@ namespace GUI
                     paramSel.Grid(prob, param, strLogFile, out dblC, out dblGamma);
                     param.C = dblC;
                     param.Gamma = dblGamma;
+                    param.Probability = true;
+                    Model model = Training.Train(prob, param);
+                    Model.Write(strModelFile, model);
+                }
+                else if (cmbModelSelection.SelectedItem.ToString() == "Use default values")
+                {
+                    if(tbxC.Text == "" || tbxGamma.Text == "")
+                    {
+                        MessageBox.Show("Please fill in parameters!");
+                        return;
+                    }
+                    param.C = double.Parse(tbxC.Text);
+                    param.Gamma = double.Parse(tbxGamma.Text);
+                    param.Probability = true;
                     Model model = Training.Train(prob, param);
                     Model.Write(strModelFile, model);
                 }
@@ -751,6 +765,20 @@ namespace GUI
             {
                 ckbImproveDirection.Enabled = false;
                 btnStepTrainAndTest.Enabled = false;
+            }
+        }
+
+        private void cmbModelSelection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbModelSelection.Text == "Use default values")
+            {
+                tbxC.ReadOnly = false;
+                tbxGamma.ReadOnly = false;
+            }
+            else
+            {
+                tbxC.ReadOnly = true;
+                tbxGamma.ReadOnly = true;
             }
         }
     }
