@@ -160,10 +160,10 @@ namespace BUS
 
             for (int i = 1; i < actualValues.Length; i++)
             {
-                if (actualValues[i]* forecastValues[i] > 0)
+                if (actualValues[i] * forecastValues[i] >= 0)
                 {
                     iTruePositive++;
-                }
+                }                
             }
             dblResult = 100 * iTruePositive / actualValues.Length;
             return dblResult;
@@ -199,6 +199,20 @@ namespace BUS
             dblResult[2] = (dblResult[2] * 100) / (actualValues.Length - 1);
             return dblResult;
         }
+        //Tỉ lệ dự đoán đúng
+        public double CorrectPredictRate(double[] actualValues, double[] forecastValues)
+        {
+            int iCount = 0;
+            for (int i = 0; i < actualValues.Length; i++)
+            {
+                if ((int)actualValues[i] == (int)forecastValues[i])
+                {
+                    iCount++;
+                }
+            }
+                        
+            return (double)(iCount*100)/actualValues.Length;
+        }        
         #endregion
     }
 }

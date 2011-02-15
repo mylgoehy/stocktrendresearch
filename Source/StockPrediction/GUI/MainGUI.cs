@@ -86,6 +86,8 @@ namespace GUI
                         break;
                 }
             }
+            double Result = measureBUS.CorrectPredictRate(actual, forecast);
+            writer.WriteLine("Correct Predicted:\t" + Result.ToString() + "%");
 
             writer.Close();
         }
@@ -160,7 +162,7 @@ namespace GUI
                 //khởi tạo các tham số cho mạng
                 ANNParameterBUS.InputNode = NUM_NODE;
                 ANNParameterBUS.HiddenNode = int.Parse(tbxANNHiddenNode.Text);
-                ANNParameterBUS.OutputNode = 1;
+                ANNParameterBUS.OutputNode = 3;
                 ANNParameterBUS.MaxEpoch = int.Parse(tbxMaxLoops.Text);
                 ANNParameterBUS.LearningRate = double.Parse(tbxLearningRate.Text);
                 ANNParameterBUS.Momentum = double.Parse(tbxMomentum.Text);
@@ -237,7 +239,7 @@ namespace GUI
                 ANNPredictBUS annPredict = new ANNPredictBUS();
                 annPredict.LoadDataSet(tbxTestFilePath.Text);
                 dblActual_Forecast = annPredict.MainProcessTrend();
-                annPredict.WritePredictPrice(strPredictedFile);
+                annPredict.WritePredictTrend(strPredictedFile);
             }
             #endregion
 
@@ -319,6 +321,7 @@ namespace GUI
             tbxMaxLoops.Text = 2000.ToString();
             tbxBias.Text = 0.ToString();
             tbxMomentum.Text = 0.01.ToString();
+            tbxAccuracy.Text = 90.ToString();
 
             if (rdANN.Checked == true)
             {
@@ -501,7 +504,8 @@ namespace GUI
                 {
                     EntryDTO entryDTO = (EntryDTO)stepTrainingBUS.WholeData.Entries[stepTrainingBUS.CurrentDateIndex + 1];
                     dblActual_Forecast[0][i] = entryDTO.ClosePrice;
-                    dblActual_Forecast[1][i] = stepTrainingBUS.TrainAndPredict(isSVR);
+                    //Tạm thời bỏ dòng này chưa sử dụng step training cho ANN
+                    //dblActual_Forecast[1][i] = stepTrainingBUS.TrainAndPredict(isSVR);
                     stepTrainingBUS.CurrentDateIndex++;
                 }
 
@@ -610,7 +614,8 @@ namespace GUI
 
             ANNPredictBUS annPredict = new ANNPredictBUS();
             annPredict.LoadDataSet(@"TestPrice.txt");
-            dblActual_Forecast = annPredict.MainProcess();
+            //Tạm thời bỏ dòng này chưa sử dụng trong predict
+            //dblActual_Forecast = annPredict.MainProcessTrend();
             pricePredict = dblActual_Forecast[1][0];
             tbxANNPrice.Text = Math.Round(dblActual_Forecast[1][0], 2).ToString();
             #endregion
