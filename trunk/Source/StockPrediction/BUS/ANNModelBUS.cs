@@ -12,14 +12,14 @@ namespace BUS
     {
         #region Attributes
         private double[][] _weightIH;
-        private double[] _weightHO;
+        private double[][] _weightHO;
 
         private double[] _outInputLayer;
         private double[] _outHiddenLayer;
-        private double _outOutputLayer;
+        private double[] _outOutputLayer;
 
         private double[][] _deltaWeightIH;
-        private double[] _deltaWeightHO;
+        private double[][] _deltaWeightHO;
 
         private static string _annModelFile;
         #endregion
@@ -31,14 +31,10 @@ namespace BUS
             OutHiddenLayer = new double[ANNParameterBUS.HiddenNode];
 
             WeightIH = new double[ANNParameterBUS.InputNode][];
-            WeightHO = new double[ANNParameterBUS.HiddenNode];
+            WeightHO = new double[ANNParameterBUS.HiddenNode][];
 
             DeltaWeightIH = new double[ANNParameterBUS.InputNode][];
-            DeltaWeightHO = new double[ANNParameterBUS.HiddenNode];
-            for (int j = 0; j < ANNParameterBUS.HiddenNode; j++)
-            {
-                DeltaWeightHO[j] = 0;
-            }
+            DeltaWeightHO = new double[ANNParameterBUS.HiddenNode][];
 
             for (int i = 0; i < ANNParameterBUS.InputNode; i++)
             {
@@ -48,6 +44,17 @@ namespace BUS
                 for (int j = 0; j < ANNParameterBUS.HiddenNode; j++)
                 {
                     DeltaWeightIH[i][j] = 0;
+                }
+            }
+
+            for (int j = 0; j < ANNParameterBUS.HiddenNode; j++)
+            {
+                WeightHO[j] = new double[ANNParameterBUS.OutputNode];
+                DeltaWeightHO[j] = new double[ANNParameterBUS.OutputNode];
+
+                for (int k = 0; k < ANNParameterBUS.OutputNode; k++)
+                {
+                    DeltaWeightHO[j][k] = 0;
                 }
             }
         }
@@ -60,7 +67,7 @@ namespace BUS
             set { _weightIH = value; }
         }
 
-        public double[] WeightHO
+        public double[][] WeightHO
         {
             get { return _weightHO; }
             set { _weightHO = value; }
@@ -78,7 +85,7 @@ namespace BUS
             set { _outHiddenLayer = value; }
         }
 
-        public double OutOutputLayer
+        public double[] OutOutputLayer
         {
             get { return _outOutputLayer; }
             set { _outOutputLayer = value; }
@@ -90,7 +97,7 @@ namespace BUS
             set { _deltaWeightIH = value; }
         }
 
-        public double[] DeltaWeightHO
+        public double[][] DeltaWeightHO
         {
             get { return _deltaWeightHO; }
             set { _deltaWeightHO = value; }
@@ -120,13 +127,17 @@ namespace BUS
             //Khởi tạo ngẫu nhiên bộ trọng số liên kết lớp Hidden - Output
             for (int i = 0; i < ANNParameterBUS.HiddenNode; i++)
             {
-                WeightHO[i] = random.NextDouble();
+                for (int j = 0; j < ANNParameterBUS.OutputNode; j++)
+                {
+                    WeightHO[i][j] = random.NextDouble();
+                }
             }
         }
 
         public double[] CalculateOutputOfHiddenLayer(double[] arr)
         {
             double[] result = new double[ANNParameterBUS.HiddenNode];
+
             for (int j = 0; j < ANNParameterBUS.HiddenNode; j++)
             {
                 result[j] = ANNParameterBUS.Bias;
@@ -141,18 +152,23 @@ namespace BUS
             return result;
         }
 
-        public double CalculateOutputOfOutputLayer(double[] arr)
+        public double[] CalculateOutputOfOutputLayer(double[] arr)
         {
-            double result = ANNParameterBUS.Bias;
-            for (int j = 0; j < ANNParameterBUS.HiddenNode; j++)
+            double[] result = new double[ANNParameterBUS.OutputNode];
+
+            for (int k = 0; k < ANNParameterBUS.OutputNode; k++)
             {
-                result += (WeightHO[j] * arr[j]);
+                result[k] = ANNParameterBUS.Bias;
+                for (int j = 0; j < ANNParameterBUS.HiddenNode; j++)
+                {
+                    result[k] += (WeightHO[j][k] * arr[j]);
+                }
             }
 
             return result;
         }
 
-        public double FeedforwardTraining()
+        public double[] FeedforwardTraining()
         {
             OutHiddenLayer = CalculateOutputOfHiddenLayer(OutInputLayer);
             OutOutputLayer = CalculateOutputOfOutputLayer(OutHiddenLayer);
@@ -160,20 +176,32 @@ namespace BUS
             return OutOutputLayer;
         }
 
-        public void ErrorBackpropagationTraining(double actualValue)
+        public void ErrorBackpropagationTraining(double[] actualValue)
         {
             //Tính độ lỗi của Lớp Output
-            double errorOut = actualValue - OutOutputLayer;
+            double[] errorOut = new double[ANNParameterBUS.OutputNode];
+            for (int k = 0; k < ANNParameterBUS.OutputNode; k++)
+            {
+                errorOut[k] = actualValue[k] - OutOutputLayer[k];
+            }
 
             //Tính độ lỗi của các neural lớp Hidden
             double[] errorHidden = new double[ANNParameterBUS.HiddenNode];
             for (int j = 0; j < ANNParameterBUS.HiddenNode; j++)
             {
-                errorHidden[j] = OutHiddenLayer[j] * (1 - OutHiddenLayer[j]) * errorOut * WeightHO[j];
+                double dTemp = 0.0;
+                for (int k = 0; k < ANNParameterBUS.OutputNode; k++)
+                {
+                    dTemp = dTemp + errorOut[k] * WeightHO[j][k];
+                }
+                errorHidden[j] = OutHiddenLayer[j] * (1 - OutHiddenLayer[j]) * dTemp;
 
                 //Cập nhật trọng số liên kết lớp Hidden - Output
-                DeltaWeightHO[j] = ANNParameterBUS.LearningRate * errorOut * OutHiddenLayer[j] + ANNParameterBUS.Momentum * DeltaWeightHO[j];
-                WeightHO[j] = WeightHO[j] + DeltaWeightHO[j];
+                for (int k = 0; k < ANNParameterBUS.OutputNode; k++)
+                {                    
+                    DeltaWeightHO[j][k] = ANNParameterBUS.LearningRate * errorOut[k] * OutHiddenLayer[j] + ANNParameterBUS.Momentum * DeltaWeightHO[j][k];
+                    WeightHO[j][k] = WeightHO[j][k] + DeltaWeightHO[j][k];
+                }
 
                 //Cập nhật trọng số liên kết lớp Input - Hidden
                 for (int i = 0; i < ANNParameterBUS.InputNode; i++)
@@ -183,7 +211,34 @@ namespace BUS
                 }
             }
         }
-        
+
+        //public void ErrorBackpropagationTraining(double[] actualValue)
+        //{
+        //    double[] errorOut = new double[ANNParameterBUS.OutputNode];
+        //    for (int k = 0; k < ANNParameterBUS.OutputNode; k++)
+        //    {
+        //        //Tính độ lỗi của Lớp Output
+        //        errorOut[k] = actualValue[k] - OutOutputLayer[k];
+
+        //        //Tính độ lỗi của các neural lớp Hidden
+        //        double[] errorHidden = new double[ANNParameterBUS.HiddenNode];
+        //        for (int j = 0; j < ANNParameterBUS.HiddenNode; j++)
+        //        {
+        //            errorHidden[j] = OutHiddenLayer[j] * (1 - OutHiddenLayer[j]) * errorOut[k] * WeightHO[j][k];
+
+        //            //Cập nhật trọng số liên kết lớp Hidden - Output
+        //            DeltaWeightHO[j][k] = ANNParameterBUS.LearningRate * errorOut[k] * OutHiddenLayer[j] + ANNParameterBUS.Momentum * DeltaWeightHO[j][k];
+        //            WeightHO[j][k] = WeightHO[j][k] + DeltaWeightHO[j][k];
+
+        //            //Cập nhật trọng số liên kết lớp Input - Hidden
+        //            for (int i = 0; i < ANNParameterBUS.InputNode; i++)
+        //            {
+        //                DeltaWeightIH[i][j] = ANNParameterBUS.LearningRate * errorHidden[j] * OutInputLayer[i] + ANNParameterBUS.Momentum * DeltaWeightIH[i][j];
+        //                WeightIH[i][j] = WeightIH[i][j] + DeltaWeightIH[i][j];
+        //            }
+        //        }
+        //    }
+        //}
         public void SaveModelFile()
         {
             try
@@ -193,6 +248,7 @@ namespace BUS
                 //Các tham số của mô hình ANN
                 writer.WriteLine(ANNParameterBUS.InputNode);
                 writer.WriteLine(ANNParameterBUS.HiddenNode);
+                writer.WriteLine(ANNParameterBUS.OutputNode);
 
                 //Bộ trọng số liên kết các lớp
                 string strLine = "";
@@ -210,11 +266,13 @@ namespace BUS
                 strLine = "";
                 for (int j = 0; j < ANNParameterBUS.HiddenNode; j++)
                 {
-                    strLine += (WeightHO[j].ToString() + " ");
+                    strLine = "";
+                    for (int k = 0; k < ANNParameterBUS.OutputNode; k++)
+                    {
+                        strLine += (WeightHO[j][k].ToString() + " ");
+                    }
+                    writer.WriteLine(strLine);
                 }
-
-                writer.WriteLine(strLine);
-
                 writer.Close();
             }
             catch (Exception ex)
@@ -231,6 +289,7 @@ namespace BUS
 
                 reader.ReadLine();
                 reader.ReadLine();
+                reader.ReadLine();
 
                 //Bộ trọng số liên kết các lớp
                 string strLine = "";
@@ -245,11 +304,15 @@ namespace BUS
                     }
                 }
 
-                strLine = reader.ReadLine();
-                strSplit = strLine.Split(' ');
+
                 for (int j = 0; j < ANNParameterBUS.HiddenNode; j++)
                 {
-                    WeightHO[j] = double.Parse(strSplit[j]);
+                    strLine = reader.ReadLine();
+                    strSplit = strLine.Split(' ');
+                    for (int k = 0; k < ANNParameterBUS.OutputNode; k++)
+                    {
+                        WeightHO[j][k] = double.Parse(strSplit[k]);
+                    }
                 }
 
                 reader.Close();
@@ -281,29 +344,34 @@ namespace BUS
             }
         }
 
-        public void ErrorBackpropagationTrainingImprove(double actualValue)
-        {
-            //Tính độ lỗi của Lớp Output
-            double errorOut = actualValue - OutOutputLayer;
+        //public void ErrorBackpropagationTrainingImprove(double[] actualValue)
+        //{
+        //    //Tính độ lỗi của Lớp Output
+        //    double[] errorOut = new double[ANNParameterBUS.OutputNode];
+        //    for (int k = 0; k < ANNParameterBUS.OutputNode; k++)
+        //    {
+        //        errorOut[k] = actualValue[k] - OutOutputLayer[k];
+        //    }
 
-            //Tính độ lỗi của các neural lớp Hidden
-            double[] errorHidden = new double[ANNParameterBUS.HiddenNode];
-            for (int j = 0; j < ANNParameterBUS.HiddenNode; j++)
-            {
-                errorHidden[j] = OutHiddenLayer[j] * (1 - OutHiddenLayer[j]) * errorOut * WeightHO[j];
+        //    //Tính độ lỗi của các neural lớp Hidden
+        //    double[] errorHidden = new double[ANNParameterBUS.HiddenNode];
+        //    for (int j = 0; j < ANNParameterBUS.HiddenNode; j++)
+        //    {
 
-                //Cập nhật trọng số liên kết lớp Hidden - Output
-                DeltaWeightHO[j] = ANNParameterBUS.LearningRate * errorOut * OutHiddenLayer[j] + ANNParameterBUS.Momentum * DeltaWeightHO[j];
-                WeightHO[j] = WeightHO[j] + DeltaWeightHO[j];
+        //        errorHidden[j] = OutHiddenLayer[j] * (1 - OutHiddenLayer[j]) * errorOut * WeightHO[j];
 
-                //Cập nhật trọng số liên kết lớp Input - Hidden
-                for (int i = 0; i < ANNParameterBUS.InputNode; i++)
-                {
-                    DeltaWeightIH[i][j] = ANNParameterBUS.LearningRate * errorHidden[j] * OutInputLayer[i] + ANNParameterBUS.Momentum * DeltaWeightIH[i][j];
-                    WeightIH[i][j] = WeightIH[i][j] + DeltaWeightIH[i][j];
-                }
-            }
-        }
+        //        //Cập nhật trọng số liên kết lớp Hidden - Output
+        //        DeltaWeightHO[j] = ANNParameterBUS.LearningRate * errorOut * OutHiddenLayer[j] + ANNParameterBUS.Momentum * DeltaWeightHO[j];
+        //        WeightHO[j] = WeightHO[j] + DeltaWeightHO[j];
+
+        //        //Cập nhật trọng số liên kết lớp Input - Hidden
+        //        for (int i = 0; i < ANNParameterBUS.InputNode; i++)
+        //        {
+        //            DeltaWeightIH[i][j] = ANNParameterBUS.LearningRate * errorHidden[j] * OutInputLayer[i] + ANNParameterBUS.Momentum * DeltaWeightIH[i][j];
+        //            WeightIH[i][j] = WeightIH[i][j] + DeltaWeightIH[i][j];
+        //        }
+        //    }
+        //}
         #endregion
     }
 }

@@ -11,6 +11,7 @@ namespace BUS
     {
         #region Attributes
         private double[][] dblActual_Forecast;
+        //private int[] iForecast;        
         private ANNModelBUS _annModel;
 
         private int _numPattern;
@@ -31,7 +32,11 @@ namespace BUS
             get { return dblActual_Forecast; }
             set { dblActual_Forecast = value; }
         }
-
+        //public int[] IForecast
+        //{
+        //    get { return iForecast; }
+        //    set { iForecast = value; }
+        //}       
         public ANNModelBUS ANNModel
         {
             get { return _annModel; }
@@ -66,27 +71,32 @@ namespace BUS
             {
                 reader = new StreamReader(strDataFile);
 
-                string strTemp = reader.ReadLine();
-                Preprocess = new PreprocessBUS();
-                Preprocess.Min = double.Parse(strTemp.Split(' ')[1]);
-                Preprocess.Max = double.Parse(strTemp.Split(' ')[2]);
+                string strTemp ;//= reader.ReadLine();
+                //Preprocess = new PreprocessBUS();
+                //Preprocess.Min = double.Parse(strTemp.Split(' ')[1]);
+                //Preprocess.Max = double.Parse(strTemp.Split(' ')[2]);
 
                 strTemp = reader.ReadToEnd();
                 reader.Close();
 
                 string[] strLines = Regex.Split(strTemp, "\r\n");
 
-                DblActual_Forecast = new double[2][];
+                //DblActual = new double[2][];
                 NumPattern = strLines.Length - 1;
+                DblActual_Forecast = new double[2][];
+
                 DblActual_Forecast[0] = new double[NumPattern];
                 DblActual_Forecast[1] = new double[NumPattern];
+
                 ArrPattern = new double[NumPattern][];
 
                 for (int i = 0; i < NumPattern; i++)
                 {
                     string[] strValue = strLines[i].Split(' ');
-
-                    DblActual_Forecast[0][i] = double.Parse(strValue[0]);
+                    
+                    //DblActual[i] = new double[1];
+                    
+                    DblActual_Forecast[0][i] = int.Parse(strValue[0]);
 
                     ArrPattern[i] = new double[ANNParameterBUS.InputNode];
                     for (int j = 0; j < ANNParameterBUS.InputNode; j++)
@@ -105,25 +115,40 @@ namespace BUS
 
         }
 
-        public double[][] MainProcess()
-        {
-            for (int i = 0; i < NumPattern; i++)
-            {
-                ANNModel.OutInputLayer = ArrPattern[i];
-                DblActual_Forecast[1][i] = ANNModel.FeedforwardTraining();
-            }
+        //public double[][] MainProcess()
+        //{
+        //    for (int i = 0; i < NumPattern; i++)
+        //    {
+        //        ANNModel.OutInputLayer = ArrPattern[i];
+        //        DblActual_Forecast[1][i] = ANNModel.FeedforwardTraining();
+        //    }
 
-            DblActual_Forecast[0] = Preprocess.DenormalizeByMinMax(DblActual_Forecast[0]);
-            DblActual_Forecast[1] = Preprocess.DenormalizeByMinMax(DblActual_Forecast[1]);
+        //    DblActual_Forecast[0] = Preprocess.DenormalizeByMinMax(DblActual_Forecast[0]);
+        //    DblActual_Forecast[1] = Preprocess.DenormalizeByMinMax(DblActual_Forecast[1]);
 
-            return DblActual_Forecast;
-        }
+        //    return DblActual_Forecast;
+        //}
         public double[][] MainProcessTrend()
         {
+            double[] dblTempForecast;
             for (int i = 0; i < NumPattern; i++)
             {
                 ANNModel.OutInputLayer = ArrPattern[i];
-                DblActual_Forecast[1][i] = ANNModel.FeedforwardTraining();
+                dblTempForecast = ANNModel.FeedforwardTraining();
+                //Xử lý kết quả dự đoán từ 3 node về xu hướng xác định
+
+                if (dblTempForecast[0] > dblTempForecast[1] && dblTempForecast[0] > dblTempForecast[2])
+                {
+                    DblActual_Forecast[1][i] = -1;// DOWNTREND
+                }
+                else if ((dblTempForecast[1] > dblTempForecast[2] && dblTempForecast[1] > dblTempForecast[0]))
+                {
+                    DblActual_Forecast[1][i] = 0;// NOTREND
+                }
+                else
+                {
+                    DblActual_Forecast[1][i] = 1;// UPTREND
+                }
             }
 
             //DblActual_Forecast[0] = Preprocess.DenormalizeByMinMax(DblActual_Forecast[0]);
@@ -132,64 +157,67 @@ namespace BUS
             return DblActual_Forecast;
         }
 
-        public double[][] StepTrainingMethod()
-        {
-            ANNParameterBUS.TrainingSize = 35;
+        //public double[][] StepTrainingMethod()
+        //{
+        //    ANNParameterBUS.TrainingSize = 35;
 
-            PreprocessBUS preprocessBUS = new PreprocessBUS();
-            ANNTrainBUS annTrain = new ANNTrainBUS();
+        //    PreprocessBUS preprocessBUS = new PreprocessBUS();
+        //    ANNTrainBUS annTrain = new ANNTrainBUS();
 
-            int len = ArrPattern.Length - ANNParameterBUS.TrainingSize;
-            double[][] dblActual_Forecast = new double[2][];
-            dblActual_Forecast[0] = new double[len];
-            dblActual_Forecast[1] = new double[len];
+        //    int len = ArrPattern.Length - ANNParameterBUS.TrainingSize;
+        //    double[][] dblActual_Forecast = new double[2][];
+        //    dblActual_Forecast[0] = new double[len];
+        //    dblActual_Forecast[1] = new double[len];
 
-            ArrPattern = Preprocess.DenormalizeByMinMax(ArrPattern);
-            DblActual_Forecast[0] = Preprocess.DenormalizeByMinMax(DblActual_Forecast[0]);
-            for (int i = 0; i < len; i++)
-            {
-                double[][] trainingSet = SelectTrainingSet(i);
-                preprocessBUS.FindMinMax(trainingSet);
-                trainingSet = preprocessBUS.PreprocessByMinMax(trainingSet);
-                annTrain.LoadDataSet(trainingSet);
-                annTrain.Main();
+        //    ArrPattern = Preprocess.DenormalizeByMinMax(ArrPattern);
+        //    DblActual_Forecast[0] = Preprocess.DenormalizeByMinMax(DblActual_Forecast[0]);
+        //    for (int i = 0; i < len; i++)
+        //    {
+        //        double[][] trainingSet = SelectTrainingSet(i);
+        //        preprocessBUS.FindMinMax(trainingSet);
+        //        trainingSet = preprocessBUS.PreprocessByMinMax(trainingSet);
+        //        annTrain.LoadDataSet(trainingSet);
+        //        annTrain.Main();
 
-                ANNModel.LoadModelFile();
-                ANNModel.OutInputLayer = preprocessBUS.PreprocessByMinMax(ArrPattern[i + ANNParameterBUS.TrainingSize - 1]);
-                dblActual_Forecast[1][i] = preprocessBUS.DenormalizeByMinMax(ANNModel.FeedforwardTraining());
-                dblActual_Forecast[0][i] = DblActual_Forecast[0][i + ANNParameterBUS.TrainingSize];
-            }
+        //        ANNModel.LoadModelFile();
+        //        ANNModel.OutInputLayer = preprocessBUS.PreprocessByMinMax(ArrPattern[i + ANNParameterBUS.TrainingSize - 1]);
+        //        dblActual_Forecast[1][i] = preprocessBUS.DenormalizeByMinMax(ANNModel.FeedforwardTraining());
+        //        dblActual_Forecast[0][i] = DblActual_Forecast[0][i + ANNParameterBUS.TrainingSize];
+        //    }
 
-            DblActual_Forecast = dblActual_Forecast;
-            NumPattern = len;
+        //    DblActual_Forecast = dblActual_Forecast;
+        //    NumPattern = len;
 
-            return dblActual_Forecast;
-        }
+        //    return dblActual_Forecast;
+        //}
 
-        public double[][] SelectTrainingSet(int index)
-        {
-            double[][] result = new double[ANNParameterBUS.TrainingSize][];
+        //public double[][] SelectTrainingSet(int index)
+        //{
+        //    double[][] result = new double[ANNParameterBUS.TrainingSize][];
 
-            for (int i = 0; i < ANNParameterBUS.TrainingSize; i++)
-            {
-                result[i] = new double[ANNParameterBUS.InputNode + 1];
-                for (int j = 0; j < ANNParameterBUS.InputNode; j++ )
-                {
-                    result[i][j] = ArrPattern[index + i][j];
-                }
-                result[i][ANNParameterBUS.InputNode] = dblActual_Forecast[0][index + i];
-            }
+        //    for (int i = 0; i < ANNParameterBUS.TrainingSize; i++)
+        //    {
+        //        result[i] = new double[ANNParameterBUS.InputNode + 1];
+        //        for (int j = 0; j < ANNParameterBUS.InputNode; j++ )
+        //        {
+        //            result[i][j] = ArrPattern[index + i][j];
+        //        }
+        //        result[i][ANNParameterBUS.InputNode] = dblActual[0][index + i];
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        public void WritePredictPrice(string strPredictedFile)
+        public void WritePredictTrend(string strPredictedFile)
         {
             StreamWriter write = new StreamWriter(strPredictedFile);
+            String strTemp = "Actuals:\tForecasts\n";
             for (int i = 0; i < NumPattern; i++)
-            {
-                write.WriteLine(DblActual_Forecast[0][i].ToString() + "\t" + DblActual_Forecast[1][i].ToString());
+            {  
+               strTemp += DblActual_Forecast[0][i] + "\t";
+               strTemp += DblActual_Forecast[1][i] + "\n";
             }
+            write.WriteLine(strTemp);
             write.Close();
         }
         #endregion

@@ -17,7 +17,7 @@ namespace BUS
         private static double _momentum;
         private static int _maxEpoch;
         private static double _bias;
-        
+
         private static int _trainingSize;
 
         private static double _accuracy;
@@ -96,6 +96,7 @@ namespace BUS
 
                 ANNParameterBUS.InputNode = int.Parse(reader.ReadLine());
                 ANNParameterBUS.HiddenNode = int.Parse(reader.ReadLine());
+                ANNParameterBUS.OutputNode = int.Parse(reader.ReadLine());
 
                 reader.Close();
             }
