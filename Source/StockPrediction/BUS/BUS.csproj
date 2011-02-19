@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A4A55317-215B-4819-B2C8-05BC534B1ECC}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -35,6 +35,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -49,6 +50,51 @@
     <Compile Include="ANNParameterBUS.cs" />
     <Compile Include="ANNPredictBUS.cs" />
     <Compile Include="ANNTrainBUS.cs" />
+    <Compile Include="ANN\Backpropagation\ActivationLayer.cs" />
+    <Compile Include="ANN\Backpropagation\ActivationNeuron.cs" />
+    <Compile Include="ANN\Backpropagation\BackpropagationConnector.cs" />
+    <Compile Include="ANN\Backpropagation\BackpropagationNetwork.cs" />
+    <Compile Include="ANN\Backpropagation\BackpropagationSynapse.cs" />
+    <Compile Include="ANN\Backpropagation\LinearLayer.cs" />
+    <Compile Include="ANN\Backpropagation\LogarithmLayer.cs" />
+    <Compile Include="ANN\Backpropagation\SigmoidLayer.cs" />
+    <Compile Include="ANN\Backpropagation\SineLayer.cs" />
+    <Compile Include="ANN\Backpropagation\TanhLayer.cs" />
+    <Compile Include="ANN\ConnectionMode.cs" />
+    <Compile Include="ANN\Connector.cs" />
+    <Compile Include="ANN\Helper.cs" />
+    <Compile Include="ANN\IConnector.cs" />
+    <Compile Include="ANN\IInitializer.cs" />
+    <Compile Include="ANN\ILayer.cs" />
+    <Compile Include="ANN\ILearningRateFunction.cs" />
+    <Compile Include="ANN\INetwork.cs" />
+    <Compile Include="ANN\INeuron.cs" />
+    <Compile Include="ANN\Initializers\ConstantFunction.cs" />
+    <Compile Include="ANN\Initializers\NguyenWidrowFunction.cs" />
+    <Compile Include="ANN\Initializers\NormalizedRandomFunction.cs" />
+    <Compile Include="ANN\Initializers\RandomFunction.cs" />
+    <Compile Include="ANN\Initializers\ZeroFunction.cs" />
+    <Compile Include="ANN\ISynapse.cs" />
+    <Compile Include="ANN\Layer.cs" />
+    <Compile Include="ANN\LearningRateFunctions\AbstractFunction.cs" />
+    <Compile Include="ANN\LearningRateFunctions\ExponentialFunction.cs" />
+    <Compile Include="ANN\LearningRateFunctions\HyperbolicFunction.cs" />
+    <Compile Include="ANN\LearningRateFunctions\LinearFunction.cs" />
+    <Compile Include="ANN\Network.cs" />
+    <Compile Include="ANN\SOM\INeighborhoodFunction.cs" />
+    <Compile Include="ANN\SOM\KohonenConnector.cs" />
+    <Compile Include="ANN\SOM\KohonenLayer.cs" />
+    <Compile Include="ANN\SOM\KohonenNetwork.cs" />
+    <Compile Include="ANN\SOM\KohonenSynapse.cs" />
+    <Compile Include="ANN\SOM\LatticeTopology.cs" />
+    <Compile Include="ANN\SOM\NeighborhoodFunctions\GaussianFunction.cs" />
+    <Compile Include="ANN\SOM\NeighborhoodFunctions\MexicanHatFunction.cs" />
+    <Compile Include="ANN\SOM\PositionNeuron.cs" />
+    <Compile Include="ANN\TrainingEpochEventArgs.cs" />
+    <Compile Include="ANN\TrainingMethod.cs" />
+    <Compile Include="ANN\TrainingSample.cs" />
+    <Compile Include="ANN\TrainingSampleEventArgs.cs" />
+    <Compile Include="ANN\TrainingSet.cs" />
     <Compile Include="ConverterBUS.cs" />
     <Compile Include="IndicatorsBUS.cs" />
     <Compile Include="MeasureBUS.cs" />
