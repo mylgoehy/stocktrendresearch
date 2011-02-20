@@ -188,9 +188,9 @@ namespace GUI
             if (openFileDlg.ShowDialog() == DialogResult.OK)
             {
                 tbxCsvFilePath.Text = openFileDlg.FileName;
-                tbxTrainFilePath.Text = openFileDlg.FileName.Replace(".csv", "") + "_1_train.txt";
-                tbxTestFilePath.Text = openFileDlg.FileName.Replace(".csv", "") + "_1_test.txt";
-                tbxModelFilePath.Text = openFileDlg.FileName.Replace(".csv", "") + "_1_model.txt";
+                tbxTrainFilePath.Text = openFileDlg.FileName.Replace(".csv", "") + "_" + cmbNumDaysPredicted.Text + "_train.txt";
+                tbxTestFilePath.Text = openFileDlg.FileName.Replace(".csv", "") + "_" + cmbNumDaysPredicted.Text + "_test.txt";
+                tbxModelFilePath.Text = openFileDlg.FileName.Replace(".csv", "") + "_" + cmbNumDaysPredicted.Text + "_model.txt";
             }
         }
 
@@ -244,7 +244,10 @@ namespace GUI
             #endregion
 
             #region Phần chung
-            HandleMeasure(strFolderPath+"PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
+            if (rdANN.Checked)
+            {
+                HandleMeasure(strFolderPath + "PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
+            }
             MessageBox.Show("Finish!");
             #endregion
             
