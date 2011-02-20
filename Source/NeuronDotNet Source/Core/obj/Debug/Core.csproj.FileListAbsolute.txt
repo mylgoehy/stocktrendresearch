@@ -1,0 +1,5 @@
+C:\Users\LE MINH DUY\Desktop\ndn30src\NeuronDotNet Source\Core\bin\Debug\NeuronDotNet.Core.dll
+C:\Users\LE MINH DUY\Desktop\ndn30src\NeuronDotNet Source\Core\bin\Debug\NeuronDotNet.Core.pdb
+C:\Users\LE MINH DUY\Desktop\ndn30src\NeuronDotNet Source\Core\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\LE MINH DUY\Desktop\ndn30src\NeuronDotNet Source\Core\obj\Debug\NeuronDotNet.Core.dll
+C:\Users\LE MINH DUY\Desktop\ndn30src\NeuronDotNet Source\Core\obj\Debug\NeuronDotNet.Core.pdb
