@@ -263,11 +263,13 @@ namespace GUI
             //1. Đọc dữ liệu từ file .csv vào mảng và tiền xử lý
             StockRecordBUS stockRecordBUS = new StockRecordBUS();
             StockRecordDTO stockRecordDTO = stockRecordBUS.LoadData(tbxCsvFilePath.Text);
-            double[] dblSource = new double[stockRecordDTO.Entries.Count];
+            double[] dblClosePrices = new double[stockRecordDTO.Entries.Count];
+            double[] dblVolumes = new double[stockRecordDTO.Entries.Count];
             int i = 0;
             foreach (EntryDTO entryDTO in stockRecordDTO.Entries)
             {
-                dblSource[i] = entryDTO.ClosePrice;
+                dblClosePrices[i] = entryDTO.ClosePrice;
+                dblVolumes[i] = entryDTO.Volume;
                 i++;
             }
             
@@ -279,7 +281,7 @@ namespace GUI
             int numDaysPredicted = Int32.Parse(cmbNumDaysPredicted.Text);
             int iNumLine = 0;
 
-            ConverterBUS.Convert(dblSource, numDaysPredicted, strTotalFile, out iNumLine);
+            ConverterBUS.Convert(dblClosePrices, dblVolumes, numDaysPredicted, strTotalFile, out iNumLine);
 
             //3. Từ file chứa toàn bộ dữ liệu ta phân phối vào 2 file train và test (dựa vào tỉ lệ bộ train)
             string strTrainFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_train.txt";

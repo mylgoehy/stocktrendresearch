@@ -240,7 +240,7 @@ namespace BUS
             }
         }
 
-        public static void Convert(double[] closePrices, int numDaysPeriod, string destFileName, out int numLines)
+        public static void Convert(double[] closePrices, double[] volumes, int numDaysPeriod, string destFileName, out int numLines)
         {
             try
             {
@@ -265,6 +265,7 @@ namespace BUS
                 double[] dblBollingerLow = IndicatorsBUS.CalculateBollingerband(closePrices, 20, 2, false);
                 // Scale các chỉ số (ngoại trừ Aroon) về -1 1
                 double dblMax = 0;
+                double dblMaxVol = 0;
                 // Tìm trị tuyệt đối lớn nhất. Nhận xét, ta chỉ cần tìm trên closePrices và BollingerUp là đủ
                 for (int i = 0; i < closePrices.Length; i++)
                 {
@@ -276,10 +277,15 @@ namespace BUS
                     {
                         dblMax = Math.Abs(closePrices[i]);
                     }
+                    if (volumes[i] > dblMaxVol)
+                    {
+                        dblMaxVol = volumes[i];
+                    }
                 }
                 // Scale
                 for (int i = 0; i < closePrices.Length; i++)
                 {
+                    volumes[i] = volumes[i] / dblMaxVol;
                     closePrices[i] = closePrices[i] / dblMax;
                     dblFastSMAs[i] = dblFastSMAs[i] / dblMax;
                     dblLowSMAs[i] = dblLowSMAs[i] / dblMax;
@@ -298,6 +304,7 @@ namespace BUS
                     string strLine = dblLabels[i].ToString() + " ";
                     int j = 1;
                     int iPastIndex = LOW_PERIOD + i - numDaysPeriod;
+                    strLine += (j++).ToString() + ":" + volumes[iPastIndex].ToString() + " ";
                     strLine += (j++).ToString() + ":" + closePrices[iPastIndex].ToString() + " ";
                     strLine += (j++).ToString() + ":" + dblFastSMAs[iPastIndex].ToString() + " ";
                     strLine += (j++).ToString() + ":" + dblLowSMAs[iPastIndex].ToString() + " ";
