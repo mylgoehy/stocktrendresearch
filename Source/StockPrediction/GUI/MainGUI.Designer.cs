@@ -45,6 +45,10 @@
             this.ckbImproveDirection = new System.Windows.Forms.CheckBox();
             this.cmbTrainingMeasure = new System.Windows.Forms.ComboBox();
             this.gbSVRSetting = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.tbxGamma = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.tbxC = new System.Windows.Forms.TextBox();
             this.rdTimeSeries = new System.Windows.Forms.RadioButton();
             this.rdNotShuffle = new System.Windows.Forms.RadioButton();
             this.rdShuffle = new System.Windows.Forms.RadioButton();
@@ -119,10 +123,6 @@
             this.dtpFrom = new System.Windows.Forms.DateTimePicker();
             this.cmbStockID = new System.Windows.Forms.ComboBox();
             this.zg1 = new ZedGraph.ZedGraphControl();
-            this.tbxC = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.tbxGamma = new System.Windows.Forms.TextBox();
             this.tabOption.SuspendLayout();
             this.tabExperiment.SuspendLayout();
             this.groupBox9.SuspendLayout();
@@ -148,7 +148,6 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(1003, 43);
             this.label1.TabIndex = 8;
-            this.label1.Text = "STOCK PREDICTION";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tabOption
@@ -361,6 +360,38 @@
             this.gbSVRSetting.TabIndex = 44;
             this.gbSVRSetting.TabStop = false;
             this.gbSVRSetting.Text = "SVR SETTING";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(10, 134);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(67, 13);
+            this.label3.TabIndex = 46;
+            this.label3.Text = "Gamma = 2^";
+            // 
+            // tbxGamma
+            // 
+            this.tbxGamma.Location = new System.Drawing.Point(83, 131);
+            this.tbxGamma.Name = "tbxGamma";
+            this.tbxGamma.Size = new System.Drawing.Size(100, 20);
+            this.tbxGamma.TabIndex = 45;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(10, 108);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(38, 13);
+            this.label2.TabIndex = 44;
+            this.label2.Text = "C = 2^";
+            // 
+            // tbxC
+            // 
+            this.tbxC.Location = new System.Drawing.Point(83, 105);
+            this.tbxC.Name = "tbxC";
+            this.tbxC.Size = new System.Drawing.Size(100, 20);
+            this.tbxC.TabIndex = 43;
             // 
             // rdTimeSeries
             // 
@@ -1182,38 +1213,6 @@
             this.zg1.ScrollMinY2 = 0;
             this.zg1.Size = new System.Drawing.Size(904, 414);
             this.zg1.TabIndex = 1;
-            // 
-            // tbxC
-            // 
-            this.tbxC.Location = new System.Drawing.Point(83, 105);
-            this.tbxC.Name = "tbxC";
-            this.tbxC.Size = new System.Drawing.Size(100, 20);
-            this.tbxC.TabIndex = 43;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 108);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(38, 13);
-            this.label2.TabIndex = 44;
-            this.label2.Text = "C = 2^";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 134);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(67, 13);
-            this.label3.TabIndex = 46;
-            this.label3.Text = "Gamma = 2^";
-            // 
-            // tbxGamma
-            // 
-            this.tbxGamma.Location = new System.Drawing.Point(83, 131);
-            this.tbxGamma.Name = "tbxGamma";
-            this.tbxGamma.Size = new System.Drawing.Size(100, 20);
-            this.tbxGamma.TabIndex = 45;
             // 
             // MainGUI
             // 

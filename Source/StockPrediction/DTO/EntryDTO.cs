@@ -14,7 +14,7 @@ namespace DTO
         private double _highPrice;
         private double _lowPrice;
         private double _closePrice;
-        //private long _volume;
+        private long _volume;
         //private double _change;
 
         #endregion
@@ -46,11 +46,11 @@ namespace DTO
             get { return _closePrice; }
             set { _closePrice = value; }
         }
-        //public long Volume
-        //{
-        //    get { return _volume; }
-        //    set { _volume = value; }
-        //}
+        public long Volume
+        {
+            get { return _volume; }
+            set { _volume = value; }
+        }
 
         //public double Change
         //{
@@ -71,7 +71,7 @@ namespace DTO
             HighPrice = Convert.ToDouble(strItems[3]);
             LowPrice = Convert.ToDouble(strItems[4]);
             ClosePrice = Convert.ToDouble(strItems[5]);
-            //Volume = Convert.ToInt64(strItems[6]);
+            Volume = Convert.ToInt64(strItems[6]);
             //Change = Convert.ToDouble(strItems[10]);
         }
        
