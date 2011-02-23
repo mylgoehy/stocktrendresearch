@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace NeuronDotNet.Core
+namespace BUS.ANN
 {
     /// <summary>
     /// This interface represents a connector. A connector is a collection of synapses connecting

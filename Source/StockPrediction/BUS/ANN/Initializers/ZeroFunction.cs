@@ -20,7 +20,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace NeuronDotNet.Core.Initializers
+namespace BUS.ANN.Initializers
 {
     /// <summary>
     /// An <see cref="IInitializer"/> using zero function

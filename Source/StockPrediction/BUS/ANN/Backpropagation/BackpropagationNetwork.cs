@@ -20,7 +20,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace NeuronDotNet.Core.Backpropagation
+namespace BUS.ANN.Backpropagation
 {
     /// <summary>
     /// This class extends a <see cref="Network"/> and represents a Backpropagation neural network.

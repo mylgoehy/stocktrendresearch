@@ -17,7 +17,7 @@
 
 ***********************************************************************************************/
 
-namespace NeuronDotNet.Core
+namespace BUS.ANN
 {
     /// <summary>
     /// Method of training used to train the network

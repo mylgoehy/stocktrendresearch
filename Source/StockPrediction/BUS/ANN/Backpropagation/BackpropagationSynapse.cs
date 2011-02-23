@@ -17,7 +17,7 @@
 
 ***********************************************************************************************/
 
-namespace NeuronDotNet.Core.Backpropagation
+namespace BUS.ANN.Backpropagation
 {
     /// <summary>
     /// Backpropagation synapse connects two activation neurons. A typical backpropagation network

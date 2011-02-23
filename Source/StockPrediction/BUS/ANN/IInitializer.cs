@@ -18,10 +18,10 @@
 ***********************************************************************************************/
 
 using System.Runtime.Serialization;
-using NeuronDotNet.Core.Backpropagation;
-using NeuronDotNet.Core.SOM;
+using BUS.ANN.Backpropagation;
+using BUS.ANN.SOM;
 
-namespace NeuronDotNet.Core
+namespace BUS.ANN
 {
     /// <summary>
     /// Initializer interface. An initializer should define initialization methods for all concrete

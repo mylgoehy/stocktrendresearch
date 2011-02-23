@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace NeuronDotNet.Core
+namespace BUS.ANN
 {
     /// <summary>
     /// This interface represents a Layer in a neural network. A layer is a container for similar

@@ -20,7 +20,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace NeuronDotNet.Core.SOM
+namespace BUS.ANN.SOM
 {
     /// <summary>
     /// This class extends a <see cref="Network"/> and represents a Kohonen Self-Organizing Map.

@@ -19,9 +19,9 @@
 
 using System;
 using System.Runtime.Serialization;
-using NeuronDotNet.Core.Initializers;
+using BUS.ANN.Initializers;
 
-namespace NeuronDotNet.Core.SOM
+namespace BUS.ANN.SOM
 {
     /// <summary>
     /// A Kohonen Connector is an <see cref="IConnector"/> consisting of a collection of Kohonen

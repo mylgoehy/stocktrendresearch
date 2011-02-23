@@ -17,7 +17,7 @@
 
 ***********************************************************************************************/
 
-namespace NeuronDotNet.Core
+namespace BUS.ANN
 {
     /// <summary>
     /// This interface represents a synapse in a network. A Synapse is responsible for communication

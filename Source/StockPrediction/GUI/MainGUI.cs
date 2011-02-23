@@ -10,8 +10,13 @@ using System.IO;
 using DTO;
 using BUS;
 using BUS.SVM;
+using BUS.ANN;
 using ZedGraph;
+<<<<<<< .mine
+using BUS.ANN.Backpropagation;
+=======
 using BUS.KMeans;
+>>>>>>> .r34
 
 namespace GUI
 {
@@ -187,10 +192,29 @@ namespace GUI
                 ANNParameterBUS.MeasureType = cmbTrainingMeasure.SelectedItem.ToString();
 
                 //Tiến hành train
-                ANNModelBUS.AnnModelFile = strModelFile;
-                ANNTrainBUS annTrain = new ANNTrainBUS();
-                annTrain.LoadDataSet(tbxTrainFilePath.Text);
-                annTrain.Main(iMeasureType);
+                //Tiến hành train
+                BackpropagationNetwork bpNetwork;
+
+                LinearLayer inputLayer = new LinearLayer(ANNParameterBUS.InputNode);
+                SigmoidLayer hidenLayer = new SigmoidLayer(ANNParameterBUS.HiddenNode);
+                SigmoidLayer outputLayer = new SigmoidLayer(ANNParameterBUS.OutputNode);
+
+                new BackpropagationConnector(inputLayer, hidenLayer);
+                new BackpropagationConnector(hidenLayer, outputLayer);
+
+                bpNetwork = new BackpropagationNetwork(inputLayer, outputLayer);
+
+                bpNetwork.SetLearningRate(ANNParameterBUS.LearningRate);
+
+                TrainingSet trainSet = new TrainingSet(ANNParameterBUS.InputNode, ANNParameterBUS.OutputNode);
+                trainSet.CreateTrainingSet(tbxTrainFilePath.Text);
+
+                bpNetwork.Learn(trainSet, ANNParameterBUS.MaxEpoch);
+
+                //ANNModelBUS.AnnModelFile = strModelFile;
+                //ANNTrainBUS annTrain = new ANNTrainBUS();
+                //annTrain.LoadDataSet(tbxTrainFilePath.Text);
+                //annTrain.Main(iMeasureType);
                 MessageBox.Show("Finish!");
             }
             #endregion

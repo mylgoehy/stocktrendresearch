@@ -19,7 +19,7 @@
 
 using System.Collections.Generic;
 
-namespace NeuronDotNet.Core.Backpropagation
+namespace BUS.ANN.Backpropagation
 {
     /// <summary>
     /// Activation Neuron is a buiding block of a back-propagation neural network.

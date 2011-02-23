@@ -20,9 +20,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using NeuronDotNet.Core.Initializers;
+using BUS.ANN.Initializers;
 
-namespace NeuronDotNet.Core
+namespace BUS.ANN
 {
     /// <summary>
     /// A connector represents a collection of synapses connecting two layers in a network.

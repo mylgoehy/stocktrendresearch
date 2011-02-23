@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace NeuronDotNet.Core.Backpropagation
+namespace BUS.ANN.Backpropagation
 {
     /// <summary>
     /// A Backpropagation Connector is an <see cref="IConnector"/> which consists of a collection of

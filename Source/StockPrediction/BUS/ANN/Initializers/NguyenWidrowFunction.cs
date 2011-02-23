@@ -19,10 +19,10 @@
 
 using System;
 using System.Runtime.Serialization;
-using NeuronDotNet.Core.Backpropagation;
-using NeuronDotNet.Core.SOM;
+using BUS.ANN.Backpropagation;
+using BUS.ANN.SOM;
 
-namespace NeuronDotNet.Core.Initializers
+namespace BUS.ANN.Initializers
 {
     /// <summary>
     /// An <see cref="IInitializer"/> using Nguyen Widrow function.

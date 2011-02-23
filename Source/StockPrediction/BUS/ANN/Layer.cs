@@ -20,9 +20,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using NeuronDotNet.Core.LearningRateFunctions;
+using BUS.ANN.LearningRateFunctions;
 
-namespace NeuronDotNet.Core
+namespace BUS.ANN
 {
     /// <summary>
     /// Layer is an abstract container for similar neurons. No two neurons within a layer can be
