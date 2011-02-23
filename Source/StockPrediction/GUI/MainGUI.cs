@@ -11,6 +11,7 @@ using DTO;
 using BUS;
 using BUS.SVM;
 using ZedGraph;
+using BUS.KMeans;
 
 namespace GUI
 {
@@ -110,6 +111,62 @@ namespace GUI
                         Model.Write(strModelFile, model);
                     }
                 }
+                else if (rdKmeans.Checked)
+                {
+                    int iNumCluster = (int)nmNumCluster.Value;
+                    int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
+                    string strMutualPath = tbxTrainFilePath.Text.Remove(iPos + 1);
+                    string strClusterModelFile = strMutualPath + "_clusterModel.txt";
+                    string[] strClusterResultFiles = new string[iNumCluster];
+                    string[] strSVMModelFiles = new string[iNumCluster];
+
+                    for (int i = 0; i < iNumCluster; i++)
+                    {
+                        strClusterResultFiles[i] = strMutualPath + "cluster" + (i + 1).ToString() + ".txt";
+                        strSVMModelFiles[i] = strMutualPath + "model" + (i + 1).ToString() + ".txt";
+                    }
+                    // Thực hiện cluster
+                    SampleDataBUS samDataBUS = new SampleDataBUS();
+                    samDataBUS.Read(tbxTrainFilePath.Text);
+                    Clustering clustering = new Clustering(iNumCluster, samDataBUS.Samples, DistanceType.Manhattan);
+                    clustering.Run(strClusterModelFile, false);
+                    samDataBUS.WriteIntoCluster(strClusterResultFiles, clustering.SampleData.ClusterIndices);
+                    // Thực hiện train SVM
+                    for (int i = 0; i < iNumCluster; i++)
+                    {
+                        Problem prob = Problem.Read(strClusterResultFiles[i]);
+                        Parameter param = new Parameter();
+
+                        if (cmbModelSelection.SelectedItem.ToString() == "Grid search")
+                        {
+                            string strLogFile = strMutualPath + "GridCluster" + (i + 1).ToString() + ".txt";
+                            double dblC;
+                            double dblGamma;
+                            ParameterSelection paramSel = new ParameterSelection();
+                            paramSel.NFOLD = Int32.Parse(tbxNumFold.Text);
+                            paramSel.Grid(prob, param, strLogFile, out dblC, out dblGamma);
+                            param.C = dblC;
+                            param.Gamma = dblGamma;
+                            param.Probability = true;
+                            Model model = Training.Train(prob, param);
+                            Model.Write(strSVMModelFiles[i], model);
+                        }
+                        else if (cmbModelSelection.SelectedItem.ToString() == "Use default values")
+                        {
+                            if (tbxC.Text == "" || tbxGamma.Text == "")
+                            {
+                                MessageBox.Show("Please fill in parameters!");
+                                return;
+                            }
+                            param.C = double.Parse(tbxC.Text);
+                            param.Gamma = double.Parse(tbxGamma.Text);
+                            param.Probability = true;
+                            Model model = Training.Train(prob, param);
+                            Model.Write(strSVMModelFiles[i], model);
+                        }
+                    }
+
+                }
                 MessageBox.Show("Finish!");
             }
             else//Mô hình ANN
@@ -175,15 +232,53 @@ namespace GUI
             {
                 iPos = tbxTestFilePath.Text.LastIndexOf('_');
                 string strMutualPath = tbxTestFilePath.Text.Remove(iPos + 1);
-                string strPredictedFile = strMutualPath + "predict.txt";
-                Problem prob = Problem.Read(tbxTestFilePath.Text);
-                Model model = Model.Read(tbxModelFilePath.Text);
-                PerformanceEvaluator performanceEval = new PerformanceEvaluator(model, prob, -1, strPredictedFile, true);
-                performanceEval.Write(strMutualPath + "_DownPerformance.txt");
-                performanceEval = new PerformanceEvaluator(strPredictedFile, prob.Y, 0);
-                performanceEval.Write(strMutualPath + "_NoPerformance.txt");
-                performanceEval = new PerformanceEvaluator(strPredictedFile, prob.Y, 1);
-                performanceEval.Write(strMutualPath + "_UpPerformance.txt");
+                if (rdDefault.Checked)
+                {
+                    string strPredictedFile = strMutualPath + "predict.txt";
+                    Problem prob = Problem.Read(tbxTestFilePath.Text);
+                    Model model = Model.Read(tbxModelFilePath.Text);
+                    double dblPrecision = Prediction.Predict(prob, strPredictedFile, model, true);
+                    StreamWriter writer = new StreamWriter(strMutualPath + "performance.txt");
+                    writer.WriteLine(dblPrecision);
+                    writer.Close();
+                    //PerformanceEvaluator performanceEval = new PerformanceEvaluator(model, prob, -1, strPredictedFile, true);
+                    //performanceEval.Write(strMutualPath + "_DownPerformance.txt");
+                    //performanceEval = new PerformanceEvaluator(strPredictedFile, prob.Y, 0);
+                    //performanceEval.Write(strMutualPath + "_NoPerformance.txt");
+                    //performanceEval = new PerformanceEvaluator(strPredictedFile, prob.Y, 1);
+                    //performanceEval.Write(strMutualPath + "_UpPerformance.txt");
+                }
+                else if (rdKmeans.Checked)
+                {
+                    int iNumCluster = (int)nmNumCluster.Value;
+                    string strClusterModelFile = strMutualPath + "_clusterModel.txt";
+                    string[] strClusterResultFiles = new string[iNumCluster];
+                    string[] strSVMModelFiles = new string[iNumCluster];
+                    string[] strPredictedFiles = new string[iNumCluster];
+
+                    for (int i = 0; i < iNumCluster; i++)
+                    {
+                        strClusterResultFiles[i] = strMutualPath + "testcluster" + (i + 1).ToString() + ".txt";
+                        strSVMModelFiles[i] = strMutualPath + "model" + (i + 1).ToString() + ".txt";
+                        strPredictedFiles[i] = strMutualPath + "predict" + (i + 1).ToString() + ".txt";
+                    }
+                    // Thực hiện cluster
+                    SampleDataBUS samDataBUS = new SampleDataBUS();
+                    samDataBUS.Read(tbxTestFilePath.Text);
+                    Clustering clustering = new Clustering(samDataBUS.Samples, DistanceType.Manhattan);
+                    clustering.Run(strClusterModelFile, true);
+                    samDataBUS.WriteIntoCluster(strClusterResultFiles, clustering.SampleData.ClusterIndices);
+                    // Thực hiện test SVM
+                    StreamWriter writer = new StreamWriter(strMutualPath + "performance.txt");
+                    for (int i = 0; i < iNumCluster; i++)
+                    {
+                        Problem prob = Problem.Read(strClusterResultFiles[i]);
+                        Model model = Model.Read(strSVMModelFiles[i]);
+                        double dblPrecision = Prediction.Predict(prob, strPredictedFiles[i], model, true);
+                        writer.WriteLine("Cluster " + (i + 1).ToString() + ": " + dblPrecision);
+                    }
+                    writer.Close();
+                }
                 
             }
             else//Mô hình ANN

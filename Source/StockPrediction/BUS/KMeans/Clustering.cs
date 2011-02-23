@@ -177,10 +177,12 @@ namespace BUS.KMeans
 
             for (int i = 0; i < Clusters.Length; i++)
             {
+                Clusters[i] = new Cluster();
                 buffer = reader.ReadLine();
                 Clusters[i].NumSample = Int32.Parse(buffer);
                 buffer = reader.ReadLine();
                 string[] parts = buffer.Split(' ');
+                Clusters[i].MeanSample = new double[parts.Length];
                 for (int j = 0; j < parts.Length; j++)
                 {
                     Clusters[i].MeanSample[j] = Double.Parse(parts[j]);
@@ -189,7 +191,11 @@ namespace BUS.KMeans
             }
             reader.Close();
         }
-
+        /// <summary>
+        /// Thực hiện phân cụm
+        /// </summary>
+        /// <param name="fileName">tên file model cho cluster</param>
+        /// <param name="testMode">Xác định chế độ test hoặc train</param>
         public void Run(string fileName, bool testMode)
         {
             if (testMode)

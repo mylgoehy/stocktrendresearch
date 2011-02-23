@@ -51,6 +51,13 @@ namespace BUS.KMeans
             TempSample = new double[dimension];
             ClearTempSample();
         }
+        /// <summary>
+        /// Khởi tạo
+        /// </summary>
+        public Cluster()
+        {
+            NumSample = 0;
+        }
         #endregion
 
         #region Methods

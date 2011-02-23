@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A4A55317-215B-4819-B2C8-05BC534B1ECC}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -103,6 +103,7 @@
     <Compile Include="MeasureBUS.cs" />
     <Compile Include="PreprocessBUS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SampleDataBUS.cs" />
     <Compile Include="StepTrainingBUS.cs" />
     <Compile Include="StockRecordBUS.cs" />
     <Compile Include="SupportClass.cs" />
