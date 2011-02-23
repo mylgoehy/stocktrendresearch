@@ -17,7 +17,7 @@
 
 ***********************************************************************************************/
 
-namespace NeuronDotNet.Core.SOM
+namespace BUS.ANN.SOM
 {
     /// <summary>
     /// Lattice Topology of the position neurons in a Kohonen Layer

@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace NeuronDotNet.Core.SOM
+namespace BUS.ANN.SOM
 {
     /// <summary>
     /// Position Neuron is a neuron in a two-dimensional space used in Kohonen networks.

@@ -19,9 +19,9 @@
 
 using System;
 using System.Runtime.Serialization;
-using NeuronDotNet.Core.Initializers;
+using BUS.ANN.Initializers;
 
-namespace NeuronDotNet.Core.Backpropagation
+namespace BUS.ANN.Backpropagation
 {
     /// <summary>
     /// An <see cref="ActivationLayer"/> using logarithmic activation function

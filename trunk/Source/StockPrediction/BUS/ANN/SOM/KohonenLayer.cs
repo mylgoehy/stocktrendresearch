@@ -20,9 +20,9 @@
 using System;
 using System.Drawing;
 using System.Runtime.Serialization;
-using NeuronDotNet.Core.SOM.NeighborhoodFunctions;
+using BUS.ANN.SOM.NeighborhoodFunctions;
 
-namespace NeuronDotNet.Core.SOM
+namespace BUS.ANN.SOM
 {
     /// <summary>
     /// Kohonen Layer is a layer containing position neurons.

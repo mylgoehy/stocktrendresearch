@@ -20,8 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.IO;
+using System.Text.RegularExpressions;
 
-namespace NeuronDotNet.Core
+namespace BUS.ANN
 {
     /// <summary>
     /// A Training Set represents a set of training samples used during 'batch training' process.
@@ -162,6 +164,66 @@ namespace NeuronDotNet.Core
             this.outputVectorLength = info.GetInt32("outputVectorLength");
             this.trainingSamples = info.GetValue("trainingSamples", typeof(IList<TrainingSample>)) as IList<TrainingSample>;
         }
+        /// <summary>
+        /// Hàm tạo tập dữ liệu học cho từ tập tin học đã có
+        /// </summary>
+        /// <param name="trainingFile">
+        /// Đường dẫn đến tập tin
+        /// </param>
+        public void CreateTrainingSet(string trainingFile)
+        {
+            double[] dblInputs = new double[InputVectorLength];
+            double[] dblOutputs = new double[OutputVectorLength];
+            
+            StreamReader reader = null;
+
+            try
+            {
+                reader = new StreamReader(trainingFile);
+                string strTemps = reader.ReadToEnd();
+                reader.Close();
+
+                string[] strLines = Regex.Split(strTemps, "\r\n");
+
+                int numPattern = strLines.Length - 1;
+                for (int i = 0; i < numPattern; i++)
+                {
+                    string[] strValue = strLines[i].Split(' ');
+
+                    int iTempActual = int.Parse(strValue[0]);
+
+                    switch (iTempActual)
+                    {
+                        case -1:// Xu hướng đi xuống
+                            dblOutputs[0] = 1;
+                            dblOutputs[1] = 0;
+                            dblOutputs[2] = 0;
+                            break;
+                        case 0:// Không xác định được xu hướng
+                            dblOutputs[0] = 0;
+                            dblOutputs[1] = 1;
+                            dblOutputs[2] = 0;
+                            break;
+                        case 1:// Xu hướng đi lên
+                            dblOutputs[0] = 0;
+                            dblOutputs[1] = 0;
+                            dblOutputs[2] = 1;
+                            break;
+                    }
+
+                    for (int j = 0; j < InputVectorLength; j++)
+                    {
+                        dblInputs[j] = double.Parse(strValue[j + 1].Split(':')[1]);
+                    }
+                    TrainingSample sample = new TrainingSample(dblInputs, dblOutputs);
+                    this.Add(sample);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }    
 
         /// <summary>
         /// Populates the serialization info with the data needed to serialize the training set

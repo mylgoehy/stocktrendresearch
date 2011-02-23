@@ -20,7 +20,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace NeuronDotNet.Core
+namespace BUS.ANN
 {
     /// <summary>
     /// This class represents a training sample used to train a neural network

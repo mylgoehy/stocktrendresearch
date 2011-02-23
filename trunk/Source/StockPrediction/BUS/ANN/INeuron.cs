@@ -19,7 +19,7 @@
 
 using System.Collections.Generic;
 
-namespace NeuronDotNet.Core
+namespace BUS.ANN
 {
     /// <summary>
     /// Interface representing a neuron. A neuron is a basic building block of a neural network.

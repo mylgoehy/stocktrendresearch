@@ -20,7 +20,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace NeuronDotNet.Core.LearningRateFunctions
+namespace BUS.ANN.LearningRateFunctions
 {
     /// <summary>
     /// Exponential Learning Rate Function. As training progresses, The learning rate exponentially

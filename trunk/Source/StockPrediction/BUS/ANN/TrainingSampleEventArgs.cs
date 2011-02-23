@@ -19,7 +19,7 @@
 
 using System;
 
-namespace NeuronDotNet.Core
+namespace BUS.ANN
 {
     /// <summary>
     /// Training Sample Event Handler. This is used by events associated with training samples.

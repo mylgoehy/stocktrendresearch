@@ -19,7 +19,7 @@
 
 using System;
 
-namespace NeuronDotNet.Core
+namespace BUS.ANN
 {
     /// <summary>
     /// This static class contains all helper functions used in this project.

@@ -20,7 +20,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace NeuronDotNet.Core.LearningRateFunctions
+namespace BUS.ANN.LearningRateFunctions
 {
     /// <summary>
     /// Linear Learning Rate Function. As the training progresses, the learning rate uniformly

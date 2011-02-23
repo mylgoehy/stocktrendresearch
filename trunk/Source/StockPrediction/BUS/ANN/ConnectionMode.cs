@@ -17,7 +17,7 @@
 
 ***********************************************************************************************/
 
-namespace NeuronDotNet.Core
+namespace BUS.ANN
 {
     /// <summary>
     /// Mode of connection between layers.

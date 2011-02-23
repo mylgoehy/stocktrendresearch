@@ -20,7 +20,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace NeuronDotNet.Core.SOM.NeighborhoodFunctions
+namespace BUS.ANN.SOM.NeighborhoodFunctions
 {
     /// <summary>
     /// Gaussian Neighborhood Function. It is a continuous bell shaped curve centered at winner neuron.

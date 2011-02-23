@@ -20,7 +20,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace NeuronDotNet.Core.Backpropagation
+namespace BUS.ANN.Backpropagation
 {
     /// <summary>
     /// An <see cref="ActivationLayer"/> using linear activation function

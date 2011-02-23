@@ -20,7 +20,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace NeuronDotNet.Core.SOM.NeighborhoodFunctions
+namespace BUS.ANN.SOM.NeighborhoodFunctions
 {
     /// <summary>
     /// Mexican Hat Neighborhood Function is the normalized second derivative of a Gaussian function.

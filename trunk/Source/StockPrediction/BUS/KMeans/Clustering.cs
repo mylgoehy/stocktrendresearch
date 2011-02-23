@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NeuronDotNet.Core;
+using BUS.ANN;
 using System.IO;
 namespace BUS.KMeans
 {

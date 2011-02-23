@@ -19,7 +19,7 @@
 
 using System;
 
-namespace NeuronDotNet.Core
+namespace BUS.ANN
 {
     /// <summary>
     /// Training Epoch Event Handler. This delegate handles events invoked whenever a training epoch
