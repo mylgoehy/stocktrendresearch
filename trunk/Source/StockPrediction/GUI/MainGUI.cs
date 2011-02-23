@@ -40,52 +40,7 @@ namespace GUI
         {
             StreamWriter writer = new StreamWriter(fileName);
             MeasureBUS measureBUS = new MeasureBUS();
-            CheckedListBox.CheckedItemCollection checkedItems = clbMeasures.CheckedItems;
-            for (int i = 0; i < checkedItems.Count; i++)
-            {
-                switch (checkedItems[i].ToString())
-                {
-                    case "MSE":
-                        double dblMSE = measureBUS.MSE(actual, forecast);
-                        writer.WriteLine("MSE " + dblMSE.ToString());
-                        break;
-                    case "NMSE":
-                        double dblNMSE = measureBUS.NMSE(actual, forecast);
-                        writer.WriteLine("NMSE " + dblNMSE.ToString());
-                        break;
-                    case "RMSE":
-                        double dblRMSE = measureBUS.RMSE(actual, forecast);
-                        writer.WriteLine("RMSE " + dblRMSE.ToString());
-                        break;
-                    case "APE":
-                        double dblAPE = measureBUS.APE(actual, forecast);
-                        writer.WriteLine("APE " + dblAPE.ToString());
-                        break;
-                    case "MAPE":
-                        double dblMAPE = measureBUS.MAPE(actual, forecast);
-                        writer.WriteLine("MAPE " + dblMAPE.ToString());
-                        break;
-                    case "DS":
-                        double dblMeasure = measureBUS.DS(actual, forecast);
-                        writer.WriteLine("DS " + dblMeasure.ToString());
-                        break;
-                    case "WDS":
-                        double dblWDS = measureBUS.WDS(actual, forecast);
-                        writer.WriteLine("WDS " + dblWDS.ToString());
-                        break;
-                    case "Sign":
-                        double dblSign = measureBUS.Sign(actual, forecast);
-                        writer.WriteLine("Sign " + dblSign.ToString());
-                        break;
-                    case "DM4Price":
-                        double[] dblResult = measureBUS.DirectionMeasure4Price(actual, forecast);
-                        writer.WriteLine("Direction measure for price:");
-                        writer.WriteLine("\t+ Right: "+dblResult[0]+"%");
-                        writer.WriteLine("\t+ Wrong: " + dblResult[1] + "%");
-                        writer.WriteLine("\t+ Cannot measure: " + dblResult[2] + "%");
-                        break;
-                }
-            }
+
             double Result = measureBUS.CorrectPredictRate(actual, forecast);
             writer.WriteLine("Correct Predicted:\t" + Result.ToString() + "%");
 
@@ -119,38 +74,41 @@ namespace GUI
             #region Dự đoán xu hướng
             if (rdSVR.Checked)//Mô hình SVR
             {
-                int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
-                string strMutualPath = tbxTrainFilePath.Text.Remove(iPos + 1);
-                string strModelFile = strMutualPath + "model.txt";
-                Problem prob = Problem.Read(tbxTrainFilePath.Text);
-                Parameter param = new Parameter();
+                if (rdDefault.Checked)
+                {
+                    int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
+                    string strMutualPath = tbxTrainFilePath.Text.Remove(iPos + 1);
+                    string strModelFile = strMutualPath + "model.txt";
+                    Problem prob = Problem.Read(tbxTrainFilePath.Text);
+                    Parameter param = new Parameter();
 
-                if (cmbModelSelection.SelectedItem.ToString() == "Grid search")
-                {
-                    string strLogFile = strMutualPath + "Grid.txt";
-                    double dblC;
-                    double dblGamma;
-                    ParameterSelection paramSel = new ParameterSelection();
-                    paramSel.NFOLD = Int32.Parse(tbxNumFold.Text);
-                    paramSel.Grid(prob, param, strLogFile, out dblC, out dblGamma);
-                    param.C = dblC;
-                    param.Gamma = dblGamma;
-                    param.Probability = true;
-                    Model model = Training.Train(prob, param);
-                    Model.Write(strModelFile, model);
-                }
-                else if (cmbModelSelection.SelectedItem.ToString() == "Use default values")
-                {
-                    if(tbxC.Text == "" || tbxGamma.Text == "")
+                    if (cmbModelSelection.SelectedItem.ToString() == "Grid search")
                     {
-                        MessageBox.Show("Please fill in parameters!");
-                        return;
+                        string strLogFile = strMutualPath + "Grid.txt";
+                        double dblC;
+                        double dblGamma;
+                        ParameterSelection paramSel = new ParameterSelection();
+                        paramSel.NFOLD = Int32.Parse(tbxNumFold.Text);
+                        paramSel.Grid(prob, param, strLogFile, out dblC, out dblGamma);
+                        param.C = dblC;
+                        param.Gamma = dblGamma;
+                        param.Probability = true;
+                        Model model = Training.Train(prob, param);
+                        Model.Write(strModelFile, model);
                     }
-                    param.C = double.Parse(tbxC.Text);
-                    param.Gamma = double.Parse(tbxGamma.Text);
-                    param.Probability = true;
-                    Model model = Training.Train(prob, param);
-                    Model.Write(strModelFile, model);
+                    else if (cmbModelSelection.SelectedItem.ToString() == "Use default values")
+                    {
+                        if (tbxC.Text == "" || tbxGamma.Text == "")
+                        {
+                            MessageBox.Show("Please fill in parameters!");
+                            return;
+                        }
+                        param.C = double.Parse(tbxC.Text);
+                        param.Gamma = double.Parse(tbxGamma.Text);
+                        param.Probability = true;
+                        Model model = Training.Train(prob, param);
+                        Model.Write(strModelFile, model);
+                    }
                 }
                 MessageBox.Show("Finish!");
             }
@@ -319,6 +277,7 @@ namespace GUI
             tbxTrainingRatio.Text = "80";
             cmbModelSelection.SelectedIndex = 0;
             cmbTrainingMeasure.SelectedIndex = 0;
+            rdDefault.Checked = true;
 
             //Khởi gán tham số ANN
             tbxANNHiddenNode.Text = 4.ToString();
@@ -452,14 +411,8 @@ namespace GUI
                 //stepTrainingBUS.Preprocess = cmbPreprocess.SelectedItem.ToString();
                 stepTrainingBUS.ModelSelection = cmbModelSelection.SelectedItem.ToString();
                 stepTrainingBUS.NumFold = tbxNumFold.Text;
-                if(ckbImproveDirection.Checked)
-                {
-                    stepTrainingBUS.ImprovedDirection = true;
-                }
-                else
-                {
-                    stepTrainingBUS.ImprovedDirection = false;
-                }
+                stepTrainingBUS.ImprovedDirection = true;
+
                 switch (cmbTrainingMeasure.SelectedItem.ToString())
                 {
                     case "MSE":
@@ -768,12 +721,10 @@ namespace GUI
         {
             if(rdPricePrediction.Checked)
             {
-                ckbImproveDirection.Enabled = true;
                 btnStepTrainAndTest.Enabled = true;
             }
             else
             {
-                ckbImproveDirection.Enabled = false;
                 btnStepTrainAndTest.Enabled = false;
             }
         }

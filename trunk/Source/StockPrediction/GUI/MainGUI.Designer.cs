@@ -42,7 +42,6 @@
             this.label16 = new System.Windows.Forms.Label();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.cmbNumDaysPredicted = new System.Windows.Forms.ComboBox();
-            this.ckbImproveDirection = new System.Windows.Forms.CheckBox();
             this.cmbTrainingMeasure = new System.Windows.Forms.ComboBox();
             this.gbSVRSetting = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -57,9 +56,7 @@
             this.label21 = new System.Windows.Forms.Label();
             this.cmbModelSelection = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.lblTrainingMeasure = new System.Windows.Forms.Label();
-            this.clbMeasures = new System.Windows.Forms.CheckedListBox();
             this.label10 = new System.Windows.Forms.Label();
             this.gbAnnSetting = new System.Windows.Forms.GroupBox();
             this.tbxAccuracy = new System.Windows.Forms.TextBox();
@@ -123,6 +120,11 @@
             this.dtpFrom = new System.Windows.Forms.DateTimePicker();
             this.cmbStockID = new System.Windows.Forms.ComboBox();
             this.zg1 = new ZedGraph.ZedGraphControl();
+            this.rdDefault = new System.Windows.Forms.RadioButton();
+            this.rdKmeans = new System.Windows.Forms.RadioButton();
+            this.rdSOM = new System.Windows.Forms.RadioButton();
+            this.lblNumCluster = new System.Windows.Forms.Label();
+            this.nmNumCluster = new System.Windows.Forms.NumericUpDown();
             this.tabOption.SuspendLayout();
             this.tabExperiment.SuspendLayout();
             this.groupBox9.SuspendLayout();
@@ -137,6 +139,7 @@
             this.groupBox4.SuspendLayout();
             this.tabApplication.SuspendLayout();
             this.gbResult.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -188,9 +191,9 @@
             this.groupBox9.Controls.Add(this.label16);
             this.groupBox9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox9.ForeColor = System.Drawing.Color.Green;
-            this.groupBox9.Location = new System.Drawing.Point(331, 405);
+            this.groupBox9.Location = new System.Drawing.Point(331, 461);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(657, 192);
+            this.groupBox9.Size = new System.Drawing.Size(657, 157);
             this.groupBox9.TabIndex = 37;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "STEP TRAINING AND TEST";
@@ -275,12 +278,9 @@
             // groupBox7
             // 
             this.groupBox7.Controls.Add(this.cmbNumDaysPredicted);
-            this.groupBox7.Controls.Add(this.ckbImproveDirection);
             this.groupBox7.Controls.Add(this.cmbTrainingMeasure);
             this.groupBox7.Controls.Add(this.gbSVRSetting);
-            this.groupBox7.Controls.Add(this.label4);
             this.groupBox7.Controls.Add(this.lblTrainingMeasure);
-            this.groupBox7.Controls.Add(this.clbMeasures);
             this.groupBox7.Controls.Add(this.label10);
             this.groupBox7.Controls.Add(this.gbAnnSetting);
             this.groupBox7.Controls.Add(this.label18);
@@ -290,7 +290,7 @@
             this.groupBox7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
             this.groupBox7.Location = new System.Drawing.Point(0, 11);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(314, 647);
+            this.groupBox7.Size = new System.Drawing.Size(314, 607);
             this.groupBox7.TabIndex = 36;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "SETTING";
@@ -309,18 +309,6 @@
             this.cmbNumDaysPredicted.Name = "cmbNumDaysPredicted";
             this.cmbNumDaysPredicted.Size = new System.Drawing.Size(141, 21);
             this.cmbNumDaysPredicted.TabIndex = 46;
-            // 
-            // ckbImproveDirection
-            // 
-            this.ckbImproveDirection.AutoSize = true;
-            this.ckbImproveDirection.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ckbImproveDirection.ForeColor = System.Drawing.Color.Black;
-            this.ckbImproveDirection.Location = new System.Drawing.Point(15, 260);
-            this.ckbImproveDirection.Name = "ckbImproveDirection";
-            this.ckbImproveDirection.Size = new System.Drawing.Size(162, 17);
-            this.ckbImproveDirection.TabIndex = 45;
-            this.ckbImproveDirection.Text = "Improve directional accuracy";
-            this.ckbImproveDirection.UseVisualStyleBackColor = true;
             // 
             // cmbTrainingMeasure
             // 
@@ -354,7 +342,7 @@
             this.gbSVRSetting.Controls.Add(this.label6);
             this.gbSVRSetting.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbSVRSetting.ForeColor = System.Drawing.Color.Black;
-            this.gbSVRSetting.Location = new System.Drawing.Point(8, 482);
+            this.gbSVRSetting.Location = new System.Drawing.Point(9, 342);
             this.gbSVRSetting.Name = "gbSVRSetting";
             this.gbSVRSetting.Size = new System.Drawing.Size(299, 159);
             this.gbSVRSetting.TabIndex = 44;
@@ -483,17 +471,6 @@
             this.label6.TabIndex = 19;
             this.label6.Text = "Model selection";
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.ForeColor = System.Drawing.Color.Black;
-            this.label4.Location = new System.Drawing.Point(8, 156);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(116, 13);
-            this.label4.TabIndex = 43;
-            this.label4.Text = "Performance Measures";
-            // 
             // lblTrainingMeasure
             // 
             this.lblTrainingMeasure.AutoSize = true;
@@ -504,27 +481,6 @@
             this.lblTrainingMeasure.Size = new System.Drawing.Size(89, 13);
             this.lblTrainingMeasure.TabIndex = 32;
             this.lblTrainingMeasure.Text = "Training Measure";
-            // 
-            // clbMeasures
-            // 
-            this.clbMeasures.CheckOnClick = true;
-            this.clbMeasures.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clbMeasures.ForeColor = System.Drawing.Color.Black;
-            this.clbMeasures.FormattingEnabled = true;
-            this.clbMeasures.Items.AddRange(new object[] {
-            "MSE",
-            "NMSE",
-            "DM4Price",
-            "DS",
-            "RMSE",
-            "APE",
-            "MAPE",
-            "WDS",
-            "Sign"});
-            this.clbMeasures.Location = new System.Drawing.Point(136, 144);
-            this.clbMeasures.Name = "clbMeasures";
-            this.clbMeasures.Size = new System.Drawing.Size(120, 109);
-            this.clbMeasures.TabIndex = 42;
             // 
             // label10
             // 
@@ -551,7 +507,7 @@
             this.gbAnnSetting.Controls.Add(this.label12);
             this.gbAnnSetting.Controls.Add(this.tbxLearningRate);
             this.gbAnnSetting.Controls.Add(this.label13);
-            this.gbAnnSetting.Location = new System.Drawing.Point(8, 284);
+            this.gbAnnSetting.Location = new System.Drawing.Point(10, 142);
             this.gbAnnSetting.Name = "gbAnnSetting";
             this.gbAnnSetting.Size = new System.Drawing.Size(299, 187);
             this.gbAnnSetting.TabIndex = 23;
@@ -718,7 +674,7 @@
             this.groupBox6.ForeColor = System.Drawing.Color.Green;
             this.groupBox6.Location = new System.Drawing.Point(331, 122);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(657, 263);
+            this.groupBox6.Size = new System.Drawing.Size(657, 322);
             this.groupBox6.TabIndex = 35;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "TRADITIONAL TRAINING AND TEST";
@@ -780,7 +736,7 @@
             this.groupBox3.ForeColor = System.Drawing.Color.Black;
             this.groupBox3.Location = new System.Drawing.Point(334, 22);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(311, 229);
+            this.groupBox3.Size = new System.Drawing.Size(311, 285);
             this.groupBox3.TabIndex = 24;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "3. TEST";
@@ -860,6 +816,11 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.nmNumCluster);
+            this.groupBox2.Controls.Add(this.lblNumCluster);
+            this.groupBox2.Controls.Add(this.rdSOM);
+            this.groupBox2.Controls.Add(this.rdKmeans);
+            this.groupBox2.Controls.Add(this.rdDefault);
             this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.btnTrainBrowser);
             this.groupBox2.Controls.Add(this.tbxTrainFilePath);
@@ -868,7 +829,7 @@
             this.groupBox2.ForeColor = System.Drawing.Color.Black;
             this.groupBox2.Location = new System.Drawing.Point(11, 125);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(312, 126);
+            this.groupBox2.Size = new System.Drawing.Size(312, 182);
             this.groupBox2.TabIndex = 23;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "2. TRAINING";
@@ -908,7 +869,7 @@
             this.btnTrain.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnTrain.Image = global::GUI.Properties.Resources.Train;
             this.btnTrain.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnTrain.Location = new System.Drawing.Point(94, 76);
+            this.btnTrain.Location = new System.Drawing.Point(95, 130);
             this.btnTrain.Name = "btnTrain";
             this.btnTrain.Size = new System.Drawing.Size(124, 41);
             this.btnTrain.TabIndex = 6;
@@ -972,10 +933,10 @@
             this.rdSVR.Checked = true;
             this.rdSVR.Location = new System.Drawing.Point(38, 57);
             this.rdSVR.Name = "rdSVR";
-            this.rdSVR.Size = new System.Drawing.Size(47, 17);
+            this.rdSVR.Size = new System.Drawing.Size(48, 17);
             this.rdSVR.TabIndex = 1;
             this.rdSVR.TabStop = true;
-            this.rdSVR.Text = "SVR";
+            this.rdSVR.Text = "SVM";
             this.rdSVR.UseVisualStyleBackColor = true;
             // 
             // rdANN
@@ -1214,11 +1175,70 @@
             this.zg1.Size = new System.Drawing.Size(904, 414);
             this.zg1.TabIndex = 1;
             // 
+            // rdDefault
+            // 
+            this.rdDefault.AutoSize = true;
+            this.rdDefault.Location = new System.Drawing.Point(8, 76);
+            this.rdDefault.Name = "rdDefault";
+            this.rdDefault.Size = new System.Drawing.Size(66, 17);
+            this.rdDefault.TabIndex = 29;
+            this.rdDefault.TabStop = true;
+            this.rdDefault.Text = "Default";
+            this.rdDefault.UseVisualStyleBackColor = true;
+            // 
+            // rdKmeans
+            // 
+            this.rdKmeans.AutoSize = true;
+            this.rdKmeans.Location = new System.Drawing.Point(84, 76);
+            this.rdKmeans.Name = "rdKmeans";
+            this.rdKmeans.Size = new System.Drawing.Size(74, 17);
+            this.rdKmeans.TabIndex = 30;
+            this.rdKmeans.TabStop = true;
+            this.rdKmeans.Text = "K-Means";
+            this.rdKmeans.UseVisualStyleBackColor = true;
+            // 
+            // rdSOM
+            // 
+            this.rdSOM.AutoSize = true;
+            this.rdSOM.Location = new System.Drawing.Point(167, 76);
+            this.rdSOM.Name = "rdSOM";
+            this.rdSOM.Size = new System.Drawing.Size(52, 17);
+            this.rdSOM.TabIndex = 31;
+            this.rdSOM.TabStop = true;
+            this.rdSOM.Text = "SOM";
+            this.rdSOM.UseVisualStyleBackColor = true;
+            // 
+            // lblNumCluster
+            // 
+            this.lblNumCluster.AutoSize = true;
+            this.lblNumCluster.Location = new System.Drawing.Point(9, 102);
+            this.lblNumCluster.Name = "lblNumCluster";
+            this.lblNumCluster.Size = new System.Drawing.Size(90, 13);
+            this.lblNumCluster.TabIndex = 32;
+            this.lblNumCluster.Text = "Num of Cluster";
+            // 
+            // nmNumCluster
+            // 
+            this.nmNumCluster.Location = new System.Drawing.Point(104, 99);
+            this.nmNumCluster.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nmNumCluster.Name = "nmNumCluster";
+            this.nmNumCluster.Size = new System.Drawing.Size(111, 20);
+            this.nmNumCluster.TabIndex = 33;
+            this.nmNumCluster.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
             // MainGUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1001, 732);
+            this.ClientSize = new System.Drawing.Size(1001, 696);
             this.Controls.Add(this.tabOption);
             this.Controls.Add(this.label1);
             this.MaximizeBox = false;
@@ -1251,6 +1271,7 @@
             this.tabApplication.PerformLayout();
             this.gbResult.ResumeLayout(false);
             this.gbResult.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1276,9 +1297,7 @@
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.ComboBox cmbModelSelection;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label lblTrainingMeasure;
-        private System.Windows.Forms.CheckedListBox clbMeasures;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.GroupBox gbAnnSetting;
         private System.Windows.Forms.TextBox tbxAccuracy;
@@ -1345,12 +1364,16 @@
         private System.Windows.Forms.RadioButton rdTimeSeries;
         private System.Windows.Forms.RadioButton rdNotShuffle;
         private System.Windows.Forms.RadioButton rdShuffle;
-        private System.Windows.Forms.CheckBox ckbImproveDirection;
         private System.Windows.Forms.ComboBox cmbNumDaysPredicted;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbxC;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbxGamma;
+        private System.Windows.Forms.RadioButton rdSOM;
+        private System.Windows.Forms.RadioButton rdKmeans;
+        private System.Windows.Forms.RadioButton rdDefault;
+        private System.Windows.Forms.NumericUpDown nmNumCluster;
+        private System.Windows.Forms.Label lblNumCluster;
     }
 }
 
