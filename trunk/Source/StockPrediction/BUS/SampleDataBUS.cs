@@ -5,13 +5,40 @@ using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace DAO
+namespace BUS
 {
-    public class SampleDataDAO
+    public class SampleDataBUS
     {
+        #region Attributes
+        /// <summary>
+        /// Chứa các dòng dữ liệu mẫu cho training và test
+        /// </summary>
         private string[] _dataLines;
+        /// <summary>
+        /// Các vector đầu vào, không bao gồm nhãn
+        /// </summary>
         private double[][] _samples;
+        #endregion
 
+        #region Properties
+        public string[] DataLines
+        {
+            get { return _dataLines; }
+            set { _dataLines = value; }
+        }
+        
+        public double[][] Samples
+        {
+            get { return _samples; }
+            set { _samples = value; }
+        }
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// Đọc file chứa các mẫu
+        /// </summary>
+        /// <param name="fileName">Tên file</param>
         public void Read(string fileName)
         {
             StreamReader stream = new StreamReader(fileName);
@@ -48,7 +75,11 @@ namespace DAO
                 iLineIndex++;
             }
         }
-
+        /// <summary>
+        /// Ghi các mẫu đã phân cụm ra từng file riêng
+        /// </summary>
+        /// <param name="fileNames">Mảng các tên file ứng với từng cụm</param>
+        /// <param name="clusterIndices">Mảng chứa chỉ số cluster ứng từng sample</param>
         public void WriteIntoCluster(string[] fileNames, int[] clusterIndices)
         {
             StreamWriter[] writers = new StreamWriter[fileNames.Length];
@@ -58,12 +89,13 @@ namespace DAO
             }
             for (int i = 0; i < _dataLines.Length; i++)
             {
-                writers[clusterIndices[i]].WriteLine(_dataLines[i]);
+                writers[clusterIndices[i]].Write(_dataLines[i]);
             }
             for (int i = 0; i < fileNames.Length; i++)
             {
                 writers[i].Close();
             }
         }
+        #endregion
     }
 }
