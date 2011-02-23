@@ -327,6 +327,19 @@ namespace BUS
             }
 
         }
+
+        public static int Convert2Trend(double[] outputValues)        
+        {
+            if (outputValues[0] > outputValues[1] && outputValues[0] > outputValues[2])
+            {
+                return  -1;// DOWNTREND
+            }
+            else if ((outputValues[1] > outputValues[2] && outputValues[1] > outputValues[0]))
+            {
+                return 0;// NOTREND
+            }
+            return 1;
+        }
         #endregion
 
     }
