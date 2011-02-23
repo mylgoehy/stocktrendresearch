@@ -162,6 +162,7 @@ namespace BUS.KMeans
                     }
                 }
             }
+            writer.Close();
         }
         /// <summary>
         /// Đọc thông tin các cluster từ file
@@ -186,6 +187,7 @@ namespace BUS.KMeans
                 }
 
             }
+            reader.Close();
         }
 
         public void Run(string fileName, bool testMode)
