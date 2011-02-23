@@ -7,16 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using DTO;
 using BUS;
 using BUS.SVM;
 using BUS.ANN;
 using ZedGraph;
-<<<<<<< .mine
 using BUS.ANN.Backpropagation;
-=======
 using BUS.KMeans;
->>>>>>> .r34
 
 namespace GUI
 {
@@ -177,7 +176,7 @@ namespace GUI
             else//Mô hình ANN
             {
                 int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
-                string strModelFile = tbxTrainFilePath.Text.Remove(iPos + 1) + "model.txt";
+                string strModelFile = tbxTrainFilePath.Text.Remove(iPos + 1) + "ANNmodel.txt";
 
                 //khởi tạo các tham số cho mạng
                 ANNParameterBUS.InputNode = NUM_NODE;
@@ -210,7 +209,13 @@ namespace GUI
                 trainSet.CreateTrainingSet(tbxTrainFilePath.Text);
 
                 bpNetwork.Learn(trainSet, ANNParameterBUS.MaxEpoch);
-
+                                
+                // Lưu lại modle
+                Stream stream = File.Open(strModelFile, FileMode.Create);
+                BinaryFormatter bformatter = new BinaryFormatter();           
+                bformatter.Serialize(stream, bpNetwork);
+                stream.Close();
+                                
                 //ANNModelBUS.AnnModelFile = strModelFile;
                 //ANNTrainBUS annTrain = new ANNTrainBUS();
                 //annTrain.LoadDataSet(tbxTrainFilePath.Text);
@@ -310,13 +315,37 @@ namespace GUI
                 iPos = tbxTestFilePath.Text.LastIndexOf('_');
                 string strPredictedFile = tbxTestFilePath.Text.Remove(iPos + 1) + "predict.txt";
 
-                ANNModelBUS.AnnModelFile = tbxModelFilePath.Text;
-                ANNParameterBUS.LoadParameter();
+                // Load model lên
+                BackpropagationNetwork bpNetwork;
 
-                ANNPredictBUS annPredict = new ANNPredictBUS();
-                annPredict.LoadDataSet(tbxTestFilePath.Text);
-                dblActual_Forecast = annPredict.MainProcessTrend();
-                annPredict.WritePredictTrend(strPredictedFile);
+                Stream stream = File.Open(tbxModelFilePath.Text, FileMode.Open);
+                BinaryFormatter bformatter = new BinaryFormatter();
+                bpNetwork = (BackpropagationNetwork)bformatter.Deserialize(stream);
+                stream.Close();
+
+                TrainingSet testSet = new TrainingSet(bpNetwork.InputLayer.NeuronCount, bpNetwork.OutputLayer.NeuronCount);
+                testSet.CreateTrainingSet(tbxTestFilePath.Text);
+
+                dblActual_Forecast[0] = new double[testSet.TrainingSampleCount];
+                dblActual_Forecast[1] = new double[testSet.TrainingSampleCount];
+                
+                // Thực hiện test
+                for (int i = 0; i < testSet.TrainingSampleCount; i++)
+                {                    
+                    TrainingSample testSample = testSet[i];
+                    dblActual_Forecast[0][i] = ConverterBUS.Convert2Trend(testSample.OutputVector);
+                    
+                    double[] dblTemp = bpNetwork.Run(testSample.InputVector);
+                    dblActual_Forecast[1][i] = ConverterBUS.Convert2Trend(dblTemp);                    
+                }
+
+                //ANNModelBUS.AnnModelFile = tbxModelFilePath.Text;
+                //ANNParameterBUS.LoadParameter();
+
+                //ANNPredictBUS annPredict = new ANNPredictBUS();
+                //annPredict.LoadDataSet(tbxTestFilePath.Text);
+                //dblActual_Forecast = annPredict.MainProcessTrend();
+                //annPredict.WritePredictTrend(strPredictedFile);
             }
             #endregion
 
@@ -326,8 +355,7 @@ namespace GUI
                 HandleMeasure(strFolderPath + "PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
             }
             MessageBox.Show("Finish!");
-            #endregion
-            
+            #endregion            
         }
 
         private void btnOK_Click(object sender, EventArgs e)
