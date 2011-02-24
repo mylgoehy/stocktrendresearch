@@ -304,7 +304,7 @@ namespace BUS
                     string strLine = dblLabels[i].ToString() + " ";
                     int j = 1;
                     int iPastIndex = LOW_PERIOD + i - numDaysPeriod;
-                    strLine += (j++).ToString() + ":" + volumes[iPastIndex].ToString() + " ";
+                    //strLine += (j++).ToString() + ":" + volumes[iPastIndex].ToString() + " ";
                     strLine += (j++).ToString() + ":" + closePrices[iPastIndex].ToString() + " ";
                     strLine += (j++).ToString() + ":" + dblFastSMAs[iPastIndex].ToString() + " ";
                     strLine += (j++).ToString() + ":" + dblLowSMAs[iPastIndex].ToString() + " ";
