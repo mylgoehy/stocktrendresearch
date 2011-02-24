@@ -59,8 +59,6 @@
             this.lblTrainingMeasure = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.gbAnnSetting = new System.Windows.Forms.GroupBox();
-            this.tbxAccuracy = new System.Windows.Forms.TextBox();
-            this.label15 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.tbxANNHiddenNode = new System.Windows.Forms.TextBox();
             this.tbxMomentum = new System.Windows.Forms.TextBox();
@@ -88,6 +86,11 @@
             this.tbxTestFilePath = new System.Windows.Forms.TextBox();
             this.btnTest = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.nmNumCluster = new System.Windows.Forms.NumericUpDown();
+            this.lblNumCluster = new System.Windows.Forms.Label();
+            this.rdSOM = new System.Windows.Forms.RadioButton();
+            this.rdKmeans = new System.Windows.Forms.RadioButton();
+            this.rdDefault = new System.Windows.Forms.RadioButton();
             this.label7 = new System.Windows.Forms.Label();
             this.btnTrainBrowser = new System.Windows.Forms.Button();
             this.tbxTrainFilePath = new System.Windows.Forms.TextBox();
@@ -120,11 +123,8 @@
             this.dtpFrom = new System.Windows.Forms.DateTimePicker();
             this.cmbStockID = new System.Windows.Forms.ComboBox();
             this.zg1 = new ZedGraph.ZedGraphControl();
-            this.rdDefault = new System.Windows.Forms.RadioButton();
-            this.rdKmeans = new System.Windows.Forms.RadioButton();
-            this.rdSOM = new System.Windows.Forms.RadioButton();
-            this.lblNumCluster = new System.Windows.Forms.Label();
-            this.nmNumCluster = new System.Windows.Forms.NumericUpDown();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tbxANNInputNode = new System.Windows.Forms.TextBox();
             this.tabOption.SuspendLayout();
             this.tabExperiment.SuspendLayout();
             this.groupBox9.SuspendLayout();
@@ -135,11 +135,11 @@
             this.groupBox5.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.tabApplication.SuspendLayout();
             this.gbResult.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -495,8 +495,8 @@
             // 
             // gbAnnSetting
             // 
-            this.gbAnnSetting.Controls.Add(this.tbxAccuracy);
-            this.gbAnnSetting.Controls.Add(this.label15);
+            this.gbAnnSetting.Controls.Add(this.label4);
+            this.gbAnnSetting.Controls.Add(this.tbxANNInputNode);
             this.gbAnnSetting.Controls.Add(this.label17);
             this.gbAnnSetting.Controls.Add(this.tbxANNHiddenNode);
             this.gbAnnSetting.Controls.Add(this.tbxMomentum);
@@ -514,30 +514,12 @@
             this.gbAnnSetting.TabStop = false;
             this.gbAnnSetting.Text = "ANN SETTING";
             // 
-            // tbxAccuracy
-            // 
-            this.tbxAccuracy.Location = new System.Drawing.Point(102, 162);
-            this.tbxAccuracy.Name = "tbxAccuracy";
-            this.tbxAccuracy.Size = new System.Drawing.Size(157, 20);
-            this.tbxAccuracy.TabIndex = 39;
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.ForeColor = System.Drawing.Color.Black;
-            this.label15.Location = new System.Drawing.Point(10, 164);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(69, 13);
-            this.label15.TabIndex = 38;
-            this.label15.Text = "Accuracy (%)";
-            // 
             // label17
             // 
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label17.ForeColor = System.Drawing.Color.Black;
-            this.label17.Location = new System.Drawing.Point(10, 20);
+            this.label17.Location = new System.Drawing.Point(7, 48);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(91, 13);
             this.label17.TabIndex = 37;
@@ -547,7 +529,7 @@
             // 
             this.tbxANNHiddenNode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxANNHiddenNode.ForeColor = System.Drawing.Color.Black;
-            this.tbxANNHiddenNode.Location = new System.Drawing.Point(102, 17);
+            this.tbxANNHiddenNode.Location = new System.Drawing.Point(99, 45);
             this.tbxANNHiddenNode.Name = "tbxANNHiddenNode";
             this.tbxANNHiddenNode.Size = new System.Drawing.Size(157, 20);
             this.tbxANNHiddenNode.TabIndex = 36;
@@ -556,7 +538,7 @@
             // 
             this.tbxMomentum.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxMomentum.ForeColor = System.Drawing.Color.Black;
-            this.tbxMomentum.Location = new System.Drawing.Point(102, 133);
+            this.tbxMomentum.Location = new System.Drawing.Point(99, 161);
             this.tbxMomentum.Name = "tbxMomentum";
             this.tbxMomentum.Size = new System.Drawing.Size(157, 20);
             this.tbxMomentum.TabIndex = 33;
@@ -566,7 +548,7 @@
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label14.ForeColor = System.Drawing.Color.Black;
-            this.label14.Location = new System.Drawing.Point(10, 136);
+            this.label14.Location = new System.Drawing.Point(7, 164);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(59, 13);
             this.label14.TabIndex = 32;
@@ -576,7 +558,7 @@
             // 
             this.tbxMaxLoops.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxMaxLoops.ForeColor = System.Drawing.Color.Black;
-            this.tbxMaxLoops.Location = new System.Drawing.Point(102, 75);
+            this.tbxMaxLoops.Location = new System.Drawing.Point(99, 103);
             this.tbxMaxLoops.Name = "tbxMaxLoops";
             this.tbxMaxLoops.Size = new System.Drawing.Size(157, 20);
             this.tbxMaxLoops.TabIndex = 31;
@@ -586,7 +568,7 @@
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label11.ForeColor = System.Drawing.Color.Black;
-            this.label11.Location = new System.Drawing.Point(10, 78);
+            this.label11.Location = new System.Drawing.Point(7, 106);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(55, 13);
             this.label11.TabIndex = 30;
@@ -596,7 +578,7 @@
             // 
             this.tbxBias.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxBias.ForeColor = System.Drawing.Color.Black;
-            this.tbxBias.Location = new System.Drawing.Point(102, 104);
+            this.tbxBias.Location = new System.Drawing.Point(99, 132);
             this.tbxBias.Name = "tbxBias";
             this.tbxBias.Size = new System.Drawing.Size(157, 20);
             this.tbxBias.TabIndex = 29;
@@ -606,7 +588,7 @@
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label12.ForeColor = System.Drawing.Color.Black;
-            this.label12.Location = new System.Drawing.Point(10, 110);
+            this.label12.Location = new System.Drawing.Point(7, 138);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(27, 13);
             this.label12.TabIndex = 28;
@@ -616,7 +598,7 @@
             // 
             this.tbxLearningRate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxLearningRate.ForeColor = System.Drawing.Color.Black;
-            this.tbxLearningRate.Location = new System.Drawing.Point(102, 46);
+            this.tbxLearningRate.Location = new System.Drawing.Point(99, 74);
             this.tbxLearningRate.Name = "tbxLearningRate";
             this.tbxLearningRate.Size = new System.Drawing.Size(157, 20);
             this.tbxLearningRate.TabIndex = 27;
@@ -626,7 +608,7 @@
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label13.ForeColor = System.Drawing.Color.Black;
-            this.label13.Location = new System.Drawing.Point(10, 49);
+            this.label13.Location = new System.Drawing.Point(7, 77);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(69, 13);
             this.label13.TabIndex = 26;
@@ -833,6 +815,65 @@
             this.groupBox2.TabIndex = 23;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "2. TRAINING";
+            // 
+            // nmNumCluster
+            // 
+            this.nmNumCluster.Location = new System.Drawing.Point(104, 99);
+            this.nmNumCluster.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nmNumCluster.Name = "nmNumCluster";
+            this.nmNumCluster.Size = new System.Drawing.Size(111, 20);
+            this.nmNumCluster.TabIndex = 33;
+            this.nmNumCluster.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // lblNumCluster
+            // 
+            this.lblNumCluster.AutoSize = true;
+            this.lblNumCluster.Location = new System.Drawing.Point(9, 102);
+            this.lblNumCluster.Name = "lblNumCluster";
+            this.lblNumCluster.Size = new System.Drawing.Size(90, 13);
+            this.lblNumCluster.TabIndex = 32;
+            this.lblNumCluster.Text = "Num of Cluster";
+            // 
+            // rdSOM
+            // 
+            this.rdSOM.AutoSize = true;
+            this.rdSOM.Location = new System.Drawing.Point(167, 76);
+            this.rdSOM.Name = "rdSOM";
+            this.rdSOM.Size = new System.Drawing.Size(52, 17);
+            this.rdSOM.TabIndex = 31;
+            this.rdSOM.TabStop = true;
+            this.rdSOM.Text = "SOM";
+            this.rdSOM.UseVisualStyleBackColor = true;
+            // 
+            // rdKmeans
+            // 
+            this.rdKmeans.AutoSize = true;
+            this.rdKmeans.Location = new System.Drawing.Point(84, 76);
+            this.rdKmeans.Name = "rdKmeans";
+            this.rdKmeans.Size = new System.Drawing.Size(74, 17);
+            this.rdKmeans.TabIndex = 30;
+            this.rdKmeans.TabStop = true;
+            this.rdKmeans.Text = "K-Means";
+            this.rdKmeans.UseVisualStyleBackColor = true;
+            // 
+            // rdDefault
+            // 
+            this.rdDefault.AutoSize = true;
+            this.rdDefault.Location = new System.Drawing.Point(8, 76);
+            this.rdDefault.Name = "rdDefault";
+            this.rdDefault.Size = new System.Drawing.Size(66, 17);
+            this.rdDefault.TabIndex = 29;
+            this.rdDefault.TabStop = true;
+            this.rdDefault.Text = "Default";
+            this.rdDefault.UseVisualStyleBackColor = true;
             // 
             // label7
             // 
@@ -1175,64 +1216,25 @@
             this.zg1.Size = new System.Drawing.Size(904, 414);
             this.zg1.TabIndex = 1;
             // 
-            // rdDefault
+            // label4
             // 
-            this.rdDefault.AutoSize = true;
-            this.rdDefault.Location = new System.Drawing.Point(8, 76);
-            this.rdDefault.Name = "rdDefault";
-            this.rdDefault.Size = new System.Drawing.Size(66, 17);
-            this.rdDefault.TabIndex = 29;
-            this.rdDefault.TabStop = true;
-            this.rdDefault.Text = "Default";
-            this.rdDefault.UseVisualStyleBackColor = true;
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.ForeColor = System.Drawing.Color.Black;
+            this.label4.Location = new System.Drawing.Point(7, 21);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(82, 13);
+            this.label4.TabIndex = 39;
+            this.label4.Text = "Num input node";
             // 
-            // rdKmeans
+            // tbxANNInputNode
             // 
-            this.rdKmeans.AutoSize = true;
-            this.rdKmeans.Location = new System.Drawing.Point(84, 76);
-            this.rdKmeans.Name = "rdKmeans";
-            this.rdKmeans.Size = new System.Drawing.Size(74, 17);
-            this.rdKmeans.TabIndex = 30;
-            this.rdKmeans.TabStop = true;
-            this.rdKmeans.Text = "K-Means";
-            this.rdKmeans.UseVisualStyleBackColor = true;
-            // 
-            // rdSOM
-            // 
-            this.rdSOM.AutoSize = true;
-            this.rdSOM.Location = new System.Drawing.Point(167, 76);
-            this.rdSOM.Name = "rdSOM";
-            this.rdSOM.Size = new System.Drawing.Size(52, 17);
-            this.rdSOM.TabIndex = 31;
-            this.rdSOM.TabStop = true;
-            this.rdSOM.Text = "SOM";
-            this.rdSOM.UseVisualStyleBackColor = true;
-            // 
-            // lblNumCluster
-            // 
-            this.lblNumCluster.AutoSize = true;
-            this.lblNumCluster.Location = new System.Drawing.Point(9, 102);
-            this.lblNumCluster.Name = "lblNumCluster";
-            this.lblNumCluster.Size = new System.Drawing.Size(90, 13);
-            this.lblNumCluster.TabIndex = 32;
-            this.lblNumCluster.Text = "Num of Cluster";
-            // 
-            // nmNumCluster
-            // 
-            this.nmNumCluster.Location = new System.Drawing.Point(104, 99);
-            this.nmNumCluster.Minimum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.nmNumCluster.Name = "nmNumCluster";
-            this.nmNumCluster.Size = new System.Drawing.Size(111, 20);
-            this.nmNumCluster.TabIndex = 33;
-            this.nmNumCluster.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
+            this.tbxANNInputNode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbxANNInputNode.ForeColor = System.Drawing.Color.Black;
+            this.tbxANNInputNode.Location = new System.Drawing.Point(99, 18);
+            this.tbxANNInputNode.Name = "tbxANNInputNode";
+            this.tbxANNInputNode.Size = new System.Drawing.Size(157, 20);
+            this.tbxANNInputNode.TabIndex = 38;
             // 
             // MainGUI
             // 
@@ -1263,6 +1265,7 @@
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -1271,7 +1274,6 @@
             this.tabApplication.PerformLayout();
             this.gbResult.ResumeLayout(false);
             this.gbResult.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1300,8 +1302,6 @@
         private System.Windows.Forms.Label lblTrainingMeasure;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.GroupBox gbAnnSetting;
-        private System.Windows.Forms.TextBox tbxAccuracy;
-        private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.TextBox tbxANNHiddenNode;
         private System.Windows.Forms.TextBox tbxMomentum;
@@ -1374,6 +1374,8 @@
         private System.Windows.Forms.RadioButton rdDefault;
         private System.Windows.Forms.NumericUpDown nmNumCluster;
         private System.Windows.Forms.Label lblNumCluster;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox tbxANNInputNode;
     }
 }
 

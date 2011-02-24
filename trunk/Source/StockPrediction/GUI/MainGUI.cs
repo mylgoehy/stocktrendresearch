@@ -179,7 +179,7 @@ namespace GUI
                 string strModelFile = tbxTrainFilePath.Text.Remove(iPos + 1) + "ANNmodel.txt";
 
                 //khởi tạo các tham số cho mạng
-                ANNParameterBUS.InputNode = NUM_NODE;
+                ANNParameterBUS.InputNode = int.Parse(tbxANNInputNode.Text);
                 ANNParameterBUS.HiddenNode = int.Parse(tbxANNHiddenNode.Text);
                 ANNParameterBUS.OutputNode = 3;
                 ANNParameterBUS.MaxEpoch = int.Parse(tbxMaxLoops.Text);
@@ -187,7 +187,7 @@ namespace GUI
                 ANNParameterBUS.Momentum = double.Parse(tbxMomentum.Text);
                 ANNParameterBUS.Bias = double.Parse(tbxBias.Text);
 
-                ANNParameterBUS.Accuracy = double.Parse(tbxAccuracy.Text);
+                //ANNParameterBUS.Accuracy = double.Parse(tbxAccuracy.Text);
                 ANNParameterBUS.MeasureType = cmbTrainingMeasure.SelectedItem.ToString();
 
                 //Tiến hành train
@@ -427,12 +427,13 @@ namespace GUI
             rdDefault.Checked = true;
 
             //Khởi gán tham số ANN
+            tbxANNInputNode.Text = 10.ToString();
             tbxANNHiddenNode.Text = 4.ToString();
             tbxLearningRate.Text = 0.3.ToString();
             tbxMaxLoops.Text = 2000.ToString();
             tbxBias.Text = 0.ToString();
             tbxMomentum.Text = 0.01.ToString();
-            tbxAccuracy.Text = 90.ToString();
+            //tbxAccuracy.Text = 90.ToString();
 
             if (rdANN.Checked == true)
             {
@@ -553,7 +554,7 @@ namespace GUI
 
                 double[][] dblActual_Forecast = new double[2][];
                 StepTrainingBUS stepTrainingBUS = new StepTrainingBUS();
-                stepTrainingBUS.NumInputNode = Convert.ToInt16(MainGUI.NUM_NODE);
+                stepTrainingBUS.NumInputNode = Convert.ToInt16(NUM_NODE);
                 stepTrainingBUS.TrainingSize = Convert.ToInt16(tbxTrainingSize.Text);
                 //stepTrainingBUS.Preprocess = cmbPreprocess.SelectedItem.ToString();
                 stepTrainingBUS.ModelSelection = cmbModelSelection.SelectedItem.ToString();
