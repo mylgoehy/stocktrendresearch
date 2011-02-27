@@ -19,6 +19,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using System.IO;
 
 namespace BUS.ANN.Backpropagation
 {
@@ -187,6 +188,95 @@ namespace BUS.ANN.Backpropagation
             {
                 layers[i].Learn(currentIteration, trainingEpochs);
             }
+
+        }
+
+        public void Write2File(double[][] actual_Forecasts, string strPredictedFile)
+        {
+            StreamWriter write = new StreamWriter(strPredictedFile);
+
+            string strTemp = "";
+            //thông kê kết quả dự đoán so với thực tế
+            strTemp += "Predicted Trend\t Actual Trend\n\tUptrend\tNotrend\tDowntrend";
+            write.WriteLine(strTemp);
+            
+            int [][] tables ;
+            tables = new int[3][];
+            for(int i = 0; i < tables.Length; i++)
+            {
+                tables[i] = new int[3];
+            }
+            for (int i = 0; i < actual_Forecasts[0].Length; i++)
+            {
+                int iTemp = (int)actual_Forecasts[0][i];
+                switch (iTemp)
+                {
+                    case 1:
+                        if (actual_Forecasts[1][i] == 1)
+                        {
+                            tables[0][0]++; 
+                        }
+                        else if (actual_Forecasts[1][i] == 0)
+                        {
+                            tables[0][1]++;
+                        }
+                        else
+                        {
+                            tables[0][2]++;
+                        }
+                        break;
+                    case 0:
+                        if (actual_Forecasts[1][i] == 1)
+                        {
+                            tables[1][0]++;
+                        }
+                        else if (actual_Forecasts[1][i] == 0)
+                        {
+                            tables[1][1]++;
+                        }
+                        else
+                        {
+                            tables[1][2]++;
+                        }
+                        break;
+                    case -1:
+                        if (actual_Forecasts[1][i] == 1)
+                        {
+                            tables[2][0]++;
+                        }
+                        else if (actual_Forecasts[1][i] == 0)
+                        {
+                            tables[2][1]++;
+                        }
+                        else
+                        {
+                            tables[2][2]++;
+                        }
+                        break;
+                }
+            }
+            string[] strLables = { "Uptrend", "Notrend", "Downtrend" };
+            for (int i = 0; i < tables.Length; i++)
+            {
+                strTemp = "";
+                strTemp += strLables[i] + "\t";
+                for (int j = 0; j < tables.Length; j++)
+                {
+                    strTemp += tables[i][j].ToString() + "\t";
+                }
+                write.WriteLine(strTemp);
+            }
+                        
+            // Ghi kết quả giũa giá trị thực và dự đoán
+            strTemp = ""+"Actuals:\tForecasts\n";
+            //srtTemp += "Actuals:\tForecasts\n";
+            for (int i = 0; i < actual_Forecasts[0].Length; i++)
+            {
+                strTemp += actual_Forecasts[0][i] + "\t";
+                strTemp += actual_Forecasts[1][i] + "\n";
+            }
+            write.WriteLine(strTemp);
+            write.Close();
         }
     }
 }
