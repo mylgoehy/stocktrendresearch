@@ -339,6 +339,7 @@ namespace GUI
                     dblActual_Forecast[1][i] = ConverterBUS.Convert2Trend(dblTemp);                    
                 }
 
+                bpNetwork.Write2File(dblActual_Forecast,strPredictedFile);
                 //ANNModelBUS.AnnModelFile = tbxModelFilePath.Text;
                 //ANNParameterBUS.LoadParameter();
 
