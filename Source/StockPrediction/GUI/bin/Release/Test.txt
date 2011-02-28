@@ -1,4 +1,4 @@
-<<<<<<< .mine
+fasdfsdfasdf<<<<<<< .mine
 0 1:72 2:68.5 3:70 4:70 5:68 
 =======
 ScaleByMinMax 107 115
