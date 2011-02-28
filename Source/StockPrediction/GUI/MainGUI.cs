@@ -16,6 +16,7 @@ using BUS.ANN;
 using ZedGraph;
 using BUS.ANN.Backpropagation;
 using BUS.KMeans;
+using System.Text.RegularExpressions;
 
 namespace GUI
 {
@@ -314,6 +315,7 @@ namespace GUI
             {
                 iPos = tbxTestFilePath.Text.LastIndexOf('_');
                 string strPredictedFile = tbxTestFilePath.Text.Remove(iPos + 1) + "predict.txt";
+                string strStatisticFile = tbxTestFilePath.Text.Remove(iPos + 1) + "statistic.txt";
 
                 // Load model lên
                 BackpropagationNetwork bpNetwork;
@@ -339,7 +341,10 @@ namespace GUI
                     dblActual_Forecast[1][i] = ConverterBUS.Convert2Trend(dblTemp);                    
                 }
 
-                bpNetwork.Write2File(dblActual_Forecast,strPredictedFile);
+                bpNetwork.Write2PredictFile(dblActual_Forecast,strPredictedFile);
+                StatisticTrend2File(strPredictedFile, strStatisticFile);
+                HandleMeasure(tbxTestFilePath.Text.Remove(iPos + 1) + "PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
+
                 //ANNModelBUS.AnnModelFile = tbxModelFilePath.Text;
                 //ANNParameterBUS.LoadParameter();
 
@@ -351,10 +356,10 @@ namespace GUI
             #endregion
 
             #region Phần chung
-            if (rdANN.Checked)
-            {
-                HandleMeasure(strFolderPath + "PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
-            }
+            //if (rdANN.Checked)
+            //{
+            //    HandleMeasure(strFolderPath + "PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
+            //}
             MessageBox.Show("Finish!");
             #endregion            
         }
@@ -890,6 +895,100 @@ namespace GUI
                 tbxC.ReadOnly = true;
                 tbxGamma.ReadOnly = true;
             }
+        }
+        private void StatisticTrend2File(string filePredicted, string fileStatistic)
+        {
+            string strTemp;
+            double[][] actual_Forecasts = new double[2][];            
+
+            // Đọc từ file predict lên
+            StreamReader read = new StreamReader(filePredicted);
+            StreamWriter write = new StreamWriter(fileStatistic);
+
+            read.ReadLine();// bỏ dòng đầu
+
+            strTemp = read.ReadToEnd();
+            string[] strActual_Forecasts = Regex.Split(strTemp,"\n");
+            actual_Forecasts[0] = new double[strActual_Forecasts.Length];
+            actual_Forecasts[1] = new double[strActual_Forecasts.Length];
+
+            for (int i = 0; i < strActual_Forecasts.Length -1; i++)
+            {
+                actual_Forecasts[0][i] = double.Parse(Regex.Split(strActual_Forecasts[i], "\t")[0]);
+                actual_Forecasts[1][i] = double.Parse(Regex.Split(strActual_Forecasts[i], "\t")[1]);
+            }
+
+            //thông kê kết quả dự đoán so với thực tế
+            strTemp = "Predicted Trend\t Actual Trend\n\tUptrend\tNotrend\tDowntrend";
+            write.WriteLine(strTemp);
+
+            int[][] tables;
+            tables = new int[3][];
+            for (int i = 0; i < tables.Length; i++)
+            {
+                tables[i] = new int[3];
+            }
+            for (int i = 0; i < actual_Forecasts[0].Length; i++)
+            {
+                int iTemp = (int)actual_Forecasts[0][i];
+                switch (iTemp)
+                {
+                    case 1:
+                        if (actual_Forecasts[1][i] == 1)
+                        {
+                            tables[0][0]++;
+                        }
+                        else if (actual_Forecasts[1][i] == 0)
+                        {
+                            tables[0][1]++;
+                        }
+                        else
+                        {
+                            tables[0][2]++;
+                        }
+                        break;
+                    case 0:
+                        if (actual_Forecasts[1][i] == 1)
+                        {
+                            tables[1][0]++;
+                        }
+                        else if (actual_Forecasts[1][i] == 0)
+                        {
+                            tables[1][1]++;
+                        }
+                        else
+                        {
+                            tables[1][2]++;
+                        }
+                        break;
+                    case -1:
+                        if (actual_Forecasts[1][i] == 1)
+                        {
+                            tables[2][0]++;
+                        }
+                        else if (actual_Forecasts[1][i] == 0)
+                        {
+                            tables[2][1]++;
+                        }
+                        else
+                        {
+                            tables[2][2]++;
+                        }
+                        break;
+                }
+            }
+            string[] strLables = { "Uptrend", "Notrend", "Downtrend" };
+            for (int i = 0; i < tables.Length; i++)
+            {
+                strTemp = "";
+                strTemp += strLables[i] + "\t";
+                for (int j = 0; j < tables.Length; j++)
+                {
+                    strTemp += tables[i][j].ToString() + "\t";
+                }
+                write.WriteLine(strTemp);
+            }
+            write.Close();
         }
     }
 }
