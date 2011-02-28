@@ -1,0 +1,28 @@
+/* Example style sheet file (note how this comment was created) */
+
+   BODY    {background: #EFE7DF;
+            margin-top: 20}
+
+   A:visited  {color: #400080}
+
+
+   A:link  {color: #0055ff}
+
+   A.active   {color: #0000ff}
+
+   H1,H2,H3,H4,H5     {font-weight: bold;
+            text-align: LEFT;
+            color: #004000;
+            background: #EFE7DF;
+            font-family: 'Gill Sans', sans-serif, Arial}
+
+   H1       {font-size: 36pt;
+	     text-align: CENTER}
+
+   H2       {font-size: 24pt}
+
+   H3       {font-size: 18pt}
+
+   CITE    {font-family: 'Gill Sans', Arial, sans-serif;
+            font-style: italic}
+

@@ -1,0 +1,258 @@
+
+<!-- saved from url=(0059)http://www.willamette.edu/~gorr/classes/cs449/backprop.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>
+Error Backpropagation
+</title>
+
+<link rel="stylesheet" href="./Error Backpropagation (tanh)_files/annstyle.css" type="text/css">
+</head>
+<body> 
+
+<a name="top"></a>
+<h1>Error Backpropagation</h1>
+<hr width="50%"><p>
+
+We have already seen how to train <a href="http://www.willamette.edu/~gorr/classes/cs449/linear2.html#gradient">linear
+networks</a> by gradient descent.  In trying to do the same for multi-layer
+networks we encounter a difficulty: we don't have any target values for
+the hidden units.  This seems to be an insurmountable problem - how could
+we tell the hidden units just what to do?  This unsolved question was in
+fact the reason why neural networks fell out of favor after an initial
+period of high popularity in the 1950s.  It took 30 years before the
+<b>error backpropagation</b> (or in short: <b>backprop</b>) algorithm
+popularized a way to train hidden units, leading to a new wave of neural
+network research and applications.
+</p><p>
+
+</p><center>
+<img src="./Error Backpropagation (tanh)_files/mlp.gif" alt="multi-layer network" width="400" border="5">
+&nbsp; (Fig. 1)
+</center>
+<p>
+
+In principle, backprop provides a way to train networks with any number
+of hidden units arranged in any number of layers.  (There are clear
+practical limits, which we will discuss later.)  In fact, the network does
+not have to be organized in layers - any pattern of connectivity that
+permits a <b>partial ordering</b> of the nodes from input to output is
+allowed.  In other words, there must be a way to order the units such that
+all connections go from "earlier" (closer to the input) to "later" ones
+(closer to the output).  This is equivalent to stating that their connection
+pattern must not contain any cycles.  Networks that respect this constraint
+are called <b>feedforward</b> networks; their connection pattern forms a
+<b>directed acyclic graph</b> or <b>dag</b>.
+</p><p>
+
+</p><hr width="50%"><p>
+
+</p><h3>The Algorithm</h3>
+
+We want to train a multi-layer feedforward network by gradient descent to
+approximate an unknown function, based on some training data consisting
+of pairs (<b>x,t</b>).  The vector <b>x</b> represents a pattern of input
+to the network, and the vector <b>t</b> the corresponding <b>target</b>
+(desired output).  As we have seen before, the overall gradient with
+respect to the entire training set is just the sum of the gradients for
+each pattern; in what follows we will therefore describe how to compute
+the gradient for just a single training pattern.
+As before, we will number the units, and denote the weight from unit
+j to unit i by w<sub>ij</sub>.
+<p>
+
+</p><ol>
+<li><b>Definitions:</b>
+<table><tbody><tr>
+<td><ul><li>
+the <b>error</b> signal for unit j:
+</li></ul></td><td></td><td align="right">
+<img align="absmiddle" width="118" height="36" src="./Error Backpropagation (tanh)_files/img1.gif" alt="delta_j = - partial E/partial net_j">
+</td></tr><tr>
+<td><ul><li>
+the (negative) <b>gradient</b> for weight w<sub>ij</sub>:
+</li></ul></td><td></td><td align="right">
+<img align="absmiddle" width="132" height="36" src="./Error Backpropagation (tanh)_files/img2.gif" alt="Delta w_{ij} = -partial E/partial w_ij"> &nbsp;
+</td></tr><tr>
+<td><ul><li>
+the set of nodes <b>anterior</b> to unit i:
+</li></ul></td><td></td><td align="right">
+<img width="108" height="36" src="./Error Backpropagation (tanh)_files/img3.gif" alt="A_i = {j : exists w_ij}"> &nbsp;
+</td></tr><tr>
+<td><ul><li>
+the set of nodes <b>posterior</b> to unit j:
+</li></ul></td><td></td><td align="right">
+<img width="106" height="29" src="./Error Backpropagation (tanh)_files/img4.gif" alt="P_j = {i : exists w_ij}"> &nbsp;
+</td></tr></tbody></table>
+<p>
+
+</p></li><li><b>The gradient.</b>
+As we did for <a href="http://www.willamette.edu/~gorr/classes/cs449/linear2.html#gradient">linear networks</a> before,
+we expand the gradient into two factors by use of the chain rule:
+<p>
+</p><div align="CENTER">
+<img width="170" height="44" src="./Error Backpropagation (tanh)_files/img5.gif" alt="Delta w_ij = -(partial E/partial net_i) (partial net_i/partial w_ij)">
+</div>
+
+The first factor is the error of unit i.  The second is
+<p>
+</p><div align="CENTER">
+<img width="224" height="51" src="./Error Backpropagation (tanh)_files/img6.gif" alt="partial net_i/partial w_ij =
+(partial/partial w_ij) sum_{k in A_i} y_i w_ik = y_j">
+</div>
+
+Putting the two together, we get
+<div align="CENTER">
+<img align="abscenter" width="96" height="29" src="./Error Backpropagation (tanh)_files/img7.gif" alt="Delta w_ij = delta_i y_j">.
+</div>
+<p>
+
+To compute this gradient, we thus need to know the activity and the error
+for all relevant nodes in the network.
+</p><p>
+
+</p></li><li><b>Forward activaction.</b>
+The activity of the input units
+is determined by the network's external input <b>x</b>.  For all other
+units, the activity is propagated forward:
+<p>
+</p><div align="CENTER">
+<img width="138" height="47" src="./Error Backpropagation (tanh)_files/img8.gif" alt="y_i = f_i(sum_{j in A_i} w_ij y_j)">
+</div>
+<p>
+
+Note that before the activity of unit i can be calculated, the
+activity of all its anterior nodes (forming the set A<sub>i</sub>)
+must be known.  Since feedforward networks do not contain cycles,
+there is an ordering of nodes from input to output that respects
+this condition.
+</p><p>
+
+</p></li><li><b>Calculating output error.</b>
+Assuming that we are using the sum-squared loss
+<p>
+</p><div align="CENTER">
+<img width="148" height="47" src="./Error Backpropagation (tanh)_files/img9.gif" alt="E = 1/2 sum_o (t_o - y_o)^2">
+</div>
+the error for output unit o is simply
+<div align="CENTER">
+<img width="92" height="27" src="./Error Backpropagation (tanh)_files/img10.gif" alt="delta_o = t_o - y_o">
+</div>
+<p>
+
+</p></li><li><b>Error backpropagation.</b>
+For hidden units, we must propagate the error back from the output nodes
+(hence the name of the algorithm).  Again using the chain rule, we can
+expand the error of a hidden unit in terms of its posterior nodes:
+<p>
+</p><div align="CENTER">
+<img width="218" height="52" src="./Error Backpropagation (tanh)_files/img11.gif" alt="delta_j = -sum_{i in P_j} (partial E/partial net_i)
+ (partial net_i/partial y_j) (partial y_j/partial net_j)">
+</div>
+<p>
+
+Of the three factors inside the sum, the first is just the error of node
+i.  The second is
+</p><p>
+</p><div align="CENTER">
+<img width="226" height="51" src="./Error Backpropagation (tanh)_files/img12.gif" alt="partial net_i/partial y_j = (partial/partial y_j)
+ sum_{k in A_i} w_ik y_k = w_ij">
+</div>
+<p>
+
+while the third is the derivative of node j's activation function:
+</p><p>
+</p><div align="CENTER">
+<img width="228" height="45" src="./Error Backpropagation (tanh)_files/img13.gif" alt="partial y_j/partial net_j =
+ partial f_j(net_j)/partial net_j = f&#39;_j(net_j)">
+</div>
+<p>
+
+For hidden units h that use the tanh activation function, we can make use
+of the special identity<br> tanh(u)' = 1 - tanh(u)<sup>2</sup>, giving us
+</p><div align="CENTER">
+<img width="124" height="28" src="./Error Backpropagation (tanh)_files/img15.gif" alt="f&#39;_h(net_h) = 1 - y_h^2">
+</div>
+<p>
+
+Putting all the pieces together we get
+</p><div align="CENTER">
+<img width="167" height="48" src="./Error Backpropagation (tanh)_files/img14.gif" alt="delta_j = f&#39;_j(net_j) sum_{i in P_j} delta_i w_{ij}">
+</div>
+<p>
+
+Note that in order to calculate the error for unit j, we must first
+know the error of all its posterior nodes (forming the set P<sub>j</sub>).
+Again, as long as there are no cycles in the network, there is an ordering
+of nodes from the output back to the input that respects this condition.
+For example, we can simply use the reverse of the order in which activity
+was propagated forward.
+</p><p>
+</p></li></ol>
+
+<hr width="50%"><p>
+
+</p><h3>Matrix Form</h3>
+
+For layered feedforward networks that are <b>fully connected</b>
+- that is, each node in a given layer connects to <i>every</i> node in
+the next layer - it is often more convenient to write the backprop
+algorithm in matrix notation rather than using more general graph
+form given above.  In this notation, the biases weights, net inputs,
+activations, and error signals for all units in a layer are combined
+into vectors, while all the non-bias weights from one layer to the
+next form a matrix W.   Layers are numbered from 0 (the input layer)
+to L (the output layer).  The backprop algorithm then looks as follows:
+<p>
+
+</p><ol>
+<li>Initialize the input layer:
+<div align="CENTER">
+<img width="46" height="27" src="./Error Backpropagation (tanh)_files/img16.gif" alt="vec{y}_0 = vec{x}">
+</div>
+<p>
+
+</p></li><li>Propagate activity forward: for l = 1, 2, ..., L,
+<div align="CENTER">
+<img width="151" height="28" src="./Error Backpropagation (tanh)_files/img17.gif" alt="vec{y}_l = f_l(W_l vec{y}_{l-1} + vec{b}_l)">
+</div>
+where b<sub>l</sub> is the vector of bias weights.
+<p>
+
+</p></li><li>Calculate the error in the output layer:
+<div align="CENTER">
+<img width="90" height="27" src="./Error Backpropagation (tanh)_files/img18.gif" alt="vec{delta}_L = vec{t} - vec{y}_L">
+</div>
+<p>
+
+</p></li><li>Backpropagate the error: for l = L-1, L-2, ..., 1,
+<div align="CENTER">
+<img width="187" height="29" src="./Error Backpropagation (tanh)_files/img19.gif" alt="vec{delta}_l = (W_{l+1}^T vec{delta}_{l+1}) . f&#39;_l(vec{net}_l)">
+</div>
+where T is the matrix transposition operator.
+<p>
+
+</p></li><li>Update the weights and biases:
+<div align="CENTER">
+<img width="219" height="29" src="./Error Backpropagation (tanh)_files/img20.gif" alt="Delta W_l = vec{delta}_l vec{y}_{l-1}^T, Delta vec{b}_l = vec{delta}_l">
+</div>
+<p>
+</p></li></ol>
+
+You can see that this notation is significantly more compact than the graph
+form, even though it describes exactly the same sequence of operations.
+<p>
+
+</p><hr width="50%"><p>
+
+</p><center>
+<a href="http://www.willamette.edu/~gorr/classes/cs449/backprop.html#top">[Top]</a>
+<img src="./Error Backpropagation (tanh)_files/pixel.gif" height="20" width="100">
+<a href="http://www.willamette.edu/~gorr/classes/cs449/bpexample.html">[Next: A first example]</a>
+<img src="./Error Backpropagation (tanh)_files/pixel.gif" height="20" width="100">
+<a href="http://www.willamette.edu/~gorr/classes/cs449/intro.html">[Back to the first page]
+</a></center><a href="http://www.willamette.edu/~gorr/classes/cs449/intro.html">
+
+
+
+
+</a></body></html>
