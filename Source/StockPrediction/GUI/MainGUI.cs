@@ -194,11 +194,31 @@ namespace GUI
                 //Tiến hành train
                 //Tiến hành train
                 BackpropagationNetwork bpNetwork;
-
+                
                 LinearLayer inputLayer = new LinearLayer(ANNParameterBUS.InputNode);
-                SigmoidLayer hidenLayer = new SigmoidLayer(ANNParameterBUS.HiddenNode);
-                SigmoidLayer outputLayer = new SigmoidLayer(ANNParameterBUS.OutputNode);
+                ActivationLayer hidenLayer = null;
+                ActivationLayer outputLayer = null;
 
+                if (rdSigmoid.Checked)
+                {
+                    hidenLayer = new SigmoidLayer(ANNParameterBUS.HiddenNode);
+                    outputLayer = new SigmoidLayer(ANNParameterBUS.OutputNode);
+                }
+                if (rdLogarithm.Checked)
+                {
+                    hidenLayer = new LogarithmLayer(ANNParameterBUS.HiddenNode);
+                    outputLayer = new LogarithmLayer(ANNParameterBUS.OutputNode);
+                }
+                if (rdTanh.Checked)
+                {
+                    hidenLayer = new TanhLayer(ANNParameterBUS.HiddenNode);
+                    outputLayer = new TanhLayer(ANNParameterBUS.OutputNode);
+                }
+                if (rdSine.Checked)
+                {
+                    hidenLayer = new SineLayer(ANNParameterBUS.HiddenNode);
+                    outputLayer = new SineLayer(ANNParameterBUS.OutputNode);
+                }
                 new BackpropagationConnector(inputLayer, hidenLayer);
                 new BackpropagationConnector(hidenLayer, outputLayer);
 
@@ -431,6 +451,7 @@ namespace GUI
             cmbModelSelection.SelectedIndex = 0;
             cmbTrainingMeasure.SelectedIndex = 0;
             rdDefault.Checked = true;
+            rdSigmoid.Checked = true;
 
             //Khởi gán tham số ANN
             tbxANNInputNode.Text = 10.ToString();

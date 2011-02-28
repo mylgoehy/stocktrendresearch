@@ -44,6 +44,7 @@
             this.cmbNumDaysPredicted = new System.Windows.Forms.ComboBox();
             this.cmbTrainingMeasure = new System.Windows.Forms.ComboBox();
             this.gbSVRSetting = new System.Windows.Forms.GroupBox();
+            this.ckbProbEstimation = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.tbxGamma = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -121,7 +122,11 @@
             this.dtpFrom = new System.Windows.Forms.DateTimePicker();
             this.cmbStockID = new System.Windows.Forms.ComboBox();
             this.zg1 = new ZedGraph.ZedGraphControl();
-            this.ckbProbEstimation = new System.Windows.Forms.CheckBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.rdTanh = new System.Windows.Forms.RadioButton();
+            this.rdLogarithm = new System.Windows.Forms.RadioButton();
+            this.rdSigmoid = new System.Windows.Forms.RadioButton();
+            this.rdSine = new System.Windows.Forms.RadioButton();
             this.tabOption.SuspendLayout();
             this.tabExperiment.SuspendLayout();
             this.groupBox9.SuspendLayout();
@@ -336,12 +341,22 @@
             this.gbSVRSetting.Controls.Add(this.label6);
             this.gbSVRSetting.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbSVRSetting.ForeColor = System.Drawing.Color.Black;
-            this.gbSVRSetting.Location = new System.Drawing.Point(9, 342);
+            this.gbSVRSetting.Location = new System.Drawing.Point(10, 390);
             this.gbSVRSetting.Name = "gbSVRSetting";
             this.gbSVRSetting.Size = new System.Drawing.Size(299, 159);
             this.gbSVRSetting.TabIndex = 44;
             this.gbSVRSetting.TabStop = false;
             this.gbSVRSetting.Text = "SVR SETTING";
+            // 
+            // ckbProbEstimation
+            // 
+            this.ckbProbEstimation.AutoSize = true;
+            this.ckbProbEstimation.Location = new System.Drawing.Point(9, 82);
+            this.ckbProbEstimation.Name = "ckbProbEstimation";
+            this.ckbProbEstimation.Size = new System.Drawing.Size(125, 17);
+            this.ckbProbEstimation.TabIndex = 47;
+            this.ckbProbEstimation.Text = "Probability Estimation";
+            this.ckbProbEstimation.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -446,6 +461,11 @@
             // 
             // gbAnnSetting
             // 
+            this.gbAnnSetting.Controls.Add(this.rdSine);
+            this.gbAnnSetting.Controls.Add(this.rdTanh);
+            this.gbAnnSetting.Controls.Add(this.rdLogarithm);
+            this.gbAnnSetting.Controls.Add(this.rdSigmoid);
+            this.gbAnnSetting.Controls.Add(this.label15);
             this.gbAnnSetting.Controls.Add(this.label4);
             this.gbAnnSetting.Controls.Add(this.tbxANNInputNode);
             this.gbAnnSetting.Controls.Add(this.label17);
@@ -460,7 +480,7 @@
             this.gbAnnSetting.Controls.Add(this.label13);
             this.gbAnnSetting.Location = new System.Drawing.Point(10, 142);
             this.gbAnnSetting.Name = "gbAnnSetting";
-            this.gbAnnSetting.Size = new System.Drawing.Size(299, 187);
+            this.gbAnnSetting.Size = new System.Drawing.Size(299, 242);
             this.gbAnnSetting.TabIndex = 23;
             this.gbAnnSetting.TabStop = false;
             this.gbAnnSetting.Text = "ANN SETTING";
@@ -480,7 +500,7 @@
             // 
             this.tbxANNInputNode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxANNInputNode.ForeColor = System.Drawing.Color.Black;
-            this.tbxANNInputNode.Location = new System.Drawing.Point(99, 18);
+            this.tbxANNInputNode.Location = new System.Drawing.Point(120, 20);
             this.tbxANNInputNode.Name = "tbxANNInputNode";
             this.tbxANNInputNode.Size = new System.Drawing.Size(157, 20);
             this.tbxANNInputNode.TabIndex = 38;
@@ -500,7 +520,7 @@
             // 
             this.tbxANNHiddenNode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxANNHiddenNode.ForeColor = System.Drawing.Color.Black;
-            this.tbxANNHiddenNode.Location = new System.Drawing.Point(99, 45);
+            this.tbxANNHiddenNode.Location = new System.Drawing.Point(120, 47);
             this.tbxANNHiddenNode.Name = "tbxANNHiddenNode";
             this.tbxANNHiddenNode.Size = new System.Drawing.Size(157, 20);
             this.tbxANNHiddenNode.TabIndex = 36;
@@ -509,7 +529,7 @@
             // 
             this.tbxMomentum.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxMomentum.ForeColor = System.Drawing.Color.Black;
-            this.tbxMomentum.Location = new System.Drawing.Point(99, 161);
+            this.tbxMomentum.Location = new System.Drawing.Point(120, 163);
             this.tbxMomentum.Name = "tbxMomentum";
             this.tbxMomentum.Size = new System.Drawing.Size(157, 20);
             this.tbxMomentum.TabIndex = 33;
@@ -529,7 +549,7 @@
             // 
             this.tbxMaxLoops.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxMaxLoops.ForeColor = System.Drawing.Color.Black;
-            this.tbxMaxLoops.Location = new System.Drawing.Point(99, 103);
+            this.tbxMaxLoops.Location = new System.Drawing.Point(120, 105);
             this.tbxMaxLoops.Name = "tbxMaxLoops";
             this.tbxMaxLoops.Size = new System.Drawing.Size(157, 20);
             this.tbxMaxLoops.TabIndex = 31;
@@ -549,7 +569,7 @@
             // 
             this.tbxBias.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxBias.ForeColor = System.Drawing.Color.Black;
-            this.tbxBias.Location = new System.Drawing.Point(99, 132);
+            this.tbxBias.Location = new System.Drawing.Point(120, 134);
             this.tbxBias.Name = "tbxBias";
             this.tbxBias.Size = new System.Drawing.Size(157, 20);
             this.tbxBias.TabIndex = 29;
@@ -569,7 +589,7 @@
             // 
             this.tbxLearningRate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxLearningRate.ForeColor = System.Drawing.Color.Black;
-            this.tbxLearningRate.Location = new System.Drawing.Point(99, 74);
+            this.tbxLearningRate.Location = new System.Drawing.Point(120, 76);
             this.tbxLearningRate.Name = "tbxLearningRate";
             this.tbxLearningRate.Size = new System.Drawing.Size(157, 20);
             this.tbxLearningRate.TabIndex = 27;
@@ -1187,15 +1207,68 @@
             this.zg1.Size = new System.Drawing.Size(904, 414);
             this.zg1.TabIndex = 1;
             // 
-            // ckbProbEstimation
+            // label15
             // 
-            this.ckbProbEstimation.AutoSize = true;
-            this.ckbProbEstimation.Location = new System.Drawing.Point(9, 82);
-            this.ckbProbEstimation.Name = "ckbProbEstimation";
-            this.ckbProbEstimation.Size = new System.Drawing.Size(125, 17);
-            this.ckbProbEstimation.TabIndex = 47;
-            this.ckbProbEstimation.Text = "Probability Estimation";
-            this.ckbProbEstimation.UseVisualStyleBackColor = true;
+            this.label15.AutoSize = true;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.ForeColor = System.Drawing.Color.Black;
+            this.label15.Location = new System.Drawing.Point(6, 193);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(98, 13);
+            this.label15.TabIndex = 40;
+            this.label15.Text = "Activation Function";
+            // 
+            // rdTanh
+            // 
+            this.rdTanh.AutoSize = true;
+            this.rdTanh.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdTanh.ForeColor = System.Drawing.Color.Black;
+            this.rdTanh.Location = new System.Drawing.Point(167, 214);
+            this.rdTanh.Name = "rdTanh";
+            this.rdTanh.Size = new System.Drawing.Size(50, 17);
+            this.rdTanh.TabIndex = 43;
+            this.rdTanh.TabStop = true;
+            this.rdTanh.Text = "Tanh";
+            this.rdTanh.UseVisualStyleBackColor = true;
+            // 
+            // rdLogarithm
+            // 
+            this.rdLogarithm.AutoSize = true;
+            this.rdLogarithm.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdLogarithm.ForeColor = System.Drawing.Color.Black;
+            this.rdLogarithm.Location = new System.Drawing.Point(84, 214);
+            this.rdLogarithm.Name = "rdLogarithm";
+            this.rdLogarithm.Size = new System.Drawing.Size(71, 17);
+            this.rdLogarithm.TabIndex = 42;
+            this.rdLogarithm.TabStop = true;
+            this.rdLogarithm.Text = "Logarithm";
+            this.rdLogarithm.UseVisualStyleBackColor = true;
+            // 
+            // rdSigmoid
+            // 
+            this.rdSigmoid.AutoSize = true;
+            this.rdSigmoid.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdSigmoid.ForeColor = System.Drawing.Color.Black;
+            this.rdSigmoid.Location = new System.Drawing.Point(8, 214);
+            this.rdSigmoid.Name = "rdSigmoid";
+            this.rdSigmoid.Size = new System.Drawing.Size(62, 17);
+            this.rdSigmoid.TabIndex = 41;
+            this.rdSigmoid.TabStop = true;
+            this.rdSigmoid.Text = "Sigmoid";
+            this.rdSigmoid.UseVisualStyleBackColor = true;
+            // 
+            // rdSine
+            // 
+            this.rdSine.AutoSize = true;
+            this.rdSine.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdSine.ForeColor = System.Drawing.Color.Black;
+            this.rdSine.Location = new System.Drawing.Point(227, 214);
+            this.rdSine.Name = "rdSine";
+            this.rdSine.Size = new System.Drawing.Size(46, 17);
+            this.rdSine.TabIndex = 44;
+            this.rdSine.TabStop = true;
+            this.rdSine.Text = "Sine";
+            this.rdSine.UseVisualStyleBackColor = true;
             // 
             // MainGUI
             // 
@@ -1334,6 +1407,11 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbxANNInputNode;
         private System.Windows.Forms.CheckBox ckbProbEstimation;
+        private System.Windows.Forms.RadioButton rdTanh;
+        private System.Windows.Forms.RadioButton rdLogarithm;
+        private System.Windows.Forms.RadioButton rdSigmoid;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.RadioButton rdSine;
     }
 }
 
