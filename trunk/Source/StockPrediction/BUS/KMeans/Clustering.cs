@@ -70,6 +70,15 @@ namespace BUS.KMeans
         #endregion
 
         #region Methods
+
+        private void NormalizeSamples()
+        {
+            for (int i = 0; i < SampleData.Samples.Length; i++)
+            {
+                SampleData.Samples[i] = Helper.Normalize(SampleData.Samples[i]);
+            }
+        }
+
         /// <summary>
         /// Chọn các trung tâm cho từng cụm bằng cách ngẫu nhiên
         /// </summary>
@@ -201,10 +210,12 @@ namespace BUS.KMeans
             if (testMode)
             {
                 LoadClusters(fileName);
+                NormalizeSamples();
                 Distribute(testMode);
             }
             else
             {
+                NormalizeSamples();
                 ChooseRandomMeanForClusters();
                 Distribute(testMode);
                 WriteClusters(fileName);
