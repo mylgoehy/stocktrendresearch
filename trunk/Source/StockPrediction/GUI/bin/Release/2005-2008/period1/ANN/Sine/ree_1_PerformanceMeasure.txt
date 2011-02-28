@@ -1,0 +1,2 @@
+Correct Predicted:	43%
+Performance Analysis of Various Activation Functions in Generalized MLP Architectures of Neural Networks 
