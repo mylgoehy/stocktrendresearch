@@ -210,12 +210,12 @@ namespace BUS.KMeans
             if (testMode)
             {
                 LoadClusters(fileName);
-                NormalizeSamples();
+                //NormalizeSamples();
                 Distribute(testMode);
             }
             else
             {
-                NormalizeSamples();
+                //NormalizeSamples();
                 ChooseRandomMeanForClusters();
                 Distribute(testMode);
                 WriteClusters(fileName);

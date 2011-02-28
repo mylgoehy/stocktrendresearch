@@ -48,10 +48,6 @@
             this.tbxGamma = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tbxC = new System.Windows.Forms.TextBox();
-            this.rdTimeSeries = new System.Windows.Forms.RadioButton();
-            this.rdNotShuffle = new System.Windows.Forms.RadioButton();
-            this.rdShuffle = new System.Windows.Forms.RadioButton();
-            this.label23 = new System.Windows.Forms.Label();
             this.tbxNumFold = new System.Windows.Forms.TextBox();
             this.label21 = new System.Windows.Forms.Label();
             this.cmbModelSelection = new System.Windows.Forms.ComboBox();
@@ -59,6 +55,8 @@
             this.lblTrainingMeasure = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.gbAnnSetting = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tbxANNInputNode = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.tbxANNHiddenNode = new System.Windows.Forms.TextBox();
             this.tbxMomentum = new System.Windows.Forms.TextBox();
@@ -123,8 +121,7 @@
             this.dtpFrom = new System.Windows.Forms.DateTimePicker();
             this.cmbStockID = new System.Windows.Forms.ComboBox();
             this.zg1 = new ZedGraph.ZedGraphControl();
-            this.label4 = new System.Windows.Forms.Label();
-            this.tbxANNInputNode = new System.Windows.Forms.TextBox();
+            this.ckbProbEstimation = new System.Windows.Forms.CheckBox();
             this.tabOption.SuspendLayout();
             this.tabExperiment.SuspendLayout();
             this.groupBox9.SuspendLayout();
@@ -328,14 +325,11 @@
             // 
             // gbSVRSetting
             // 
+            this.gbSVRSetting.Controls.Add(this.ckbProbEstimation);
             this.gbSVRSetting.Controls.Add(this.label3);
             this.gbSVRSetting.Controls.Add(this.tbxGamma);
             this.gbSVRSetting.Controls.Add(this.label2);
             this.gbSVRSetting.Controls.Add(this.tbxC);
-            this.gbSVRSetting.Controls.Add(this.rdTimeSeries);
-            this.gbSVRSetting.Controls.Add(this.rdNotShuffle);
-            this.gbSVRSetting.Controls.Add(this.rdShuffle);
-            this.gbSVRSetting.Controls.Add(this.label23);
             this.gbSVRSetting.Controls.Add(this.tbxNumFold);
             this.gbSVRSetting.Controls.Add(this.label21);
             this.gbSVRSetting.Controls.Add(this.cmbModelSelection);
@@ -380,49 +374,6 @@
             this.tbxC.Name = "tbxC";
             this.tbxC.Size = new System.Drawing.Size(100, 20);
             this.tbxC.TabIndex = 43;
-            // 
-            // rdTimeSeries
-            // 
-            this.rdTimeSeries.AutoSize = true;
-            this.rdTimeSeries.Checked = true;
-            this.rdTimeSeries.Location = new System.Drawing.Point(225, 82);
-            this.rdTimeSeries.Name = "rdTimeSeries";
-            this.rdTimeSeries.Size = new System.Drawing.Size(74, 17);
-            this.rdTimeSeries.TabIndex = 42;
-            this.rdTimeSeries.TabStop = true;
-            this.rdTimeSeries.Text = "time series";
-            this.rdTimeSeries.UseVisualStyleBackColor = true;
-            // 
-            // rdNotShuffle
-            // 
-            this.rdNotShuffle.AutoSize = true;
-            this.rdNotShuffle.Location = new System.Drawing.Point(147, 82);
-            this.rdNotShuffle.Name = "rdNotShuffle";
-            this.rdNotShuffle.Size = new System.Drawing.Size(74, 17);
-            this.rdNotShuffle.TabIndex = 41;
-            this.rdNotShuffle.Text = "not shuffle";
-            this.rdNotShuffle.UseVisualStyleBackColor = true;
-            // 
-            // rdShuffle
-            // 
-            this.rdShuffle.AutoSize = true;
-            this.rdShuffle.Location = new System.Drawing.Point(89, 82);
-            this.rdShuffle.Name = "rdShuffle";
-            this.rdShuffle.Size = new System.Drawing.Size(56, 17);
-            this.rdShuffle.TabIndex = 40;
-            this.rdShuffle.Text = "shuffle";
-            this.rdShuffle.UseVisualStyleBackColor = true;
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label23.ForeColor = System.Drawing.Color.Black;
-            this.label23.Location = new System.Drawing.Point(6, 84);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(81, 13);
-            this.label23.TabIndex = 39;
-            this.label23.Text = "Cross-validation";
             // 
             // tbxNumFold
             // 
@@ -513,6 +464,26 @@
             this.gbAnnSetting.TabIndex = 23;
             this.gbAnnSetting.TabStop = false;
             this.gbAnnSetting.Text = "ANN SETTING";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.ForeColor = System.Drawing.Color.Black;
+            this.label4.Location = new System.Drawing.Point(7, 21);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(82, 13);
+            this.label4.TabIndex = 39;
+            this.label4.Text = "Num input node";
+            // 
+            // tbxANNInputNode
+            // 
+            this.tbxANNInputNode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbxANNInputNode.ForeColor = System.Drawing.Color.Black;
+            this.tbxANNInputNode.Location = new System.Drawing.Point(99, 18);
+            this.tbxANNInputNode.Name = "tbxANNInputNode";
+            this.tbxANNInputNode.Size = new System.Drawing.Size(157, 20);
+            this.tbxANNInputNode.TabIndex = 38;
             // 
             // label17
             // 
@@ -1216,25 +1187,15 @@
             this.zg1.Size = new System.Drawing.Size(904, 414);
             this.zg1.TabIndex = 1;
             // 
-            // label4
+            // ckbProbEstimation
             // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.ForeColor = System.Drawing.Color.Black;
-            this.label4.Location = new System.Drawing.Point(7, 21);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(82, 13);
-            this.label4.TabIndex = 39;
-            this.label4.Text = "Num input node";
-            // 
-            // tbxANNInputNode
-            // 
-            this.tbxANNInputNode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbxANNInputNode.ForeColor = System.Drawing.Color.Black;
-            this.tbxANNInputNode.Location = new System.Drawing.Point(99, 18);
-            this.tbxANNInputNode.Name = "tbxANNInputNode";
-            this.tbxANNInputNode.Size = new System.Drawing.Size(157, 20);
-            this.tbxANNInputNode.TabIndex = 38;
+            this.ckbProbEstimation.AutoSize = true;
+            this.ckbProbEstimation.Location = new System.Drawing.Point(9, 82);
+            this.ckbProbEstimation.Name = "ckbProbEstimation";
+            this.ckbProbEstimation.Size = new System.Drawing.Size(125, 17);
+            this.ckbProbEstimation.TabIndex = 47;
+            this.ckbProbEstimation.Text = "Probability Estimation";
+            this.ckbProbEstimation.UseVisualStyleBackColor = true;
             // 
             // MainGUI
             // 
@@ -1360,10 +1321,6 @@
         private System.Windows.Forms.ComboBox cmbStockID;
         private System.Windows.Forms.TextBox tbxNumDayTrendPredict;
         private System.Windows.Forms.Label label22;
-        private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.RadioButton rdTimeSeries;
-        private System.Windows.Forms.RadioButton rdNotShuffle;
-        private System.Windows.Forms.RadioButton rdShuffle;
         private System.Windows.Forms.ComboBox cmbNumDaysPredicted;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbxC;
@@ -1376,6 +1333,7 @@
         private System.Windows.Forms.Label lblNumCluster;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbxANNInputNode;
+        private System.Windows.Forms.CheckBox ckbProbEstimation;
     }
 }
 
