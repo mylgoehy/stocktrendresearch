@@ -278,16 +278,18 @@ namespace GUI
             #endregion
 
             #region Dự đoán xu hướng
-            if (rdSVR.Checked)//Mô hình SVR
+            if (rdSVR.Checked)//Mô hình SVM
             {
                 iPos = tbxTestFilePath.Text.LastIndexOf('_');
                 string strMutualPath = tbxTestFilePath.Text.Remove(iPos + 1);
                 if (rdDefault.Checked)
                 {
                     string strPredictedFile = strMutualPath + "predict.txt";
+                    string strStatisticFile = strMutualPath + "statistic.txt";
                     Problem prob = Problem.Read(tbxTestFilePath.Text);
                     Model model = Model.Read(tbxModelFilePath.Text);
                     double dblPrecision = Prediction.Predict(prob, strPredictedFile, model, ckbProbEstimation.Checked);
+                    StatisticTrend2File(strPredictedFile, strStatisticFile);
                     StreamWriter writer = new StreamWriter(strMutualPath + "performance.txt");
                     writer.WriteLine(dblPrecision);
                     writer.Close();
@@ -305,12 +307,13 @@ namespace GUI
                     string[] strClusterResultFiles = new string[iNumCluster];
                     string[] strSVMModelFiles = new string[iNumCluster];
                     string[] strPredictedFiles = new string[iNumCluster];
-
+                    string[] strStatisticFiles = new string[iNumCluster];
                     for (int i = 0; i < iNumCluster; i++)
                     {
                         strClusterResultFiles[i] = strMutualPath + "testcluster" + (i + 1).ToString() + ".txt";
                         strSVMModelFiles[i] = strMutualPath + "model" + (i + 1).ToString() + ".txt";
                         strPredictedFiles[i] = strMutualPath + "predict" + (i + 1).ToString() + ".txt";
+                        strStatisticFiles[i] = strMutualPath + "statistic" + (i + 1).ToString() + ".txt";
                     }
                     // Thực hiện cluster
                     SampleDataBUS samDataBUS = new SampleDataBUS();
@@ -320,13 +323,20 @@ namespace GUI
                     samDataBUS.WriteIntoCluster(strClusterResultFiles, clustering.SampleData.ClusterIndices);
                     // Thực hiện test SVM
                     StreamWriter writer = new StreamWriter(strMutualPath + "performance.txt");
+                    double dblTotalPrecision = 0;
                     for (int i = 0; i < iNumCluster; i++)
                     {
                         Problem prob = Problem.Read(strClusterResultFiles[i]);
                         Model model = Model.Read(strSVMModelFiles[i]);
                         double dblPrecision = Prediction.Predict(prob, strPredictedFiles[i], model, ckbProbEstimation.Checked);
+                        StatisticTrend2File(strPredictedFiles[i], strStatisticFiles[i]);
                         writer.WriteLine("Cluster " + (i + 1).ToString() + ": " + dblPrecision);
+                        if (clustering.Clusters[i].NumSample > 0)
+                        {
+                            dblTotalPrecision += dblPrecision * clustering.Clusters[i].NumSample;
+                        }
                     }
+                    writer.WriteLine("All: " + dblTotalPrecision/samDataBUS.DataLines.Length);
                     writer.Close();
                 }
                 
@@ -935,8 +945,8 @@ namespace GUI
 
             for (int i = 0; i < strActual_Forecasts.Length -1; i++)
             {
-                actual_Forecasts[0][i] = double.Parse(Regex.Split(strActual_Forecasts[i], "\t")[0]);
-                actual_Forecasts[1][i] = double.Parse(Regex.Split(strActual_Forecasts[i], "\t")[1]);
+                actual_Forecasts[0][i] = double.Parse(Regex.Split(strActual_Forecasts[i], " ")[0]);
+                actual_Forecasts[1][i] = double.Parse(Regex.Split(strActual_Forecasts[i], " ")[1]);
             }
 
             //thông kê kết quả dự đoán so với thực tế
