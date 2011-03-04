@@ -105,7 +105,17 @@ namespace BUS.KMeans
                         if (SampleData.DistanceToClusters[i] == -1 || dblDist < SampleData.DistanceToClusters[i])
                         {
                             SampleData.DistanceToClusters[i] = dblDist;
-                            SampleData.ClusterIndices[i] = j;
+                            int iCurrentClusterIndex = SampleData.ClusterIndices[i];    // Chỉ số cluster mà mẫu i hiện tại thuộc về
+                            if (iCurrentClusterIndex != j)
+                            {
+                                HasClusterChanged = true;
+                                if (iCurrentClusterIndex != -1)
+                                {
+                                    --Clusters[iCurrentClusterIndex].NumSample;
+                                }
+                                ++Clusters[j].NumSample;
+                                SampleData.ClusterIndices[i] = j;
+                            }
                         }
                     }
                 }
@@ -188,7 +198,7 @@ namespace BUS.KMeans
             {
                 Clusters[i] = new Cluster();
                 buffer = reader.ReadLine();
-                Clusters[i].NumSample = Int32.Parse(buffer);
+                Clusters[i].NumSample = 0;
                 buffer = reader.ReadLine();
                 string[] parts = buffer.Split(' ');
                 Clusters[i].MeanSample = new double[parts.Length];
