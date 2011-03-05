@@ -60,25 +60,9 @@ namespace GUI
                 MessageBox.Show("Error: You must fill all required inputs!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            int iMeasureType = 0;
-            switch (cmbTrainingMeasure.SelectedItem.ToString())
-            {
-                case "MSE":
-                    iMeasureType = MSE;
-                    break;
-                case "NMSE":
-                    iMeasureType = NMSE;
-                    break;
-                case "RMSE":
-                    iMeasureType = RMSE;
-                    break;
-                case "Sign":
-                    iMeasureType = SIGN;
-                    break;
-            }
 
             #region Dự đoán xu hướng
-            if (rdSVR.Checked)//Mô hình SVR
+            if (rdSVM.Checked)//Mô hình SVR
             {
                 if (rdDefault.Checked)
                 {
@@ -231,7 +215,7 @@ namespace GUI
 
                 bpNetwork.Learn(trainSet, ANNParameterBUS.MaxEpoch);
                                 
-                // Lưu lại modle
+                // Lưu lại model
                 Stream stream = File.Open(strModelFile, FileMode.Create);
                 BinaryFormatter bformatter = new BinaryFormatter();           
                 bformatter.Serialize(stream, bpNetwork);
@@ -267,7 +251,6 @@ namespace GUI
                 return;
             }
 
-            #region Phần chung
             //Ma trận với dòng thứ 1 chứa các giá trị thực và dòng thứ 2 chứa các giá trị dự đoán.
             double[][] dblActual_Forecast = new double[2][];
             dblActual_Forecast[0] = null;
@@ -275,10 +258,8 @@ namespace GUI
 
             int iPos = tbxTestFilePath.Text.LastIndexOf('\\');
             string strFolderPath = tbxTestFilePath.Text.Remove(iPos+1);
-            #endregion
 
-            #region Dự đoán xu hướng
-            if (rdSVR.Checked)//Mô hình SVM
+            if (rdSVM.Checked)//Mô hình SVM
             {
                 iPos = tbxTestFilePath.Text.LastIndexOf('_');
                 string strMutualPath = tbxTestFilePath.Text.Remove(iPos + 1);
@@ -383,15 +364,8 @@ namespace GUI
                 //dblActual_Forecast = annPredict.MainProcessTrend();
                 //annPredict.WritePredictTrend(strPredictedFile);
             }
-            #endregion
 
-            #region Phần chung
-            //if (rdANN.Checked)
-            //{
-            //    HandleMeasure(strFolderPath + "PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
-            //}
-            MessageBox.Show("Finish!");
-            #endregion            
+            MessageBox.Show("Finish!");           
         }
 
         private void btnOK_Click(object sender, EventArgs e)
@@ -766,7 +740,7 @@ namespace GUI
             strArgs[0] = @"TestPrice.txt";
             strArgs[1] = @"AppModel\SVRPrice\" + cmbStockID.SelectedItem.ToString() + "_1_model.txt";
             strArgs[2] = "price_predicted.txt";
-            dblActual_Forecast = svm_predict.MainProcess(strArgs);
+            //dblActual_Forecast = svm_predict.MainProcess(strArgs);
             tbxSVMPrice.Text = Math.Round(dblActual_Forecast[1][0], 2).ToString();
             #endregion
             #region Trend
@@ -855,7 +829,7 @@ namespace GUI
 
                 strArgs[0] = @"TestTrend.txt";
                 strArgs[2] = "trend_predicted.txt";
-                dblActual_Forecast = svm_predict.MainProcess(strArgs);
+                //dblActual_Forecast = svm_predict.MainProcess(strArgs);
                 tbxSVMTrend.Text = dblActual_Forecast[1][0] > 0 ? "Tăng" : "Giảm";
 
                 #endregion
@@ -900,18 +874,6 @@ namespace GUI
         private void dtpTo_ValueChanged(object sender, EventArgs e)
         {
             CreateGraph(zg1);
-        }
-
-        private void rdPricePrediction_CheckedChanged(object sender, EventArgs e)
-        {
-            if(rdPricePrediction.Checked)
-            {
-                btnStepTrainAndTest.Enabled = true;
-            }
-            else
-            {
-                btnStepTrainAndTest.Enabled = false;
-            }
         }
 
         private void cmbModelSelection_SelectedIndexChanged(object sender, EventArgs e)
