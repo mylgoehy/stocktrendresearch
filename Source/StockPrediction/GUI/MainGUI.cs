@@ -449,6 +449,8 @@ namespace GUI
             cmbActivationFunc.SelectedIndex = 0;
             lblNumCluster.Enabled = false;
             nmNumCluster.Enabled = false;
+            cmbExperimentMode.SelectedIndex = 0;
+
             //Khởi gán tham số ANN
             tbxANNInputNode.Text = 10.ToString();
             tbxANNHiddenNode.Text = 4.ToString();
@@ -1119,6 +1121,42 @@ namespace GUI
         {
             lblNumCluster.Enabled = rdSOMSVM.Checked;
             nmNumCluster.Enabled = rdSOMSVM.Checked;
+        }
+
+        private void EnableStepByStepTrainAndTest(bool isEnable)
+        {
+            btnPreprocess.Enabled = isEnable;
+            btnTrain.Enabled = isEnable;
+            btnTest.Enabled = isEnable;
+
+            btnBrowser.Enabled = isEnable; ;
+            btnTestBrowser.Enabled = isEnable;
+            btnTrainBrowser.Enabled = isEnable;
+            btnModelBrowser.Enabled = isEnable;
+
+            tbxCsvFilePath.Enabled = isEnable;
+            tbxTrainFilePath.Enabled = isEnable;
+            tbxTestFilePath.Enabled = isEnable;
+            tbxModelFilePath.Enabled = isEnable;
+
+            lblInputFile.Enabled = isEnable;
+            lblTestFile.Enabled = isEnable;
+            lblModelFile.Enabled = isEnable;
+            lblTrainingFile.Enabled = isEnable;
+        }
+
+        private void cmbExperimentMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbExperimentMode.SelectedItem.ToString() == "Batch")
+            {
+                gbBatchTrainTest.Enabled = true;
+                EnableStepByStepTrainAndTest(false);
+            }
+            else
+            {
+                gbBatchTrainTest.Enabled = false;
+                EnableStepByStepTrainAndTest(true);
+            }
         }
     }
 }

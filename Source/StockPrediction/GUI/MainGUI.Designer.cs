@@ -33,15 +33,15 @@
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabExperiment = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.label9 = new System.Windows.Forms.Label();
+            this.lblModelFile = new System.Windows.Forms.Label();
             this.btnModelBrowser = new System.Windows.Forms.Button();
             this.tbxModelFilePath = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
+            this.lblTestFile = new System.Windows.Forms.Label();
             this.btnTestBrowser = new System.Windows.Forms.Button();
             this.tbxTestFilePath = new System.Windows.Forms.TextBox();
             this.btnTest = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.lblTrainingFile = new System.Windows.Forms.Label();
             this.btnTrainBrowser = new System.Windows.Forms.Button();
             this.gbSVRSetting = new System.Windows.Forms.GroupBox();
             this.ckbProbEstimation = new System.Windows.Forms.CheckBox();
@@ -160,7 +160,9 @@
             // tabExperiment
             // 
             this.tabExperiment.BackColor = System.Drawing.Color.Transparent;
+            this.tabExperiment.Controls.Add(this.lblExperimentMode);
             this.tabExperiment.Controls.Add(this.gbBatchTrainTest);
+            this.tabExperiment.Controls.Add(this.cmbExperimentMode);
             this.tabExperiment.Controls.Add(this.groupBox3);
             this.tabExperiment.Controls.Add(this.groupBox2);
             this.tabExperiment.Controls.Add(this.groupBox5);
@@ -176,10 +178,10 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.label9);
+            this.groupBox3.Controls.Add(this.lblModelFile);
             this.groupBox3.Controls.Add(this.btnModelBrowser);
             this.groupBox3.Controls.Add(this.tbxModelFilePath);
-            this.groupBox3.Controls.Add(this.label8);
+            this.groupBox3.Controls.Add(this.lblTestFile);
             this.groupBox3.Controls.Add(this.btnTestBrowser);
             this.groupBox3.Controls.Add(this.tbxTestFilePath);
             this.groupBox3.Controls.Add(this.btnTest);
@@ -192,16 +194,16 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "3. TEST";
             // 
-            // label9
+            // lblModelFile
             // 
-            this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.ForeColor = System.Drawing.Color.Black;
-            this.label9.Location = new System.Drawing.Point(6, 79);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(52, 13);
-            this.label9.TabIndex = 34;
-            this.label9.Text = "Model file";
+            this.lblModelFile.AutoSize = true;
+            this.lblModelFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblModelFile.ForeColor = System.Drawing.Color.Black;
+            this.lblModelFile.Location = new System.Drawing.Point(6, 79);
+            this.lblModelFile.Name = "lblModelFile";
+            this.lblModelFile.Size = new System.Drawing.Size(52, 13);
+            this.lblModelFile.TabIndex = 34;
+            this.lblModelFile.Text = "Model file";
             // 
             // btnModelBrowser
             // 
@@ -224,16 +226,16 @@
             this.tbxModelFilePath.Size = new System.Drawing.Size(192, 20);
             this.tbxModelFilePath.TabIndex = 32;
             // 
-            // label8
+            // lblTestFile
             // 
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.ForeColor = System.Drawing.Color.Black;
-            this.label8.Location = new System.Drawing.Point(6, 37);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(44, 13);
-            this.label8.TabIndex = 31;
-            this.label8.Text = "Test file";
+            this.lblTestFile.AutoSize = true;
+            this.lblTestFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTestFile.ForeColor = System.Drawing.Color.Black;
+            this.lblTestFile.Location = new System.Drawing.Point(6, 37);
+            this.lblTestFile.Name = "lblTestFile";
+            this.lblTestFile.Size = new System.Drawing.Size(44, 13);
+            this.lblTestFile.TabIndex = 31;
+            this.lblTestFile.Text = "Test file";
             // 
             // btnTestBrowser
             // 
@@ -272,7 +274,7 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.lblTrainingFile);
             this.groupBox2.Controls.Add(this.btnTrainBrowser);
             this.groupBox2.Controls.Add(this.gbSVRSetting);
             this.groupBox2.Controls.Add(this.tbxTrainFilePath);
@@ -287,16 +289,16 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "2. TRAINING";
             // 
-            // label7
+            // lblTrainingFile
             // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.ForeColor = System.Drawing.Color.Black;
-            this.label7.Location = new System.Drawing.Point(13, 35);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(78, 13);
-            this.label7.TabIndex = 28;
-            this.label7.Text = "Training set file";
+            this.lblTrainingFile.AutoSize = true;
+            this.lblTrainingFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTrainingFile.ForeColor = System.Drawing.Color.Black;
+            this.lblTrainingFile.Location = new System.Drawing.Point(13, 35);
+            this.lblTrainingFile.Name = "lblTrainingFile";
+            this.lblTrainingFile.Size = new System.Drawing.Size(78, 13);
+            this.lblTrainingFile.TabIndex = 28;
+            this.lblTrainingFile.Text = "Training set file";
             // 
             // btnTrainBrowser
             // 
@@ -814,8 +816,6 @@
             // 
             // GBModelChoice
             // 
-            this.GBModelChoice.Controls.Add(this.lblExperimentMode);
-            this.GBModelChoice.Controls.Add(this.cmbExperimentMode);
             this.GBModelChoice.Controls.Add(this.rdSOMSVM);
             this.GBModelChoice.Controls.Add(this.nmNumCluster);
             this.GBModelChoice.Controls.Add(this.cmbNumDaysPredicted);
@@ -826,9 +826,9 @@
             this.GBModelChoice.Controls.Add(this.rdKSVMeans);
             this.GBModelChoice.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GBModelChoice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.GBModelChoice.Location = new System.Drawing.Point(14, 16);
+            this.GBModelChoice.Location = new System.Drawing.Point(14, 57);
             this.GBModelChoice.Name = "GBModelChoice";
-            this.GBModelChoice.Size = new System.Drawing.Size(356, 121);
+            this.GBModelChoice.Size = new System.Drawing.Size(356, 87);
             this.GBModelChoice.TabIndex = 19;
             this.GBModelChoice.TabStop = false;
             this.GBModelChoice.Text = "MODEL CHOICE";
@@ -848,6 +848,7 @@
             // 
             // nmNumCluster
             // 
+            this.nmNumCluster.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.nmNumCluster.Location = new System.Drawing.Point(289, 54);
             this.nmNumCluster.Minimum = new decimal(new int[] {
             2,
@@ -873,9 +874,9 @@
             "5",
             "10",
             "30"});
-            this.cmbNumDaysPredicted.Location = new System.Drawing.Point(115, 54);
+            this.cmbNumDaysPredicted.Location = new System.Drawing.Point(108, 54);
             this.cmbNumDaysPredicted.Name = "cmbNumDaysPredicted";
-            this.cmbNumDaysPredicted.Size = new System.Drawing.Size(86, 21);
+            this.cmbNumDaysPredicted.Size = new System.Drawing.Size(93, 21);
             this.cmbNumDaysPredicted.TabIndex = 46;
             // 
             // lblNumCluster
@@ -919,7 +920,7 @@
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label10.ForeColor = System.Drawing.Color.Black;
-            this.label10.Location = new System.Drawing.Point(13, 58);
+            this.label10.Location = new System.Drawing.Point(12, 58);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(96, 13);
             this.label10.TabIndex = 40;
@@ -1167,7 +1168,7 @@
             // 
             this.gbBatchTrainTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbBatchTrainTest.ForeColor = System.Drawing.Color.Purple;
-            this.gbBatchTrainTest.Location = new System.Drawing.Point(392, 16);
+            this.gbBatchTrainTest.Location = new System.Drawing.Point(392, 21);
             this.gbBatchTrainTest.Name = "gbBatchTrainTest";
             this.gbBatchTrainTest.Size = new System.Drawing.Size(506, 121);
             this.gbBatchTrainTest.TabIndex = 38;
@@ -1177,21 +1178,23 @@
             // cmbExperimentMode
             // 
             this.cmbExperimentMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbExperimentMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmbExperimentMode.FormattingEnabled = true;
             this.cmbExperimentMode.Items.AddRange(new object[] {
             "Step-by-step",
             "Batch"});
-            this.cmbExperimentMode.Location = new System.Drawing.Point(115, 91);
+            this.cmbExperimentMode.Location = new System.Drawing.Point(122, 21);
             this.cmbExperimentMode.Name = "cmbExperimentMode";
-            this.cmbExperimentMode.Size = new System.Drawing.Size(86, 21);
+            this.cmbExperimentMode.Size = new System.Drawing.Size(175, 21);
             this.cmbExperimentMode.TabIndex = 47;
+            this.cmbExperimentMode.SelectedIndexChanged += new System.EventHandler(this.cmbExperimentMode_SelectedIndexChanged);
             // 
             // lblExperimentMode
             // 
             this.lblExperimentMode.AutoSize = true;
             this.lblExperimentMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblExperimentMode.ForeColor = System.Drawing.Color.Black;
-            this.lblExperimentMode.Location = new System.Drawing.Point(16, 94);
+            this.lblExperimentMode.Location = new System.Drawing.Point(27, 24);
             this.lblExperimentMode.Name = "lblExperimentMode";
             this.lblExperimentMode.Size = new System.Drawing.Size(89, 13);
             this.lblExperimentMode.TabIndex = 48;
@@ -1222,6 +1225,7 @@
             this.Load += new System.EventHandler(this.MainGUI_Load);
             this.tabMain.ResumeLayout(false);
             this.tabExperiment.ResumeLayout(false);
+            this.tabExperiment.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -1272,15 +1276,15 @@
         private System.Windows.Forms.TextBox tbxTrainingRatio;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label lblModelFile;
         private System.Windows.Forms.Button btnModelBrowser;
         private System.Windows.Forms.TextBox tbxModelFilePath;
-        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label lblTestFile;
         private System.Windows.Forms.Button btnTestBrowser;
         private System.Windows.Forms.TextBox tbxTestFilePath;
         private System.Windows.Forms.Button btnTest;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label lblTrainingFile;
         private System.Windows.Forms.Button btnTrainBrowser;
         private System.Windows.Forms.TextBox tbxTrainFilePath;
         private System.Windows.Forms.Button btnTrain;
