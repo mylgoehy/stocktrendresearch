@@ -42,7 +42,6 @@
             this.label16 = new System.Windows.Forms.Label();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.cmbNumDaysPredicted = new System.Windows.Forms.ComboBox();
-            this.cmbTrainingMeasure = new System.Windows.Forms.ComboBox();
             this.gbSVRSetting = new System.Windows.Forms.GroupBox();
             this.ckbProbEstimation = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -53,9 +52,13 @@
             this.label21 = new System.Windows.Forms.Label();
             this.cmbModelSelection = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.lblTrainingMeasure = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.gbAnnSetting = new System.Windows.Forms.GroupBox();
+            this.rdSine = new System.Windows.Forms.RadioButton();
+            this.rdTanh = new System.Windows.Forms.RadioButton();
+            this.rdLogarithm = new System.Windows.Forms.RadioButton();
+            this.rdSigmoid = new System.Windows.Forms.RadioButton();
+            this.label15 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.tbxANNInputNode = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
@@ -94,11 +97,8 @@
             this.btnTrainBrowser = new System.Windows.Forms.Button();
             this.tbxTrainFilePath = new System.Windows.Forms.TextBox();
             this.btnTrain = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.rdTrendPrediction = new System.Windows.Forms.RadioButton();
-            this.rdPricePrediction = new System.Windows.Forms.RadioButton();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.rdSVR = new System.Windows.Forms.RadioButton();
+            this.rdSVM = new System.Windows.Forms.RadioButton();
             this.rdANN = new System.Windows.Forms.RadioButton();
             this.tabApplication = new System.Windows.Forms.TabPage();
             this.tbxNumDayTrendPredict = new System.Windows.Forms.TextBox();
@@ -122,11 +122,8 @@
             this.dtpFrom = new System.Windows.Forms.DateTimePicker();
             this.cmbStockID = new System.Windows.Forms.ComboBox();
             this.zg1 = new ZedGraph.ZedGraphControl();
-            this.label15 = new System.Windows.Forms.Label();
-            this.rdTanh = new System.Windows.Forms.RadioButton();
-            this.rdLogarithm = new System.Windows.Forms.RadioButton();
-            this.rdSigmoid = new System.Windows.Forms.RadioButton();
-            this.rdSine = new System.Windows.Forms.RadioButton();
+            this.lblTrainingMeasure = new System.Windows.Forms.Label();
+            this.cmbTrainingMeasure = new System.Windows.Forms.ComboBox();
             this.tabOption.SuspendLayout();
             this.tabExperiment.SuspendLayout();
             this.groupBox9.SuspendLayout();
@@ -138,7 +135,6 @@
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).BeginInit();
-            this.groupBox1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.tabApplication.SuspendLayout();
             this.gbResult.SuspendLayout();
@@ -172,7 +168,6 @@
             this.tabExperiment.Controls.Add(this.groupBox9);
             this.tabExperiment.Controls.Add(this.groupBox7);
             this.tabExperiment.Controls.Add(this.groupBox6);
-            this.tabExperiment.Controls.Add(this.groupBox1);
             this.tabExperiment.Controls.Add(this.groupBox4);
             this.tabExperiment.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabExperiment.Location = new System.Drawing.Point(4, 22);
@@ -312,22 +307,6 @@
             this.cmbNumDaysPredicted.Size = new System.Drawing.Size(141, 21);
             this.cmbNumDaysPredicted.TabIndex = 46;
             // 
-            // cmbTrainingMeasure
-            // 
-            this.cmbTrainingMeasure.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbTrainingMeasure.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cmbTrainingMeasure.ForeColor = System.Drawing.Color.Black;
-            this.cmbTrainingMeasure.FormattingEnabled = true;
-            this.cmbTrainingMeasure.Items.AddRange(new object[] {
-            "MSE",
-            "NMSE",
-            "RMSE",
-            "Sign"});
-            this.cmbTrainingMeasure.Location = new System.Drawing.Point(117, 108);
-            this.cmbTrainingMeasure.Name = "cmbTrainingMeasure";
-            this.cmbTrainingMeasure.Size = new System.Drawing.Size(140, 21);
-            this.cmbTrainingMeasure.TabIndex = 31;
-            // 
             // gbSVRSetting
             // 
             this.gbSVRSetting.Controls.Add(this.ckbProbEstimation);
@@ -437,17 +416,6 @@
             this.label6.TabIndex = 19;
             this.label6.Text = "Model selection";
             // 
-            // lblTrainingMeasure
-            // 
-            this.lblTrainingMeasure.AutoSize = true;
-            this.lblTrainingMeasure.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTrainingMeasure.ForeColor = System.Drawing.Color.Black;
-            this.lblTrainingMeasure.Location = new System.Drawing.Point(8, 112);
-            this.lblTrainingMeasure.Name = "lblTrainingMeasure";
-            this.lblTrainingMeasure.Size = new System.Drawing.Size(89, 13);
-            this.lblTrainingMeasure.TabIndex = 32;
-            this.lblTrainingMeasure.Text = "Training Measure";
-            // 
             // label10
             // 
             this.label10.AutoSize = true;
@@ -484,6 +452,69 @@
             this.gbAnnSetting.TabIndex = 23;
             this.gbAnnSetting.TabStop = false;
             this.gbAnnSetting.Text = "ANN SETTING";
+            // 
+            // rdSine
+            // 
+            this.rdSine.AutoSize = true;
+            this.rdSine.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdSine.ForeColor = System.Drawing.Color.Black;
+            this.rdSine.Location = new System.Drawing.Point(227, 214);
+            this.rdSine.Name = "rdSine";
+            this.rdSine.Size = new System.Drawing.Size(46, 17);
+            this.rdSine.TabIndex = 44;
+            this.rdSine.TabStop = true;
+            this.rdSine.Text = "Sine";
+            this.rdSine.UseVisualStyleBackColor = true;
+            // 
+            // rdTanh
+            // 
+            this.rdTanh.AutoSize = true;
+            this.rdTanh.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdTanh.ForeColor = System.Drawing.Color.Black;
+            this.rdTanh.Location = new System.Drawing.Point(167, 214);
+            this.rdTanh.Name = "rdTanh";
+            this.rdTanh.Size = new System.Drawing.Size(50, 17);
+            this.rdTanh.TabIndex = 43;
+            this.rdTanh.TabStop = true;
+            this.rdTanh.Text = "Tanh";
+            this.rdTanh.UseVisualStyleBackColor = true;
+            // 
+            // rdLogarithm
+            // 
+            this.rdLogarithm.AutoSize = true;
+            this.rdLogarithm.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdLogarithm.ForeColor = System.Drawing.Color.Black;
+            this.rdLogarithm.Location = new System.Drawing.Point(84, 214);
+            this.rdLogarithm.Name = "rdLogarithm";
+            this.rdLogarithm.Size = new System.Drawing.Size(71, 17);
+            this.rdLogarithm.TabIndex = 42;
+            this.rdLogarithm.TabStop = true;
+            this.rdLogarithm.Text = "Logarithm";
+            this.rdLogarithm.UseVisualStyleBackColor = true;
+            // 
+            // rdSigmoid
+            // 
+            this.rdSigmoid.AutoSize = true;
+            this.rdSigmoid.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdSigmoid.ForeColor = System.Drawing.Color.Black;
+            this.rdSigmoid.Location = new System.Drawing.Point(8, 214);
+            this.rdSigmoid.Name = "rdSigmoid";
+            this.rdSigmoid.Size = new System.Drawing.Size(62, 17);
+            this.rdSigmoid.TabIndex = 41;
+            this.rdSigmoid.TabStop = true;
+            this.rdSigmoid.Text = "Sigmoid";
+            this.rdSigmoid.UseVisualStyleBackColor = true;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.ForeColor = System.Drawing.Color.Black;
+            this.label15.Location = new System.Drawing.Point(6, 193);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(98, 13);
+            this.label15.TabIndex = 40;
+            this.label15.Text = "Activation Function";
             // 
             // label4
             // 
@@ -909,67 +940,30 @@
             this.btnTrain.UseVisualStyleBackColor = true;
             this.btnTrain.Click += new System.EventHandler(this.btnTrain_Click);
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.rdTrendPrediction);
-            this.groupBox1.Controls.Add(this.rdPricePrediction);
-            this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.groupBox1.Location = new System.Drawing.Point(331, 11);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(209, 92);
-            this.groupBox1.TabIndex = 18;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "PREDICTION TYPE";
-            // 
-            // rdTrendPrediction
-            // 
-            this.rdTrendPrediction.AutoSize = true;
-            this.rdTrendPrediction.Location = new System.Drawing.Point(38, 57);
-            this.rdTrendPrediction.Name = "rdTrendPrediction";
-            this.rdTrendPrediction.Size = new System.Drawing.Size(103, 17);
-            this.rdTrendPrediction.TabIndex = 1;
-            this.rdTrendPrediction.TabStop = true;
-            this.rdTrendPrediction.Text = "Trend Prediction";
-            this.rdTrendPrediction.UseVisualStyleBackColor = true;
-            // 
-            // rdPricePrediction
-            // 
-            this.rdPricePrediction.AutoSize = true;
-            this.rdPricePrediction.Checked = true;
-            this.rdPricePrediction.Location = new System.Drawing.Point(38, 30);
-            this.rdPricePrediction.Name = "rdPricePrediction";
-            this.rdPricePrediction.Size = new System.Drawing.Size(99, 17);
-            this.rdPricePrediction.TabIndex = 0;
-            this.rdPricePrediction.TabStop = true;
-            this.rdPricePrediction.Text = "Price Prediction";
-            this.rdPricePrediction.UseVisualStyleBackColor = true;
-            this.rdPricePrediction.CheckedChanged += new System.EventHandler(this.rdPricePrediction_CheckedChanged);
-            // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.rdSVR);
+            this.groupBox4.Controls.Add(this.rdSVM);
             this.groupBox4.Controls.Add(this.rdANN);
             this.groupBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.groupBox4.Location = new System.Drawing.Point(558, 11);
+            this.groupBox4.Location = new System.Drawing.Point(331, 15);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(183, 92);
             this.groupBox4.TabIndex = 19;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "MODEL TYPE";
             // 
-            // rdSVR
+            // rdSVM
             // 
-            this.rdSVR.AutoSize = true;
-            this.rdSVR.Checked = true;
-            this.rdSVR.Location = new System.Drawing.Point(38, 57);
-            this.rdSVR.Name = "rdSVR";
-            this.rdSVR.Size = new System.Drawing.Size(48, 17);
-            this.rdSVR.TabIndex = 1;
-            this.rdSVR.TabStop = true;
-            this.rdSVR.Text = "SVM";
-            this.rdSVR.UseVisualStyleBackColor = true;
+            this.rdSVM.AutoSize = true;
+            this.rdSVM.Checked = true;
+            this.rdSVM.Location = new System.Drawing.Point(38, 57);
+            this.rdSVM.Name = "rdSVM";
+            this.rdSVM.Size = new System.Drawing.Size(48, 17);
+            this.rdSVM.TabIndex = 1;
+            this.rdSVM.TabStop = true;
+            this.rdSVM.Text = "SVM";
+            this.rdSVM.UseVisualStyleBackColor = true;
             // 
             // rdANN
             // 
@@ -1207,68 +1201,32 @@
             this.zg1.Size = new System.Drawing.Size(904, 414);
             this.zg1.TabIndex = 1;
             // 
-            // label15
+            // lblTrainingMeasure
             // 
-            this.label15.AutoSize = true;
-            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.ForeColor = System.Drawing.Color.Black;
-            this.label15.Location = new System.Drawing.Point(6, 193);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(98, 13);
-            this.label15.TabIndex = 40;
-            this.label15.Text = "Activation Function";
+            this.lblTrainingMeasure.AutoSize = true;
+            this.lblTrainingMeasure.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTrainingMeasure.ForeColor = System.Drawing.Color.Black;
+            this.lblTrainingMeasure.Location = new System.Drawing.Point(8, 112);
+            this.lblTrainingMeasure.Name = "lblTrainingMeasure";
+            this.lblTrainingMeasure.Size = new System.Drawing.Size(89, 13);
+            this.lblTrainingMeasure.TabIndex = 32;
+            this.lblTrainingMeasure.Text = "Training Measure";
             // 
-            // rdTanh
+            // cmbTrainingMeasure
             // 
-            this.rdTanh.AutoSize = true;
-            this.rdTanh.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdTanh.ForeColor = System.Drawing.Color.Black;
-            this.rdTanh.Location = new System.Drawing.Point(167, 214);
-            this.rdTanh.Name = "rdTanh";
-            this.rdTanh.Size = new System.Drawing.Size(50, 17);
-            this.rdTanh.TabIndex = 43;
-            this.rdTanh.TabStop = true;
-            this.rdTanh.Text = "Tanh";
-            this.rdTanh.UseVisualStyleBackColor = true;
-            // 
-            // rdLogarithm
-            // 
-            this.rdLogarithm.AutoSize = true;
-            this.rdLogarithm.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdLogarithm.ForeColor = System.Drawing.Color.Black;
-            this.rdLogarithm.Location = new System.Drawing.Point(84, 214);
-            this.rdLogarithm.Name = "rdLogarithm";
-            this.rdLogarithm.Size = new System.Drawing.Size(71, 17);
-            this.rdLogarithm.TabIndex = 42;
-            this.rdLogarithm.TabStop = true;
-            this.rdLogarithm.Text = "Logarithm";
-            this.rdLogarithm.UseVisualStyleBackColor = true;
-            // 
-            // rdSigmoid
-            // 
-            this.rdSigmoid.AutoSize = true;
-            this.rdSigmoid.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdSigmoid.ForeColor = System.Drawing.Color.Black;
-            this.rdSigmoid.Location = new System.Drawing.Point(8, 214);
-            this.rdSigmoid.Name = "rdSigmoid";
-            this.rdSigmoid.Size = new System.Drawing.Size(62, 17);
-            this.rdSigmoid.TabIndex = 41;
-            this.rdSigmoid.TabStop = true;
-            this.rdSigmoid.Text = "Sigmoid";
-            this.rdSigmoid.UseVisualStyleBackColor = true;
-            // 
-            // rdSine
-            // 
-            this.rdSine.AutoSize = true;
-            this.rdSine.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdSine.ForeColor = System.Drawing.Color.Black;
-            this.rdSine.Location = new System.Drawing.Point(227, 214);
-            this.rdSine.Name = "rdSine";
-            this.rdSine.Size = new System.Drawing.Size(46, 17);
-            this.rdSine.TabIndex = 44;
-            this.rdSine.TabStop = true;
-            this.rdSine.Text = "Sine";
-            this.rdSine.UseVisualStyleBackColor = true;
+            this.cmbTrainingMeasure.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTrainingMeasure.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbTrainingMeasure.ForeColor = System.Drawing.Color.Black;
+            this.cmbTrainingMeasure.FormattingEnabled = true;
+            this.cmbTrainingMeasure.Items.AddRange(new object[] {
+            "MSE",
+            "NMSE",
+            "RMSE",
+            "Sign"});
+            this.cmbTrainingMeasure.Location = new System.Drawing.Point(117, 108);
+            this.cmbTrainingMeasure.Name = "cmbTrainingMeasure";
+            this.cmbTrainingMeasure.Size = new System.Drawing.Size(140, 21);
+            this.cmbTrainingMeasure.TabIndex = 31;
             // 
             // MainGUI
             // 
@@ -1300,8 +1258,6 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.tabApplication.ResumeLayout(false);
@@ -1327,13 +1283,11 @@
         private System.Windows.Forms.TextBox tbxTrainingSize;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.GroupBox groupBox7;
-        private System.Windows.Forms.ComboBox cmbTrainingMeasure;
         private System.Windows.Forms.GroupBox gbSVRSetting;
         private System.Windows.Forms.TextBox tbxNumFold;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.ComboBox cmbModelSelection;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label lblTrainingMeasure;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.GroupBox gbAnnSetting;
         private System.Windows.Forms.Label label17;
@@ -1367,11 +1321,8 @@
         private System.Windows.Forms.Button btnTrainBrowser;
         private System.Windows.Forms.TextBox tbxTrainFilePath;
         private System.Windows.Forms.Button btnTrain;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.RadioButton rdTrendPrediction;
-        private System.Windows.Forms.RadioButton rdPricePrediction;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.RadioButton rdSVR;
+        private System.Windows.Forms.RadioButton rdSVM;
         private System.Windows.Forms.RadioButton rdANN;
         private ZedGraph.ZedGraphControl zg1;
         private System.Windows.Forms.GroupBox gbResult;
@@ -1412,6 +1363,8 @@
         private System.Windows.Forms.RadioButton rdSigmoid;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.RadioButton rdSine;
+        private System.Windows.Forms.ComboBox cmbTrainingMeasure;
+        private System.Windows.Forms.Label lblTrainingMeasure;
     }
 }
 
