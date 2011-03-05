@@ -53,6 +53,262 @@ namespace GUI
             writer.Close();
         }
 
+        private void TrainSVM()
+        {
+            int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
+            string strMutualPath = tbxTrainFilePath.Text.Remove(iPos + 1);
+            string strModelFile = strMutualPath + "model.txt";
+            Problem prob = Problem.Read(tbxTrainFilePath.Text);
+            Parameter param = new Parameter();
+
+            if (cmbModelSelection.SelectedItem.ToString() == "Grid search")
+            {
+                string strLogFile = strMutualPath + "Grid.txt";
+                double dblC;
+                double dblGamma;
+                ParameterSelection paramSel = new ParameterSelection();
+                paramSel.NFOLD = Int32.Parse(tbxNumFold.Text);
+                paramSel.Grid(prob, param, strLogFile, out dblC, out dblGamma);
+                param.C = dblC;
+                param.Gamma = dblGamma;
+                param.Probability = ckbProbEstimation.Checked;
+                Model model = Training.Train(prob, param);
+                Model.Write(strModelFile, model);
+            }
+            else if (cmbModelSelection.SelectedItem.ToString() == "Use default values")
+            {
+                if (tbxC.Text == "" || tbxGamma.Text == "")
+                {
+                    MessageBox.Show("Please fill in parameters!");
+                    return;
+                }
+                param.C = double.Parse(tbxC.Text);
+                param.Gamma = double.Parse(tbxGamma.Text);
+                param.Probability = ckbProbEstimation.Checked;
+                Model model = Training.Train(prob, param);
+                Model.Write(strModelFile, model);
+            }
+        }
+
+        private void TrainKSVMeans()
+        {
+            int iNumCluster = (int)nmNumCluster.Value;
+            int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
+            string strMutualPath = tbxTrainFilePath.Text.Remove(iPos + 1);
+            string strClusterModelFile = strMutualPath + "_clusterModel.txt";
+            string[] strClusterResultFiles = new string[iNumCluster];
+            string[] strSVMModelFiles = new string[iNumCluster];
+
+            for (int i = 0; i < iNumCluster; i++)
+            {
+                strClusterResultFiles[i] = strMutualPath + "cluster" + (i + 1).ToString() + ".txt";
+                strSVMModelFiles[i] = strMutualPath + "model" + (i + 1).ToString() + ".txt";
+            }
+            // Thực hiện cluster
+            SampleDataBUS samDataBUS = new SampleDataBUS();
+            samDataBUS.Read(tbxTrainFilePath.Text);
+            Clustering clustering = new Clustering(iNumCluster, samDataBUS.Samples, DistanceType.Manhattan);
+            clustering.Run(strClusterModelFile, false);
+            samDataBUS.WriteIntoCluster(strClusterResultFiles, clustering.SampleData.ClusterIndices);
+            // Thực hiện train SVM
+            for (int i = 0; i < iNumCluster; i++)
+            {
+                Problem prob = Problem.Read(strClusterResultFiles[i]);
+                Parameter param = new Parameter();
+
+                if (cmbModelSelection.SelectedItem.ToString() == "Grid search")
+                {
+                    string strLogFile = strMutualPath + "GridCluster" + (i + 1).ToString() + ".txt";
+                    double dblC;
+                    double dblGamma;
+                    ParameterSelection paramSel = new ParameterSelection();
+                    paramSel.NFOLD = Int32.Parse(tbxNumFold.Text);
+                    paramSel.Grid(prob, param, strLogFile, out dblC, out dblGamma);
+                    param.C = dblC;
+                    param.Gamma = dblGamma;
+                    param.Probability = ckbProbEstimation.Checked;
+                    Model model = Training.Train(prob, param);
+                    Model.Write(strSVMModelFiles[i], model);
+                }
+                else if (cmbModelSelection.SelectedItem.ToString() == "Use default values")
+                {
+                    if (tbxC.Text == "" || tbxGamma.Text == "")
+                    {
+                        MessageBox.Show("Please fill in parameters!");
+                        return;
+                    }
+                    param.C = double.Parse(tbxC.Text);
+                    param.Gamma = double.Parse(tbxGamma.Text);
+                    param.Probability = ckbProbEstimation.Checked;
+                    Model model = Training.Train(prob, param);
+                    Model.Write(strSVMModelFiles[i], model);
+                }
+            }
+        }
+
+        private void TrainANN()
+        {
+            int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
+            string strModelFile = tbxTrainFilePath.Text.Remove(iPos + 1) + "ANNmodel.txt";
+
+            //khởi tạo các tham số cho mạng
+            ANNParameterBUS.InputNode = int.Parse(tbxANNInputNode.Text);
+            ANNParameterBUS.HiddenNode = int.Parse(tbxANNHiddenNode.Text);
+            ANNParameterBUS.OutputNode = 3;
+            ANNParameterBUS.MaxEpoch = int.Parse(tbxMaxLoops.Text);
+            ANNParameterBUS.LearningRate = double.Parse(tbxLearningRate.Text);
+            ANNParameterBUS.Momentum = double.Parse(tbxMomentum.Text);
+            ANNParameterBUS.Bias = double.Parse(tbxBias.Text);
+
+            //ANNParameterBUS.Accuracy = double.Parse(tbxAccuracy.Text);
+            ANNParameterBUS.MeasureType = cmbTrainingMeasure.SelectedItem.ToString();
+
+            //Tiến hành train
+            //Tiến hành train
+            BackpropagationNetwork bpNetwork;
+
+            LinearLayer inputLayer = new LinearLayer(ANNParameterBUS.InputNode);
+            ActivationLayer hidenLayer = null;
+            ActivationLayer outputLayer = null;
+            switch (cmbActivationFunc.SelectedItem.ToString())
+            {
+                case "Sigmoid":
+                    hidenLayer = new SigmoidLayer(ANNParameterBUS.HiddenNode);
+                    outputLayer = new SigmoidLayer(ANNParameterBUS.OutputNode);
+                    break;
+                case "Tanh":
+                    hidenLayer = new TanhLayer(ANNParameterBUS.HiddenNode);
+                    outputLayer = new TanhLayer(ANNParameterBUS.OutputNode);
+                    break;
+                case "Logarithm":
+                    hidenLayer = new LogarithmLayer(ANNParameterBUS.HiddenNode);
+                    outputLayer = new LogarithmLayer(ANNParameterBUS.OutputNode);
+                    break;
+                case "Sine":
+                    hidenLayer = new SineLayer(ANNParameterBUS.HiddenNode);
+                    outputLayer = new SineLayer(ANNParameterBUS.OutputNode);
+                    break;
+            }
+
+            new BackpropagationConnector(inputLayer, hidenLayer);
+            new BackpropagationConnector(hidenLayer, outputLayer);
+
+            bpNetwork = new BackpropagationNetwork(inputLayer, outputLayer);
+
+            bpNetwork.SetLearningRate(ANNParameterBUS.LearningRate);
+
+            TrainingSet trainSet = new TrainingSet(ANNParameterBUS.InputNode, ANNParameterBUS.OutputNode);
+            trainSet.CreateTrainingSet(tbxTrainFilePath.Text);
+
+            bpNetwork.Learn(trainSet, ANNParameterBUS.MaxEpoch);
+
+            // Lưu lại model
+            Stream stream = File.Open(strModelFile, FileMode.Create);
+            BinaryFormatter bformatter = new BinaryFormatter();
+            bformatter.Serialize(stream, bpNetwork);
+            stream.Close();
+
+            //ANNModelBUS.AnnModelFile = strModelFile;
+            //ANNTrainBUS annTrain = new ANNTrainBUS();
+            //annTrain.LoadDataSet(tbxTrainFilePath.Text);
+            //annTrain.Main(iMeasureType);
+                
+        }
+
+        private void TestSVM()
+        {
+            int iPos = tbxTestFilePath.Text.LastIndexOf('_');
+            string strMutualPath = tbxTestFilePath.Text.Remove(iPos + 1);
+            string strPredictedFile = strMutualPath + "predict.txt";
+            string strStatisticFile = strMutualPath + "statistic.txt";
+            Problem prob = Problem.Read(tbxTestFilePath.Text);
+            Model model = Model.Read(tbxModelFilePath.Text);
+            double dblPrecision = Prediction.Predict(prob, strPredictedFile, model, ckbProbEstimation.Checked);
+            StatisticTrend2File(strPredictedFile, strStatisticFile);
+            StreamWriter writer = new StreamWriter(strMutualPath + "performance.txt");
+            writer.WriteLine(dblPrecision);
+            writer.Close();
+        }
+
+        private void TestKSVMeans()
+        {
+            int iPos = tbxTestFilePath.Text.LastIndexOf('_');
+            string strMutualPath = tbxTestFilePath.Text.Remove(iPos + 1);
+            int iNumCluster = (int)nmNumCluster.Value;
+            string strClusterModelFile = strMutualPath + "_clusterModel.txt";
+            string[] strClusterResultFiles = new string[iNumCluster];
+            string[] strSVMModelFiles = new string[iNumCluster];
+            string[] strPredictedFiles = new string[iNumCluster];
+            string[] strStatisticFiles = new string[iNumCluster];
+            for (int i = 0; i < iNumCluster; i++)
+            {
+                strClusterResultFiles[i] = strMutualPath + "testcluster" + (i + 1).ToString() + ".txt";
+                strSVMModelFiles[i] = strMutualPath + "model" + (i + 1).ToString() + ".txt";
+                strPredictedFiles[i] = strMutualPath + "predict" + (i + 1).ToString() + ".txt";
+                strStatisticFiles[i] = strMutualPath + "statistic" + (i + 1).ToString() + ".txt";
+            }
+            // Thực hiện cluster
+            SampleDataBUS samDataBUS = new SampleDataBUS();
+            samDataBUS.Read(tbxTestFilePath.Text);
+            Clustering clustering = new Clustering(samDataBUS.Samples, DistanceType.Manhattan);
+            clustering.Run(strClusterModelFile, true);
+            samDataBUS.WriteIntoCluster(strClusterResultFiles, clustering.SampleData.ClusterIndices);
+            // Thực hiện test SVM
+            StreamWriter writer = new StreamWriter(strMutualPath + "performance.txt");
+            double dblTotalPrecision = 0;
+            for (int i = 0; i < iNumCluster; i++)
+            {
+                Problem prob = Problem.Read(strClusterResultFiles[i]);
+                Model model = Model.Read(strSVMModelFiles[i]);
+                double dblPrecision = Prediction.Predict(prob, strPredictedFiles[i], model, ckbProbEstimation.Checked);
+                StatisticTrend2File(strPredictedFiles[i], strStatisticFiles[i]);
+                writer.WriteLine("Cluster " + (i + 1).ToString() + ": " + dblPrecision);
+                if (clustering.Clusters[i].NumSample > 0)
+                {
+                    dblTotalPrecision += dblPrecision * clustering.Clusters[i].NumSample;
+                }
+            }
+            writer.WriteLine("All: " + dblTotalPrecision / samDataBUS.DataLines.Length);
+            writer.Close();
+        }
+
+        private void TestANN()
+        {
+            int iPos = tbxTestFilePath.Text.LastIndexOf('_');
+            string strPredictedFile = tbxTestFilePath.Text.Remove(iPos + 1) + "predict.txt";
+            string strStatisticFile = tbxTestFilePath.Text.Remove(iPos + 1) + "statistic.txt";
+
+            // Load model lên
+            BackpropagationNetwork bpNetwork;
+
+            Stream stream = File.Open(tbxModelFilePath.Text, FileMode.Open);
+            BinaryFormatter bformatter = new BinaryFormatter();
+            bpNetwork = (BackpropagationNetwork)bformatter.Deserialize(stream);
+            stream.Close();
+
+            TrainingSet testSet = new TrainingSet(bpNetwork.InputLayer.NeuronCount, bpNetwork.OutputLayer.NeuronCount);
+            testSet.CreateTrainingSet(tbxTestFilePath.Text);
+
+            //Ma trận với dòng thứ 1 chứa các giá trị thực và dòng thứ 2 chứa các giá trị dự đoán.
+            double[][] dblActual_Forecast = new double[2][];
+            dblActual_Forecast[0] = new double[testSet.TrainingSampleCount];
+            dblActual_Forecast[1] = new double[testSet.TrainingSampleCount];
+
+            // Thực hiện test
+            for (int i = 0; i < testSet.TrainingSampleCount; i++)
+            {
+                TrainingSample testSample = testSet[i];
+                dblActual_Forecast[0][i] = ConverterBUS.Convert2Trend(testSample.OutputVector);
+
+                double[] dblTemp = bpNetwork.Run(testSample.InputVector);
+                dblActual_Forecast[1][i] = ConverterBUS.Convert2Trend(dblTemp);
+            }
+
+            bpNetwork.Write2PredictFile(dblActual_Forecast, strPredictedFile);
+            StatisticTrend2File(strPredictedFile, strStatisticFile);
+            HandleMeasure(tbxTestFilePath.Text.Remove(iPos + 1) + "PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
+        }
+
         private void btnTrain_Click(object sender, EventArgs e)
         {
             if (tbxTrainFilePath.Text == "")
@@ -61,173 +317,19 @@ namespace GUI
                 return;
             }
 
-            #region Dự đoán xu hướng
-            if (rdSVM.Checked)//Mô hình SVR
+            if (rdSVM.Checked)
             {
-                if (rdDefault.Checked)
-                {
-                    int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
-                    string strMutualPath = tbxTrainFilePath.Text.Remove(iPos + 1);
-                    string strModelFile = strMutualPath + "model.txt";
-                    Problem prob = Problem.Read(tbxTrainFilePath.Text);
-                    Parameter param = new Parameter();
-
-                    if (cmbModelSelection.SelectedItem.ToString() == "Grid search")
-                    {
-                        string strLogFile = strMutualPath + "Grid.txt";
-                        double dblC;
-                        double dblGamma;
-                        ParameterSelection paramSel = new ParameterSelection();
-                        paramSel.NFOLD = Int32.Parse(tbxNumFold.Text);
-                        paramSel.Grid(prob, param, strLogFile, out dblC, out dblGamma);
-                        param.C = dblC;
-                        param.Gamma = dblGamma;
-                        param.Probability = ckbProbEstimation.Checked;
-                        Model model = Training.Train(prob, param);
-                        Model.Write(strModelFile, model);
-                    }
-                    else if (cmbModelSelection.SelectedItem.ToString() == "Use default values")
-                    {
-                        if (tbxC.Text == "" || tbxGamma.Text == "")
-                        {
-                            MessageBox.Show("Please fill in parameters!");
-                            return;
-                        }
-                        param.C = double.Parse(tbxC.Text);
-                        param.Gamma = double.Parse(tbxGamma.Text);
-                        param.Probability = ckbProbEstimation.Checked;
-                        Model model = Training.Train(prob, param);
-                        Model.Write(strModelFile, model);
-                    }
-                }
-                else if (rdKmeans.Checked)
-                {
-                    int iNumCluster = (int)nmNumCluster.Value;
-                    int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
-                    string strMutualPath = tbxTrainFilePath.Text.Remove(iPos + 1);
-                    string strClusterModelFile = strMutualPath + "_clusterModel.txt";
-                    string[] strClusterResultFiles = new string[iNumCluster];
-                    string[] strSVMModelFiles = new string[iNumCluster];
-
-                    for (int i = 0; i < iNumCluster; i++)
-                    {
-                        strClusterResultFiles[i] = strMutualPath + "cluster" + (i + 1).ToString() + ".txt";
-                        strSVMModelFiles[i] = strMutualPath + "model" + (i + 1).ToString() + ".txt";
-                    }
-                    // Thực hiện cluster
-                    SampleDataBUS samDataBUS = new SampleDataBUS();
-                    samDataBUS.Read(tbxTrainFilePath.Text);
-                    Clustering clustering = new Clustering(iNumCluster, samDataBUS.Samples, DistanceType.Manhattan);
-                    clustering.Run(strClusterModelFile, false);
-                    samDataBUS.WriteIntoCluster(strClusterResultFiles, clustering.SampleData.ClusterIndices);
-                    // Thực hiện train SVM
-                    for (int i = 0; i < iNumCluster; i++)
-                    {
-                        Problem prob = Problem.Read(strClusterResultFiles[i]);
-                        Parameter param = new Parameter();
-
-                        if (cmbModelSelection.SelectedItem.ToString() == "Grid search")
-                        {
-                            string strLogFile = strMutualPath + "GridCluster" + (i + 1).ToString() + ".txt";
-                            double dblC;
-                            double dblGamma;
-                            ParameterSelection paramSel = new ParameterSelection();
-                            paramSel.NFOLD = Int32.Parse(tbxNumFold.Text);
-                            paramSel.Grid(prob, param, strLogFile, out dblC, out dblGamma);
-                            param.C = dblC;
-                            param.Gamma = dblGamma;
-                            param.Probability = ckbProbEstimation.Checked;
-                            Model model = Training.Train(prob, param);
-                            Model.Write(strSVMModelFiles[i], model);
-                        }
-                        else if (cmbModelSelection.SelectedItem.ToString() == "Use default values")
-                        {
-                            if (tbxC.Text == "" || tbxGamma.Text == "")
-                            {
-                                MessageBox.Show("Please fill in parameters!");
-                                return;
-                            }
-                            param.C = double.Parse(tbxC.Text);
-                            param.Gamma = double.Parse(tbxGamma.Text);
-                            param.Probability = ckbProbEstimation.Checked;
-                            Model model = Training.Train(prob, param);
-                            Model.Write(strSVMModelFiles[i], model);
-                        }
-                    }
-
-                }
-                MessageBox.Show("Finish!");
+                TrainSVM();
             }
-            else//Mô hình ANN
+            else if (rdKSVMeans.Checked)
             {
-                int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
-                string strModelFile = tbxTrainFilePath.Text.Remove(iPos + 1) + "ANNmodel.txt";
-
-                //khởi tạo các tham số cho mạng
-                ANNParameterBUS.InputNode = int.Parse(tbxANNInputNode.Text);
-                ANNParameterBUS.HiddenNode = int.Parse(tbxANNHiddenNode.Text);
-                ANNParameterBUS.OutputNode = 3;
-                ANNParameterBUS.MaxEpoch = int.Parse(tbxMaxLoops.Text);
-                ANNParameterBUS.LearningRate = double.Parse(tbxLearningRate.Text);
-                ANNParameterBUS.Momentum = double.Parse(tbxMomentum.Text);
-                ANNParameterBUS.Bias = double.Parse(tbxBias.Text);
-
-                //ANNParameterBUS.Accuracy = double.Parse(tbxAccuracy.Text);
-                ANNParameterBUS.MeasureType = cmbTrainingMeasure.SelectedItem.ToString();
-
-                //Tiến hành train
-                //Tiến hành train
-                BackpropagationNetwork bpNetwork;
-                
-                LinearLayer inputLayer = new LinearLayer(ANNParameterBUS.InputNode);
-                ActivationLayer hidenLayer = null;
-                ActivationLayer outputLayer = null;
-
-                if (rdSigmoid.Checked)
-                {
-                    hidenLayer = new SigmoidLayer(ANNParameterBUS.HiddenNode);
-                    outputLayer = new SigmoidLayer(ANNParameterBUS.OutputNode);
-                }
-                if (rdLogarithm.Checked)
-                {
-                    hidenLayer = new LogarithmLayer(ANNParameterBUS.HiddenNode);
-                    outputLayer = new LogarithmLayer(ANNParameterBUS.OutputNode);
-                }
-                if (rdTanh.Checked)
-                {
-                    hidenLayer = new TanhLayer(ANNParameterBUS.HiddenNode);
-                    outputLayer = new TanhLayer(ANNParameterBUS.OutputNode);
-                }
-                if (rdSine.Checked)
-                {
-                    hidenLayer = new SineLayer(ANNParameterBUS.HiddenNode);
-                    outputLayer = new SineLayer(ANNParameterBUS.OutputNode);
-                }
-                new BackpropagationConnector(inputLayer, hidenLayer);
-                new BackpropagationConnector(hidenLayer, outputLayer);
-
-                bpNetwork = new BackpropagationNetwork(inputLayer, outputLayer);
-
-                bpNetwork.SetLearningRate(ANNParameterBUS.LearningRate);
-
-                TrainingSet trainSet = new TrainingSet(ANNParameterBUS.InputNode, ANNParameterBUS.OutputNode);
-                trainSet.CreateTrainingSet(tbxTrainFilePath.Text);
-
-                bpNetwork.Learn(trainSet, ANNParameterBUS.MaxEpoch);
-                                
-                // Lưu lại model
-                Stream stream = File.Open(strModelFile, FileMode.Create);
-                BinaryFormatter bformatter = new BinaryFormatter();           
-                bformatter.Serialize(stream, bpNetwork);
-                stream.Close();
-                                
-                //ANNModelBUS.AnnModelFile = strModelFile;
-                //ANNTrainBUS annTrain = new ANNTrainBUS();
-                //annTrain.LoadDataSet(tbxTrainFilePath.Text);
-                //annTrain.Main(iMeasureType);
-                MessageBox.Show("Finish!");
+                TrainKSVMeans();
             }
-            #endregion
+            else if(rdANN.Checked)//Mô hình ANN
+            {
+                TrainANN();
+            }
+            MessageBox.Show("Finish!");
         }
 
         private void btnBrowser_Click(object sender, EventArgs e)
@@ -251,118 +353,17 @@ namespace GUI
                 return;
             }
 
-            //Ma trận với dòng thứ 1 chứa các giá trị thực và dòng thứ 2 chứa các giá trị dự đoán.
-            double[][] dblActual_Forecast = new double[2][];
-            dblActual_Forecast[0] = null;
-            dblActual_Forecast[1] = null;
-
-            int iPos = tbxTestFilePath.Text.LastIndexOf('\\');
-            string strFolderPath = tbxTestFilePath.Text.Remove(iPos+1);
-
-            if (rdSVM.Checked)//Mô hình SVM
+            if (rdSVM.Checked)
             {
-                iPos = tbxTestFilePath.Text.LastIndexOf('_');
-                string strMutualPath = tbxTestFilePath.Text.Remove(iPos + 1);
-                if (rdDefault.Checked)
-                {
-                    string strPredictedFile = strMutualPath + "predict.txt";
-                    string strStatisticFile = strMutualPath + "statistic.txt";
-                    Problem prob = Problem.Read(tbxTestFilePath.Text);
-                    Model model = Model.Read(tbxModelFilePath.Text);
-                    double dblPrecision = Prediction.Predict(prob, strPredictedFile, model, ckbProbEstimation.Checked);
-                    StatisticTrend2File(strPredictedFile, strStatisticFile);
-                    StreamWriter writer = new StreamWriter(strMutualPath + "performance.txt");
-                    writer.WriteLine(dblPrecision);
-                    writer.Close();
-                    //PerformanceEvaluator performanceEval = new PerformanceEvaluator(model, prob, -1, strPredictedFile, true);
-                    //performanceEval.Write(strMutualPath + "_DownPerformance.txt");
-                    //performanceEval = new PerformanceEvaluator(strPredictedFile, prob.Y, 0);
-                    //performanceEval.Write(strMutualPath + "_NoPerformance.txt");
-                    //performanceEval = new PerformanceEvaluator(strPredictedFile, prob.Y, 1);
-                    //performanceEval.Write(strMutualPath + "_UpPerformance.txt");
-                }
-                else if (rdKmeans.Checked)
-                {
-                    int iNumCluster = (int)nmNumCluster.Value;
-                    string strClusterModelFile = strMutualPath + "_clusterModel.txt";
-                    string[] strClusterResultFiles = new string[iNumCluster];
-                    string[] strSVMModelFiles = new string[iNumCluster];
-                    string[] strPredictedFiles = new string[iNumCluster];
-                    string[] strStatisticFiles = new string[iNumCluster];
-                    for (int i = 0; i < iNumCluster; i++)
-                    {
-                        strClusterResultFiles[i] = strMutualPath + "testcluster" + (i + 1).ToString() + ".txt";
-                        strSVMModelFiles[i] = strMutualPath + "model" + (i + 1).ToString() + ".txt";
-                        strPredictedFiles[i] = strMutualPath + "predict" + (i + 1).ToString() + ".txt";
-                        strStatisticFiles[i] = strMutualPath + "statistic" + (i + 1).ToString() + ".txt";
-                    }
-                    // Thực hiện cluster
-                    SampleDataBUS samDataBUS = new SampleDataBUS();
-                    samDataBUS.Read(tbxTestFilePath.Text);
-                    Clustering clustering = new Clustering(samDataBUS.Samples, DistanceType.Manhattan);
-                    clustering.Run(strClusterModelFile, true);
-                    samDataBUS.WriteIntoCluster(strClusterResultFiles, clustering.SampleData.ClusterIndices);
-                    // Thực hiện test SVM
-                    StreamWriter writer = new StreamWriter(strMutualPath + "performance.txt");
-                    double dblTotalPrecision = 0;
-                    for (int i = 0; i < iNumCluster; i++)
-                    {
-                        Problem prob = Problem.Read(strClusterResultFiles[i]);
-                        Model model = Model.Read(strSVMModelFiles[i]);
-                        double dblPrecision = Prediction.Predict(prob, strPredictedFiles[i], model, ckbProbEstimation.Checked);
-                        StatisticTrend2File(strPredictedFiles[i], strStatisticFiles[i]);
-                        writer.WriteLine("Cluster " + (i + 1).ToString() + ": " + dblPrecision);
-                        if (clustering.Clusters[i].NumSample > 0)
-                        {
-                            dblTotalPrecision += dblPrecision * clustering.Clusters[i].NumSample;
-                        }
-                    }
-                    writer.WriteLine("All: " + dblTotalPrecision/samDataBUS.DataLines.Length);
-                    writer.Close();
-                }
-                
+                TestSVM();
             }
-            else//Mô hình ANN
+            else if (rdKSVMeans.Checked)
             {
-                iPos = tbxTestFilePath.Text.LastIndexOf('_');
-                string strPredictedFile = tbxTestFilePath.Text.Remove(iPos + 1) + "predict.txt";
-                string strStatisticFile = tbxTestFilePath.Text.Remove(iPos + 1) + "statistic.txt";
-
-                // Load model lên
-                BackpropagationNetwork bpNetwork;
-
-                Stream stream = File.Open(tbxModelFilePath.Text, FileMode.Open);
-                BinaryFormatter bformatter = new BinaryFormatter();
-                bpNetwork = (BackpropagationNetwork)bformatter.Deserialize(stream);
-                stream.Close();
-
-                TrainingSet testSet = new TrainingSet(bpNetwork.InputLayer.NeuronCount, bpNetwork.OutputLayer.NeuronCount);
-                testSet.CreateTrainingSet(tbxTestFilePath.Text);
-
-                dblActual_Forecast[0] = new double[testSet.TrainingSampleCount];
-                dblActual_Forecast[1] = new double[testSet.TrainingSampleCount];
-                
-                // Thực hiện test
-                for (int i = 0; i < testSet.TrainingSampleCount; i++)
-                {                    
-                    TrainingSample testSample = testSet[i];
-                    dblActual_Forecast[0][i] = ConverterBUS.Convert2Trend(testSample.OutputVector);
-                    
-                    double[] dblTemp = bpNetwork.Run(testSample.InputVector);
-                    dblActual_Forecast[1][i] = ConverterBUS.Convert2Trend(dblTemp);                    
-                }
-
-                bpNetwork.Write2PredictFile(dblActual_Forecast,strPredictedFile);
-                StatisticTrend2File(strPredictedFile, strStatisticFile);
-                HandleMeasure(tbxTestFilePath.Text.Remove(iPos + 1) + "PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
-
-                //ANNModelBUS.AnnModelFile = tbxModelFilePath.Text;
-                //ANNParameterBUS.LoadParameter();
-
-                //ANNPredictBUS annPredict = new ANNPredictBUS();
-                //annPredict.LoadDataSet(tbxTestFilePath.Text);
-                //dblActual_Forecast = annPredict.MainProcessTrend();
-                //annPredict.WritePredictTrend(strPredictedFile);
+                TestKSVMeans();
+            }
+            else if(rdANN.Checked)
+            {
+                TestANN();
             }
 
             MessageBox.Show("Finish!");           
@@ -434,9 +435,9 @@ namespace GUI
             tbxTrainingRatio.Text = "80";
             cmbModelSelection.SelectedIndex = 0;
             cmbTrainingMeasure.SelectedIndex = 0;
-            rdDefault.Checked = true;
-            rdSigmoid.Checked = true;
-
+            cmbActivationFunc.SelectedIndex = 0;
+            lblNumCluster.Enabled = false;
+            nmNumCluster.Enabled = false;
             //Khởi gán tham số ANN
             tbxANNInputNode.Text = 10.ToString();
             tbxANNHiddenNode.Text = 4.ToString();
@@ -535,16 +536,8 @@ namespace GUI
 
         private void rdANN_CheckedChanged(object sender, EventArgs e)
         {
-            if (rdANN.Checked == true)
-            {
-                gbAnnSetting.Enabled = true;
-                gbSVRSetting.Enabled = false;
-            }
-            else
-            {
-                gbAnnSetting.Enabled = false;
-                gbSVRSetting.Enabled = true;
-            }
+            gbAnnSetting.Enabled = rdANN.Checked;
+            gbSVRSetting.Enabled = !rdANN.Checked;
         }
 
         private void btnStepTrainAndTest_Click(object sender, EventArgs e)
@@ -982,6 +975,18 @@ namespace GUI
                 write.WriteLine(strTemp);
             }
             write.Close();
+        }
+
+        private void rdKSVMeans_CheckedChanged(object sender, EventArgs e)
+        {
+            lblNumCluster.Enabled = rdKSVMeans.Checked;
+            nmNumCluster.Enabled = rdKSVMeans.Checked;
+        }
+
+        private void rdSOMSVM_CheckedChanged(object sender, EventArgs e)
+        {
+            lblNumCluster.Enabled = rdSOMSVM.Checked;
+            nmNumCluster.Enabled = rdSOMSVM.Checked;
         }
     }
 }
