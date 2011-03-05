@@ -196,10 +196,8 @@ namespace BUS.ANN.Backpropagation
             StreamWriter write = new StreamWriter(strPredictedFile);
                                    
             // Ghi kết quả giũa giá trị thực và dự đoán
-            string strTemp = "Actuals: Forecasts";
-            write.WriteLine(strTemp);
+            string strTemp = null;
 
-            //srtTemp += "Actuals:\tForecasts\n";
             for (int i = 0; i < actual_Forecasts[0].Length; i++)
             {
                 strTemp = actual_Forecasts[0][i] + " ";
