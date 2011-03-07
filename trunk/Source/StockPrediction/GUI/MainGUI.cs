@@ -42,7 +42,7 @@ namespace GUI
             InitializeComponent();
         }
 
-        private void HandleMeasure(string fileName, double []actual, double []forecast)
+        private void WriteAccurancy2File(string fileName, double[] actual, double[] forecast)
         {
             StreamWriter writer = new StreamWriter(fileName);
             MeasureBUS measureBUS = new MeasureBUS();
@@ -164,12 +164,9 @@ namespace GUI
             ANNParameterBUS.MaxEpoch = int.Parse(tbxMaxLoops.Text);
             ANNParameterBUS.LearningRate = double.Parse(tbxLearningRate.Text);
             ANNParameterBUS.Momentum = double.Parse(tbxMomentum.Text);
-            ANNParameterBUS.Bias = double.Parse(tbxBias.Text);
+            ANNParameterBUS.Bias = double.Parse(tbxBias.Text);                       
+            //ANNParameterBUS.MeasureType = cmbTrainingMeasure.SelectedItem.ToString();
 
-            //ANNParameterBUS.Accuracy = double.Parse(tbxAccuracy.Text);
-            ANNParameterBUS.MeasureType = cmbTrainingMeasure.SelectedItem.ToString();
-
-            //Tiến hành train
             //Tiến hành train
             BackpropagationNetwork bpNetwork;
 
@@ -212,13 +209,7 @@ namespace GUI
             Stream stream = File.Open(strModelFile, FileMode.Create);
             BinaryFormatter bformatter = new BinaryFormatter();
             bformatter.Serialize(stream, bpNetwork);
-            stream.Close();
-
-            //ANNModelBUS.AnnModelFile = strModelFile;
-            //ANNTrainBUS annTrain = new ANNTrainBUS();
-            //annTrain.LoadDataSet(tbxTrainFilePath.Text);
-            //annTrain.Main(iMeasureType);
-                
+            stream.Close();                
         }
         /// <summary>
         /// Phần test cho SVM
@@ -291,16 +282,16 @@ namespace GUI
 
             // Load model lên
             BackpropagationNetwork bpNetwork;
-
             Stream stream = File.Open(tbxModelFilePath.Text, FileMode.Open);
             BinaryFormatter bformatter = new BinaryFormatter();
             bpNetwork = (BackpropagationNetwork)bformatter.Deserialize(stream);
             stream.Close();
 
+            // Tạo tập mẫu để test
             TrainingSet testSet = new TrainingSet(bpNetwork.InputLayer.NeuronCount, bpNetwork.OutputLayer.NeuronCount);
             testSet.CreateTrainingSet(tbxTestFilePath.Text);
 
-            //Ma trận với dòng thứ 1 chứa các giá trị thực và dòng thứ 2 chứa các giá trị dự đoán.
+            // Ma trận với dòng thứ 1 chứa các giá trị thực và dòng thứ 2 chứa các giá trị dự đoán.
             double[][] dblActual_Forecast = new double[2][];
             dblActual_Forecast[0] = new double[testSet.TrainingSampleCount];
             dblActual_Forecast[1] = new double[testSet.TrainingSampleCount];
@@ -315,9 +306,12 @@ namespace GUI
                 dblActual_Forecast[1][i] = ConverterBUS.Convert2Trend(dblTemp);
             }
 
+            // Ghi kết quả dự đoán xuống file
             bpNetwork.Write2PredictFile(dblActual_Forecast, strPredictedFile);
+            // Thực hiện thống kế theo ma trận xu hướng và ghi xuống file
             StatisticTrend2File(strPredictedFile, strStatisticFile);
-            HandleMeasure(tbxTestFilePath.Text.Remove(iPos + 1) + "PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
+            // Ghi kết quả độ chính xác dự đoán được xuống file
+            WriteAccurancy2File(tbxTestFilePath.Text.Remove(iPos + 1) + "PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
         }
 
         private void btnTrain_Click(object sender, EventArgs e)
@@ -457,16 +451,17 @@ namespace GUI
             tbxLearningRate.Text = 0.3.ToString();
             tbxMaxLoops.Text = 2000.ToString();
             tbxBias.Text = 0.ToString();
-            tbxMomentum.Text = 0.01.ToString();
-            //tbxAccuracy.Text = 90.ToString();
+            tbxMomentum.Text = 0.01.ToString();            
 
             if (rdANN.Checked == true)
             {
                 gbAnnSetting.Enabled = true;
+                gbSVRSetting.Enabled = false;
             }
             else
             {
                 gbAnnSetting.Enabled = false;
+                gbSVRSetting.Enabled = true;
             }
 
             _stockRecordBUS = new StockRecordBUS();
@@ -555,99 +550,99 @@ namespace GUI
 
         private void btnStepTrainAndTest_Click(object sender, EventArgs e)
         {
-            try
-            {
-                bool isSVR = true;
-                if (rdANN.Checked == true)
-                {
-                    isSVR = false;
-                    ANNParameterBUS.HiddenNode = Convert.ToInt16(tbxANNHiddenNode.Text);
-                    ANNParameterBUS.OutputNode = 1;
-                    ANNParameterBUS.MaxEpoch = Convert.ToInt16(tbxMaxLoops.Text);
-                    ANNParameterBUS.LearningRate = Convert.ToDouble(tbxLearningRate.Text);
-                    ANNParameterBUS.Momentum = Convert.ToDouble(tbxMomentum.Text);
-                    ANNParameterBUS.Bias = Convert.ToDouble(tbxBias.Text);
-                }
+            //try
+            //{
+            //    bool isSVR = true;
+            //    if (rdANN.Checked == true)
+            //    {
+            //        isSVR = false;
+            //        ANNParameterBUS.HiddenNode = Convert.ToInt16(tbxANNHiddenNode.Text);
+            //        ANNParameterBUS.OutputNode = 1;
+            //        ANNParameterBUS.MaxEpoch = Convert.ToInt16(tbxMaxLoops.Text);
+            //        ANNParameterBUS.LearningRate = Convert.ToDouble(tbxLearningRate.Text);
+            //        ANNParameterBUS.Momentum = Convert.ToDouble(tbxMomentum.Text);
+            //        ANNParameterBUS.Bias = Convert.ToDouble(tbxBias.Text);
+            //    }
 
-                double[][] dblActual_Forecast = new double[2][];
-                StepTrainingBUS stepTrainingBUS = new StepTrainingBUS();
-                stepTrainingBUS.NumInputNode = Convert.ToInt16(NUM_NODE);
-                stepTrainingBUS.TrainingSize = Convert.ToInt16(tbxTrainingSize.Text);
-                //stepTrainingBUS.Preprocess = cmbPreprocess.SelectedItem.ToString();
-                stepTrainingBUS.ModelSelection = cmbModelSelection.SelectedItem.ToString();
-                stepTrainingBUS.NumFold = tbxNumFold.Text;
-                stepTrainingBUS.ImprovedDirection = true;
+            //    double[][] dblActual_Forecast = new double[2][];
+            //    StepTrainingBUS stepTrainingBUS = new StepTrainingBUS();
+            //    stepTrainingBUS.NumInputNode = Convert.ToInt16(NUM_NODE);
+            //    stepTrainingBUS.TrainingSize = Convert.ToInt16(tbxTrainingSize.Text);
+            //    //stepTrainingBUS.Preprocess = cmbPreprocess.SelectedItem.ToString();
+            //    stepTrainingBUS.ModelSelection = cmbModelSelection.SelectedItem.ToString();
+            //    stepTrainingBUS.NumFold = tbxNumFold.Text;
+            //    stepTrainingBUS.ImprovedDirection = true;
 
-                switch (cmbTrainingMeasure.SelectedItem.ToString())
-                {
-                    case "MSE":
-                        stepTrainingBUS.TrainingMeasure = MSE;
-                        break;
-                    case "NMSE":
-                        stepTrainingBUS.TrainingMeasure = NMSE;
-                        break;
-                    case "RMSE":
-                        stepTrainingBUS.TrainingMeasure = RMSE;
-                        break;
-                    case "Sign":
-                        stepTrainingBUS.TrainingMeasure = SIGN;
-                        break;
-                }
-                stepTrainingBUS.LoadWholdeData(tbxCsvFilePath.Text);
+            //    switch (cmbTrainingMeasure.SelectedItem.ToString())
+            //    {
+            //        case "MSE":
+            //            stepTrainingBUS.TrainingMeasure = MSE;
+            //            break;
+            //        case "NMSE":
+            //            stepTrainingBUS.TrainingMeasure = NMSE;
+            //            break;
+            //        case "RMSE":
+            //            stepTrainingBUS.TrainingMeasure = RMSE;
+            //            break;
+            //        case "Sign":
+            //            stepTrainingBUS.TrainingMeasure = SIGN;
+            //            break;
+            //    }
+            //    stepTrainingBUS.LoadWholdeData(tbxCsvFilePath.Text);
 
-                if (tbxStartDate.Text == "WholeData")
-                {
-                    stepTrainingBUS.CurrentDateIndex = stepTrainingBUS.TrainingSize - 1;
-                }
-                else
-                {
-                    stepTrainingBUS.CurrentDateIndex =
-                        stepTrainingBUS.FindIndex(DateTime.ParseExact(tbxStartDate.Text, "d/M/yyyy", null));
-                }
-                int iEndIndex;
-                if (tbxEndDate.Text == "WholeData")
-                {
-                    iEndIndex = stepTrainingBUS.WholeData.Entries.Count-2;
-                }
-                else
-                {
-                    iEndIndex =
-                        stepTrainingBUS.FindIndex(DateTime.ParseExact(tbxEndDate.Text, "d/M/yyyy", null));
-                }
-                if (iEndIndex == -1 || iEndIndex > stepTrainingBUS.WholeData.Entries.Count - 2 || iEndIndex < stepTrainingBUS.CurrentDateIndex)
-                {
-                    MessageBox.Show("Error: Invalid input!");
-                    return;
-                }
+            //    if (tbxStartDate.Text == "WholeData")
+            //    {
+            //        stepTrainingBUS.CurrentDateIndex = stepTrainingBUS.TrainingSize - 1;
+            //    }
+            //    else
+            //    {
+            //        stepTrainingBUS.CurrentDateIndex =
+            //            stepTrainingBUS.FindIndex(DateTime.ParseExact(tbxStartDate.Text, "d/M/yyyy", null));
+            //    }
+            //    int iEndIndex;
+            //    if (tbxEndDate.Text == "WholeData")
+            //    {
+            //        iEndIndex = stepTrainingBUS.WholeData.Entries.Count-2;
+            //    }
+            //    else
+            //    {
+            //        iEndIndex =
+            //            stepTrainingBUS.FindIndex(DateTime.ParseExact(tbxEndDate.Text, "d/M/yyyy", null));
+            //    }
+            //    if (iEndIndex == -1 || iEndIndex > stepTrainingBUS.WholeData.Entries.Count - 2 || iEndIndex < stepTrainingBUS.CurrentDateIndex)
+            //    {
+            //        MessageBox.Show("Error: Invalid input!");
+            //        return;
+            //    }
 
-                int iLen = iEndIndex + 1 - stepTrainingBUS.CurrentDateIndex;
-                dblActual_Forecast[0] = new double[iLen];
-                dblActual_Forecast[1] = new double[iLen];
-                for (int i = 0; i < iLen; i++)
-                {
-                    EntryDTO entryDTO = (EntryDTO)stepTrainingBUS.WholeData.Entries[stepTrainingBUS.CurrentDateIndex + 1];
-                    dblActual_Forecast[0][i] = entryDTO.ClosePrice;
-                    //Tạm thời bỏ dòng này chưa sử dụng step training cho ANN
-                    //dblActual_Forecast[1][i] = stepTrainingBUS.TrainAndPredict(isSVR);
-                    stepTrainingBUS.CurrentDateIndex++;
-                }
+            //    int iLen = iEndIndex + 1 - stepTrainingBUS.CurrentDateIndex;
+            //    dblActual_Forecast[0] = new double[iLen];
+            //    dblActual_Forecast[1] = new double[iLen];
+            //    for (int i = 0; i < iLen; i++)
+            //    {
+            //        EntryDTO entryDTO = (EntryDTO)stepTrainingBUS.WholeData.Entries[stepTrainingBUS.CurrentDateIndex + 1];
+            //        dblActual_Forecast[0][i] = entryDTO.ClosePrice;
+            //        //Tạm thời bỏ dòng này chưa sử dụng step training cho ANN
+            //        //dblActual_Forecast[1][i] = stepTrainingBUS.TrainAndPredict(isSVR);
+            //        stepTrainingBUS.CurrentDateIndex++;
+            //    }
 
-                //Ghi kết quả cuối cùng ra file
-                StreamWriter finalResult = new StreamWriter("StepPredict.txt");
-                for (int i = 0; i < iLen; i++)
-                {
-                    finalResult.WriteLine(dblActual_Forecast[0][i].ToString() + "\t" + dblActual_Forecast[1][i].ToString());
-                }
-                finalResult.Close();
+            //    //Ghi kết quả cuối cùng ra file
+            //    StreamWriter finalResult = new StreamWriter("StepPredict.txt");
+            //    for (int i = 0; i < iLen; i++)
+            //    {
+            //        finalResult.WriteLine(dblActual_Forecast[0][i].ToString() + "\t" + dblActual_Forecast[1][i].ToString());
+            //    }
+            //    finalResult.Close();
 
-                HandleMeasure("StepMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
-                MessageBox.Show("Finish!");
-            }
-            catch (Exception ex)
-            {
+            //    HandleMeasure("StepMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
+            //    MessageBox.Show("Finish!");
+            //}
+            //catch (Exception ex)
+            //{
 
-                throw ex;
-            }
+            //    throw ex;
+            //}
         }
 
         private void cmbStockID_SelectedIndexChanged(object sender, EventArgs e)
@@ -731,12 +726,12 @@ namespace GUI
             }
             #endregion
             #region Dự đoán ANN
-            ANNModelBUS.AnnModelFile = @"AppModel\ANNPrice\" + cmbStockID.SelectedItem.ToString() + "_1_model.txt";
+            //ANNModelBUS.AnnModelFile = @"AppModel\ANNPrice\" + cmbStockID.SelectedItem.ToString() + "_1_model.txt";
 
-            ANNParameterBUS.LoadParameter();
+           // ANNParameterBUS.LoadParameter();
 
-            ANNPredictBUS annPredict = new ANNPredictBUS();
-            annPredict.LoadDataSet(@"TestPrice.txt");
+            //ANNPredictBUS annPredict = new ANNPredictBUS();
+            //annPredict.LoadDataSet(@"TestPrice.txt");
             //Tạm thời bỏ dòng này chưa sử dụng trong predict
             //dblActual_Forecast = annPredict.MainProcessTrend();
             pricePredict = dblActual_Forecast[1][0];
@@ -806,30 +801,30 @@ namespace GUI
 
                 if (numDaysPredicted >= 1 && numDaysPredicted < 5)
                 {
-                    ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_1_model.txt";
+                    //ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_1_model.txt";
                     strArgs[1] = @"AppModel\SVRTrend\" + cmbStockID.SelectedItem.ToString() + "_1_model.txt";
                 }
                 else if (numDaysPredicted >= 5 && numDaysPredicted < 10)
                 {
-                    ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_5_model.txt";
+                    //ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_5_model.txt";
                     strArgs[1] = @"AppModel\SVRTrend\" + cmbStockID.SelectedItem.ToString() + "_5_model.txt";
                 }
                 else if (numDaysPredicted >= 10 && numDaysPredicted < 30)
                 {
-                    ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_10_model.txt";
+                    //ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_10_model.txt";
                     strArgs[1] = @"AppModel\SVRTrend\" + cmbStockID.SelectedItem.ToString() + "_10_model.txt";
                 }
                 else
                 {
-                    ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_30_model.txt";
+                    //ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_30_model.txt";
                     strArgs[1] = @"AppModel\SVRTrend\" + cmbStockID.SelectedItem.ToString() + "_30_model.txt";
                 }
 
-                ANNParameterBUS.LoadParameter();
+               // ANNParameterBUS.LoadParameter();
 
-                ANNPredictBUS annPredictTrend = new ANNPredictBUS();
-                annPredictTrend.LoadDataSet(@"TestTrend.txt");
-                dblActual_Forecast = annPredictTrend.MainProcessTrend();
+                //ANNPredictBUS annPredictTrend = new ANNPredictBUS();
+                //annPredictTrend.LoadDataSet(@"TestTrend.txt");
+               // dblActual_Forecast = annPredictTrend.MainProcessTrend();
                 trendPredict = dblActual_Forecast[1][0];
                 tbxANNTrend.Text = dblActual_Forecast[1][0] > 0 ? "Tăng" : "Giảm";
 
@@ -846,8 +841,7 @@ namespace GUI
             else
             {
                 MessageBox.Show("Error: Invalid input!");
-            }
-            
+            }            
             
             #endregion            
             
@@ -909,6 +903,8 @@ namespace GUI
 
             strTemp = reader.ReadToEnd();
             reader.Close();
+
+            // Xây dựng lại ma trận kết quả thực và dự đoán từ file
             string[] strActual_Forecasts = Regex.Split(strTemp,"\n");
             int iLen = 0;
             for (int i = 0; i < strActual_Forecasts.Length; i++)
@@ -930,7 +926,7 @@ namespace GUI
                 }
             }
 
-            //thông kê kết quả dự đoán so với thực tế
+            // Thông kê kết quả dự đoán so với thực tế
             strTemp = "Predicted Trend\t Actual Trend\n\tUptrend\tNotrend\tDowntrend";
             writer.WriteLine(strTemp);
 
@@ -945,7 +941,7 @@ namespace GUI
                 int iTemp = (int)actual_Forecasts[0][i];
                 switch (iTemp)
                 {
-                    case 1:
+                    case 1:// Với trường hợp xu hướng tăng
                         if (actual_Forecasts[1][i] == 1)
                         {
                             tables[0][0]++;
@@ -959,7 +955,7 @@ namespace GUI
                             tables[0][2]++;
                         }
                         break;
-                    case 0:
+                    case 0:// Với trường hợp không có xu hướng
                         if (actual_Forecasts[1][i] == 1)
                         {
                             tables[1][0]++;
@@ -973,7 +969,7 @@ namespace GUI
                             tables[1][2]++;
                         }
                         break;
-                    case -1:
+                    case -1:// Với trường hợp xu hướng giảm
                         if (actual_Forecasts[1][i] == 1)
                         {
                             tables[2][0]++;
@@ -989,6 +985,8 @@ namespace GUI
                         break;
                 }
             }
+
+            // Thực hiện ghi kết quả thống kê xuống file
             string[] strLables = { "Uptrend", "Notrend", "Downtrend" };
             for (int i = 0; i < tables.Length; i++)
             {
@@ -1002,7 +1000,7 @@ namespace GUI
             }
             writer.Close();
         }
-
+        
         private void StatisticTrend2File(string[] predictedFiles, string statisticFile)
         {
             string strTemp = "";

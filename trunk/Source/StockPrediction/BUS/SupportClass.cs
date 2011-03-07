@@ -26,16 +26,16 @@ public class SupportClass
 	public class Tokenizer: System.Collections.IEnumerator
 	{
 		/// Position over the string
-		private long currentPos = 0;
+		private long _currentPos = 0;
 
 		/// Include demiliters in the results.
-		private bool includeDelims = false;
+		private bool _includeDelims = false;
 
 		/// Char representation of the String to tokenize.
-		private char[] chars = null;
+		private char[] _chars = null;
 			
 		//The tokenizer uses the default delimiter set: the space character, the tab character, the newline character, and the carriage-return character and the form-feed character
-		private string delimiters = " \t\n\r\f";		
+		private string _delimiters = " \t\n\r\f";		
 
 		/// <summary>
 		/// Initializes a new class instance with a specified string to process
@@ -43,7 +43,7 @@ public class SupportClass
 		/// <param name="source">String to tokenize</param>
 		public Tokenizer(System.String source)
 		{			
-			this.chars = source.ToCharArray();
+			this._chars = source.ToCharArray();
 		}
 
 		/// <summary>
@@ -54,7 +54,7 @@ public class SupportClass
 		/// <param name="delimiters">String containing the delimiters</param>
 		public Tokenizer(System.String source, System.String delimiters):this(source)
 		{			
-			this.delimiters = delimiters;
+			this._delimiters = delimiters;
 		}
 
 
@@ -67,7 +67,7 @@ public class SupportClass
 		/// <param name="includeDelims">Determines if delimiters are included in the results.</param>
 		public Tokenizer(System.String source, System.String delimiters, bool includeDelims):this(source,delimiters)
 		{
-			this.includeDelims = includeDelims;
+			this._includeDelims = includeDelims;
 		}	
 
 
@@ -77,7 +77,7 @@ public class SupportClass
 		/// <returns>The string value of the token</returns>
 		public System.String NextToken()
 		{				
-			return NextToken(this.delimiters);
+			return NextToken(this._delimiters);
 		}
 
 		/// <summary>
@@ -90,15 +90,15 @@ public class SupportClass
 		{
 			//According to documentation, the usage of the received delimiters should be temporary (only for this call).
 			//However, it seems it is not true, so the following line is necessary.
-			this.delimiters = delimiters;
+			this._delimiters = delimiters;
 
 			//at the end 
-			if (this.currentPos == this.chars.Length)
+			if (this._currentPos == this._chars.Length)
 				throw new System.ArgumentOutOfRangeException();
 			//if over a delimiter and delimiters must be returned
-			else if (   (System.Array.IndexOf(delimiters.ToCharArray(),chars[this.currentPos]) != -1)
-				     && this.includeDelims )                	
-				return "" + this.chars[this.currentPos++];
+			else if (   (System.Array.IndexOf(delimiters.ToCharArray(),_chars[this._currentPos]) != -1)
+				     && this._includeDelims )                	
+				return "" + this._chars[this._currentPos++];
 			//need to get the token wo delimiters.
 			else
 				return nextToken(delimiters.ToCharArray());
@@ -108,23 +108,23 @@ public class SupportClass
 		private System.String nextToken(char[] delimiters)
 		{
 			string token="";
-			long pos = this.currentPos;
+			long pos = this._currentPos;
 
 			//skip possible delimiters
-			while (System.Array.IndexOf(delimiters,this.chars[currentPos]) != -1)
+			while (System.Array.IndexOf(delimiters,this._chars[_currentPos]) != -1)
 				//The last one is a delimiter (i.e there is no more tokens)
-				if (++this.currentPos == this.chars.Length)
+				if (++this._currentPos == this._chars.Length)
 				{
-					this.currentPos = pos;
+					this._currentPos = pos;
 					throw new System.ArgumentOutOfRangeException();
 				}
 			
 			//getting the token
-			while (System.Array.IndexOf(delimiters,this.chars[this.currentPos]) == -1)
+			while (System.Array.IndexOf(delimiters,this._chars[this._currentPos]) == -1)
 			{
-				token+=this.chars[this.currentPos];
+				token+=this._chars[this._currentPos];
 				//the last one is not a delimiter
-				if (++this.currentPos == this.chars.Length)
+				if (++this._currentPos == this._chars.Length)
 					break;
 			}
 			return token;
@@ -138,7 +138,7 @@ public class SupportClass
 		public bool HasMoreTokens()
 		{
 			//keeping the current pos
-			long pos = this.currentPos;
+			long pos = this._currentPos;
 			
 			try
 			{
@@ -150,7 +150,7 @@ public class SupportClass
 			}
 			finally
 			{
-				this.currentPos = pos;
+				this._currentPos = pos;
 			}
 			return true;
 		}
@@ -163,7 +163,7 @@ public class SupportClass
 			get
 			{
 				//keeping the current pos
-				long pos = this.currentPos;
+				long pos = this._currentPos;
 				int i = 0;
 			
 				try
@@ -176,7 +176,7 @@ public class SupportClass
 				}
 				catch (System.ArgumentOutOfRangeException)
 				{				
-					this.currentPos = pos;
+					this._currentPos = pos;
 					return i;
 				}
 			}

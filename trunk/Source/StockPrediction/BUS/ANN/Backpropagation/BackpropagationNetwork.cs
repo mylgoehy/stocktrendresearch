@@ -190,7 +190,11 @@ namespace BUS.ANN.Backpropagation
             }
 
         }
-
+        /// <summary>
+        /// Ghi kết quả dự đoán và thực ra file
+        /// </summary>
+        /// <param name="actual_Forecasts">Mảng kết quả thực và dự đoán</param>
+        /// <param name="strPredictedFile">File chứa kết quả</param>
         public void Write2PredictFile(double[][] actual_Forecasts, string strPredictedFile)
         {
             StreamWriter write = new StreamWriter(strPredictedFile);
@@ -199,6 +203,7 @@ namespace BUS.ANN.Backpropagation
             string strTemp = "Actuals: Forecasts";
             write.WriteLine(strTemp);
 
+            // Ghi lần lượt từng mẫu kết quả xuống file
             for (int i = 0; i < actual_Forecasts[0].Length; i++)
             {
                 strTemp = actual_Forecasts[0][i] + " ";
