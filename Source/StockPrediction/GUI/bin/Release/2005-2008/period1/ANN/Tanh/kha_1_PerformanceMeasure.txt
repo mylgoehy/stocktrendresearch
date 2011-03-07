@@ -1,1 +1,1 @@
-Correct Predicted:	58%
+Correct Predicted:	59.5%
