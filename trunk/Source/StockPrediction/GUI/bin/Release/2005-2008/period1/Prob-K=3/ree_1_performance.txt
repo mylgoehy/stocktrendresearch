@@ -1,0 +1,4 @@
+Cluster 1: NaN
+Cluster 2: 1
+Cluster 3: 0.68452380952381
+All: 0.735
