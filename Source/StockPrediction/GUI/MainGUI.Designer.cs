@@ -32,6 +32,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabExperiment = new System.Windows.Forms.TabPage();
+            this.lblExperimentMode = new System.Windows.Forms.Label();
+            this.gbBatchTrainTest = new System.Windows.Forms.GroupBox();
+            this.cmbExperimentMode = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.lblModelFile = new System.Windows.Forms.Label();
             this.btnModelBrowser = new System.Windows.Forms.Button();
@@ -73,19 +76,12 @@
             this.tbxLearningRate = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.lblInputFile = new System.Windows.Forms.Label();
             this.btnPreprocess = new System.Windows.Forms.Button();
             this.tbxCsvFilePath = new System.Windows.Forms.TextBox();
             this.btnBrowser = new System.Windows.Forms.Button();
             this.tbxTrainingRatio = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.groupBox9 = new System.Windows.Forms.GroupBox();
-            this.btnStepTrainAndTest = new System.Windows.Forms.Button();
-            this.tbxEndDate = new System.Windows.Forms.TextBox();
-            this.label20 = new System.Windows.Forms.Label();
-            this.tbxStartDate = new System.Windows.Forms.TextBox();
-            this.label19 = new System.Windows.Forms.Label();
-            this.tbxTrainingSize = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
             this.GBModelChoice = new System.Windows.Forms.GroupBox();
             this.rdSOMSVM = new System.Windows.Forms.RadioButton();
             this.nmNumCluster = new System.Windows.Forms.NumericUpDown();
@@ -117,10 +113,6 @@
             this.dtpFrom = new System.Windows.Forms.DateTimePicker();
             this.cmbStockID = new System.Windows.Forms.ComboBox();
             this.zg1 = new ZedGraph.ZedGraphControl();
-            this.gbBatchTrainTest = new System.Windows.Forms.GroupBox();
-            this.cmbExperimentMode = new System.Windows.Forms.ComboBox();
-            this.lblExperimentMode = new System.Windows.Forms.Label();
-            this.lblInputFile = new System.Windows.Forms.Label();
             this.tabMain.SuspendLayout();
             this.tabExperiment.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -128,7 +120,6 @@
             this.gbSVRSetting.SuspendLayout();
             this.gbAnnSetting.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            this.groupBox9.SuspendLayout();
             this.GBModelChoice.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).BeginInit();
             this.tabApplication.SuspendLayout();
@@ -144,6 +135,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(1003, 43);
             this.label1.TabIndex = 8;
+            this.label1.Text = "STOCK STREND PREDICTION";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tabMain
@@ -153,7 +145,7 @@
             this.tabMain.Location = new System.Drawing.Point(0, 44);
             this.tabMain.Name = "tabMain";
             this.tabMain.SelectedIndex = 0;
-            this.tabMain.Size = new System.Drawing.Size(1003, 687);
+            this.tabMain.Size = new System.Drawing.Size(1003, 513);
             this.tabMain.TabIndex = 9;
             this.tabMain.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabOption_Selected);
             // 
@@ -166,15 +158,50 @@
             this.tabExperiment.Controls.Add(this.groupBox3);
             this.tabExperiment.Controls.Add(this.groupBox2);
             this.tabExperiment.Controls.Add(this.groupBox5);
-            this.tabExperiment.Controls.Add(this.groupBox9);
             this.tabExperiment.Controls.Add(this.GBModelChoice);
             this.tabExperiment.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabExperiment.Location = new System.Drawing.Point(4, 22);
             this.tabExperiment.Name = "tabExperiment";
             this.tabExperiment.Padding = new System.Windows.Forms.Padding(3);
-            this.tabExperiment.Size = new System.Drawing.Size(995, 661);
+            this.tabExperiment.Size = new System.Drawing.Size(995, 487);
             this.tabExperiment.TabIndex = 0;
             this.tabExperiment.Text = "EXPERIMENT";
+            // 
+            // lblExperimentMode
+            // 
+            this.lblExperimentMode.AutoSize = true;
+            this.lblExperimentMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblExperimentMode.ForeColor = System.Drawing.Color.Black;
+            this.lblExperimentMode.Location = new System.Drawing.Point(27, 24);
+            this.lblExperimentMode.Name = "lblExperimentMode";
+            this.lblExperimentMode.Size = new System.Drawing.Size(89, 13);
+            this.lblExperimentMode.TabIndex = 48;
+            this.lblExperimentMode.Text = "Experiment Mode";
+            // 
+            // gbBatchTrainTest
+            // 
+            this.gbBatchTrainTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbBatchTrainTest.ForeColor = System.Drawing.Color.Purple;
+            this.gbBatchTrainTest.Location = new System.Drawing.Point(392, 21);
+            this.gbBatchTrainTest.Name = "gbBatchTrainTest";
+            this.gbBatchTrainTest.Size = new System.Drawing.Size(506, 121);
+            this.gbBatchTrainTest.TabIndex = 38;
+            this.gbBatchTrainTest.TabStop = false;
+            this.gbBatchTrainTest.Text = "BATCH TRAINING AND TEST";
+            // 
+            // cmbExperimentMode
+            // 
+            this.cmbExperimentMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbExperimentMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbExperimentMode.FormattingEnabled = true;
+            this.cmbExperimentMode.Items.AddRange(new object[] {
+            "Step-by-step",
+            "Batch"});
+            this.cmbExperimentMode.Location = new System.Drawing.Point(122, 21);
+            this.cmbExperimentMode.Name = "cmbExperimentMode";
+            this.cmbExperimentMode.Size = new System.Drawing.Size(175, 21);
+            this.cmbExperimentMode.TabIndex = 47;
+            this.cmbExperimentMode.SelectedIndexChanged += new System.EventHandler(this.cmbExperimentMode_SelectedIndexChanged);
             // 
             // groupBox3
             // 
@@ -210,9 +237,9 @@
             this.btnModelBrowser.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnModelBrowser.ForeColor = System.Drawing.Color.Black;
             this.btnModelBrowser.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnModelBrowser.Location = new System.Drawing.Point(259, 71);
+            this.btnModelBrowser.Location = new System.Drawing.Point(289, 72);
             this.btnModelBrowser.Name = "btnModelBrowser";
-            this.btnModelBrowser.Size = new System.Drawing.Size(83, 28);
+            this.btnModelBrowser.Size = new System.Drawing.Size(59, 24);
             this.btnModelBrowser.TabIndex = 33;
             this.btnModelBrowser.Text = "Browse...";
             this.btnModelBrowser.UseVisualStyleBackColor = true;
@@ -223,7 +250,7 @@
             this.tbxModelFilePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxModelFilePath.Location = new System.Drawing.Point(61, 75);
             this.tbxModelFilePath.Name = "tbxModelFilePath";
-            this.tbxModelFilePath.Size = new System.Drawing.Size(192, 20);
+            this.tbxModelFilePath.Size = new System.Drawing.Size(222, 20);
             this.tbxModelFilePath.TabIndex = 32;
             // 
             // lblTestFile
@@ -242,9 +269,9 @@
             this.btnTestBrowser.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnTestBrowser.ForeColor = System.Drawing.Color.Black;
             this.btnTestBrowser.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnTestBrowser.Location = new System.Drawing.Point(259, 29);
+            this.btnTestBrowser.Location = new System.Drawing.Point(289, 31);
             this.btnTestBrowser.Name = "btnTestBrowser";
-            this.btnTestBrowser.Size = new System.Drawing.Size(83, 28);
+            this.btnTestBrowser.Size = new System.Drawing.Size(59, 25);
             this.btnTestBrowser.TabIndex = 30;
             this.btnTestBrowser.Text = "Browse...";
             this.btnTestBrowser.UseVisualStyleBackColor = true;
@@ -255,7 +282,7 @@
             this.tbxTestFilePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxTestFilePath.Location = new System.Drawing.Point(61, 34);
             this.tbxTestFilePath.Name = "tbxTestFilePath";
-            this.tbxTestFilePath.Size = new System.Drawing.Size(192, 20);
+            this.tbxTestFilePath.Size = new System.Drawing.Size(222, 20);
             this.tbxTestFilePath.TabIndex = 29;
             // 
             // btnTest
@@ -264,9 +291,9 @@
             this.btnTest.ForeColor = System.Drawing.Color.Black;
             this.btnTest.Image = global::GUI.Properties.Resources.Test;
             this.btnTest.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnTest.Location = new System.Drawing.Point(116, 117);
+            this.btnTest.Location = new System.Drawing.Point(115, 109);
             this.btnTest.Name = "btnTest";
-            this.btnTest.Size = new System.Drawing.Size(124, 41);
+            this.btnTest.Size = new System.Drawing.Size(124, 49);
             this.btnTest.TabIndex = 6;
             this.btnTest.Text = "Test";
             this.btnTest.UseVisualStyleBackColor = true;
@@ -305,9 +332,9 @@
             this.btnTrainBrowser.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnTrainBrowser.ForeColor = System.Drawing.Color.Black;
             this.btnTrainBrowser.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnTrainBrowser.Location = new System.Drawing.Point(409, 27);
+            this.btnTrainBrowser.Location = new System.Drawing.Point(432, 31);
             this.btnTrainBrowser.Name = "btnTrainBrowser";
-            this.btnTrainBrowser.Size = new System.Drawing.Size(83, 28);
+            this.btnTrainBrowser.Size = new System.Drawing.Size(60, 23);
             this.btnTrainBrowser.TabIndex = 27;
             this.btnTrainBrowser.Text = "Browse...";
             this.btnTrainBrowser.UseVisualStyleBackColor = true;
@@ -433,7 +460,7 @@
             this.tbxTrainFilePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxTrainFilePath.Location = new System.Drawing.Point(97, 32);
             this.tbxTrainFilePath.Name = "tbxTrainFilePath";
-            this.tbxTrainFilePath.Size = new System.Drawing.Size(300, 20);
+            this.tbxTrainFilePath.Size = new System.Drawing.Size(329, 20);
             this.tbxTrainFilePath.TabIndex = 26;
             // 
             // btnTrain
@@ -481,8 +508,8 @@
             this.cmbActivationFunc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbActivationFunc.FormattingEnabled = true;
             this.cmbActivationFunc.Items.AddRange(new object[] {
-            "Sigmoid",
             "Tanh",
+            "Sigmoid",
             "Logarithm",
             "Sine"});
             this.cmbActivationFunc.Location = new System.Drawing.Point(108, 23);
@@ -665,12 +692,23 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "1. DATA PREPROCESS";
             // 
+            // lblInputFile
+            // 
+            this.lblInputFile.AutoSize = true;
+            this.lblInputFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblInputFile.ForeColor = System.Drawing.Color.Black;
+            this.lblInputFile.Location = new System.Drawing.Point(11, 31);
+            this.lblInputFile.Name = "lblInputFile";
+            this.lblInputFile.Size = new System.Drawing.Size(47, 13);
+            this.lblInputFile.TabIndex = 24;
+            this.lblInputFile.Text = "Input file";
+            // 
             // btnPreprocess
             // 
             this.btnPreprocess.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPreprocess.ForeColor = System.Drawing.Color.Black;
             this.btnPreprocess.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnPreprocess.Location = new System.Drawing.Point(115, 81);
+            this.btnPreprocess.Location = new System.Drawing.Point(115, 85);
             this.btnPreprocess.Name = "btnPreprocess";
             this.btnPreprocess.Size = new System.Drawing.Size(124, 41);
             this.btnPreprocess.TabIndex = 7;
@@ -682,9 +720,9 @@
             // 
             this.tbxCsvFilePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxCsvFilePath.ForeColor = System.Drawing.Color.Black;
-            this.tbxCsvFilePath.Location = new System.Drawing.Point(61, 52);
+            this.tbxCsvFilePath.Location = new System.Drawing.Point(61, 28);
             this.tbxCsvFilePath.Name = "tbxCsvFilePath";
-            this.tbxCsvFilePath.Size = new System.Drawing.Size(205, 20);
+            this.tbxCsvFilePath.Size = new System.Drawing.Size(222, 20);
             this.tbxCsvFilePath.TabIndex = 18;
             // 
             // btnBrowser
@@ -692,9 +730,9 @@
             this.btnBrowser.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnBrowser.ForeColor = System.Drawing.Color.Black;
             this.btnBrowser.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnBrowser.Location = new System.Drawing.Point(268, 48);
+            this.btnBrowser.Location = new System.Drawing.Point(289, 26);
             this.btnBrowser.Name = "btnBrowser";
-            this.btnBrowser.Size = new System.Drawing.Size(83, 28);
+            this.btnBrowser.Size = new System.Drawing.Size(59, 23);
             this.btnBrowser.TabIndex = 19;
             this.btnBrowser.Text = "Browse...";
             this.btnBrowser.UseVisualStyleBackColor = true;
@@ -703,9 +741,9 @@
             // tbxTrainingRatio
             // 
             this.tbxTrainingRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbxTrainingRatio.Location = new System.Drawing.Point(125, 23);
+            this.tbxTrainingRatio.Location = new System.Drawing.Point(116, 55);
             this.tbxTrainingRatio.Name = "tbxTrainingRatio";
-            this.tbxTrainingRatio.Size = new System.Drawing.Size(141, 20);
+            this.tbxTrainingRatio.Size = new System.Drawing.Size(167, 20);
             this.tbxTrainingRatio.TabIndex = 23;
             // 
             // label5
@@ -713,106 +751,11 @@
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.Color.Black;
-            this.label5.Location = new System.Drawing.Point(7, 25);
+            this.label5.Location = new System.Drawing.Point(8, 58);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(102, 13);
             this.label5.TabIndex = 22;
             this.label5.Text = "Training set ratio (%)";
-            // 
-            // groupBox9
-            // 
-            this.groupBox9.Controls.Add(this.btnStepTrainAndTest);
-            this.groupBox9.Controls.Add(this.tbxEndDate);
-            this.groupBox9.Controls.Add(this.label20);
-            this.groupBox9.Controls.Add(this.tbxStartDate);
-            this.groupBox9.Controls.Add(this.label19);
-            this.groupBox9.Controls.Add(this.tbxTrainingSize);
-            this.groupBox9.Controls.Add(this.label16);
-            this.groupBox9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox9.ForeColor = System.Drawing.Color.Green;
-            this.groupBox9.Location = new System.Drawing.Point(14, 490);
-            this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(657, 128);
-            this.groupBox9.TabIndex = 37;
-            this.groupBox9.TabStop = false;
-            this.groupBox9.Text = "STEP TRAINING AND TEST";
-            // 
-            // btnStepTrainAndTest
-            // 
-            this.btnStepTrainAndTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnStepTrainAndTest.ForeColor = System.Drawing.Color.Black;
-            this.btnStepTrainAndTest.Image = global::GUI.Properties.Resources.Fast_Forward_32_h_p8;
-            this.btnStepTrainAndTest.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnStepTrainAndTest.Location = new System.Drawing.Point(194, 81);
-            this.btnStepTrainAndTest.Name = "btnStepTrainAndTest";
-            this.btnStepTrainAndTest.Size = new System.Drawing.Size(162, 41);
-            this.btnStepTrainAndTest.TabIndex = 7;
-            this.btnStepTrainAndTest.Text = "Step train and test";
-            this.btnStepTrainAndTest.UseVisualStyleBackColor = true;
-            this.btnStepTrainAndTest.Click += new System.EventHandler(this.btnStepTrainAndTest_Click);
-            // 
-            // tbxEndDate
-            // 
-            this.tbxEndDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbxEndDate.ForeColor = System.Drawing.Color.Black;
-            this.tbxEndDate.Location = new System.Drawing.Point(353, 50);
-            this.tbxEndDate.Name = "tbxEndDate";
-            this.tbxEndDate.Size = new System.Drawing.Size(139, 20);
-            this.tbxEndDate.TabIndex = 5;
-            this.tbxEndDate.Text = "WholeData";
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label20.ForeColor = System.Drawing.Color.Black;
-            this.label20.Location = new System.Drawing.Point(325, 53);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(20, 13);
-            this.label20.TabIndex = 4;
-            this.label20.Text = "To";
-            // 
-            // tbxStartDate
-            // 
-            this.tbxStartDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbxStartDate.ForeColor = System.Drawing.Color.Black;
-            this.tbxStartDate.Location = new System.Drawing.Point(169, 50);
-            this.tbxStartDate.Name = "tbxStartDate";
-            this.tbxStartDate.Size = new System.Drawing.Size(139, 20);
-            this.tbxStartDate.TabIndex = 3;
-            this.tbxStartDate.Text = "WholeData";
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label19.ForeColor = System.Drawing.Color.Black;
-            this.label19.Location = new System.Drawing.Point(58, 53);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(84, 13);
-            this.label19.TabIndex = 2;
-            this.label19.Text = "From (d/M/yyyy)";
-            // 
-            // tbxTrainingSize
-            // 
-            this.tbxTrainingSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbxTrainingSize.ForeColor = System.Drawing.Color.Black;
-            this.tbxTrainingSize.Location = new System.Drawing.Point(169, 14);
-            this.tbxTrainingSize.Name = "tbxTrainingSize";
-            this.tbxTrainingSize.Size = new System.Drawing.Size(139, 20);
-            this.tbxTrainingSize.TabIndex = 1;
-            this.tbxTrainingSize.Text = "30";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.ForeColor = System.Drawing.Color.Black;
-            this.label16.Location = new System.Drawing.Point(58, 17);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(97, 13);
-            this.label16.TabIndex = 0;
-            this.label16.Text = "Training size (days)";
             // 
             // GBModelChoice
             // 
@@ -841,7 +784,6 @@
             this.rdSOMSVM.Name = "rdSOMSVM";
             this.rdSOMSVM.Size = new System.Drawing.Size(75, 17);
             this.rdSOMSVM.TabIndex = 31;
-            this.rdSOMSVM.TabStop = true;
             this.rdSOMSVM.Text = "SOM-SVM";
             this.rdSOMSVM.UseVisualStyleBackColor = true;
             this.rdSOMSVM.CheckedChanged += new System.EventHandler(this.rdSOMSVM_CheckedChanged);
@@ -849,14 +791,14 @@
             // nmNumCluster
             // 
             this.nmNumCluster.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nmNumCluster.Location = new System.Drawing.Point(289, 54);
+            this.nmNumCluster.Location = new System.Drawing.Point(289, 56);
             this.nmNumCluster.Minimum = new decimal(new int[] {
             2,
             0,
             0,
             0});
             this.nmNumCluster.Name = "nmNumCluster";
-            this.nmNumCluster.Size = new System.Drawing.Size(56, 20);
+            this.nmNumCluster.Size = new System.Drawing.Size(42, 20);
             this.nmNumCluster.TabIndex = 33;
             this.nmNumCluster.Value = new decimal(new int[] {
             2,
@@ -874,9 +816,9 @@
             "5",
             "10",
             "30"});
-            this.cmbNumDaysPredicted.Location = new System.Drawing.Point(108, 54);
+            this.cmbNumDaysPredicted.Location = new System.Drawing.Point(116, 53);
             this.cmbNumDaysPredicted.Name = "cmbNumDaysPredicted";
-            this.cmbNumDaysPredicted.Size = new System.Drawing.Size(93, 21);
+            this.cmbNumDaysPredicted.Size = new System.Drawing.Size(46, 21);
             this.cmbNumDaysPredicted.TabIndex = 46;
             // 
             // lblNumCluster
@@ -884,7 +826,7 @@
             this.lblNumCluster.AutoSize = true;
             this.lblNumCluster.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblNumCluster.ForeColor = System.Drawing.Color.Black;
-            this.lblNumCluster.Location = new System.Drawing.Point(207, 58);
+            this.lblNumCluster.Location = new System.Drawing.Point(195, 61);
             this.lblNumCluster.Name = "lblNumCluster";
             this.lblNumCluster.Size = new System.Drawing.Size(76, 13);
             this.lblNumCluster.TabIndex = 32;
@@ -893,24 +835,24 @@
             // rdSVM
             // 
             this.rdSVM.AutoSize = true;
-            this.rdSVM.Checked = true;
             this.rdSVM.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rdSVM.Location = new System.Drawing.Point(85, 26);
             this.rdSVM.Name = "rdSVM";
             this.rdSVM.Size = new System.Drawing.Size(48, 17);
             this.rdSVM.TabIndex = 1;
-            this.rdSVM.TabStop = true;
             this.rdSVM.Text = "SVM";
             this.rdSVM.UseVisualStyleBackColor = true;
             // 
             // rdANN
             // 
             this.rdANN.AutoSize = true;
+            this.rdANN.Checked = true;
             this.rdANN.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rdANN.Location = new System.Drawing.Point(16, 26);
             this.rdANN.Name = "rdANN";
             this.rdANN.Size = new System.Drawing.Size(48, 17);
             this.rdANN.TabIndex = 0;
+            this.rdANN.TabStop = true;
             this.rdANN.Text = "ANN";
             this.rdANN.UseVisualStyleBackColor = true;
             this.rdANN.CheckedChanged += new System.EventHandler(this.rdANN_CheckedChanged);
@@ -934,7 +876,6 @@
             this.rdKSVMeans.Name = "rdKSVMeans";
             this.rdKSVMeans.Size = new System.Drawing.Size(81, 17);
             this.rdKSVMeans.TabIndex = 30;
-            this.rdKSVMeans.TabStop = true;
             this.rdKSVMeans.Text = "K-SVMeans";
             this.rdKSVMeans.UseVisualStyleBackColor = true;
             this.rdKSVMeans.CheckedChanged += new System.EventHandler(this.rdKSVMeans_CheckedChanged);
@@ -958,7 +899,7 @@
             this.tabApplication.Location = new System.Drawing.Point(4, 22);
             this.tabApplication.Name = "tabApplication";
             this.tabApplication.Padding = new System.Windows.Forms.Padding(3);
-            this.tabApplication.Size = new System.Drawing.Size(995, 661);
+            this.tabApplication.Size = new System.Drawing.Size(995, 487);
             this.tabApplication.TabIndex = 1;
             this.tabApplication.Text = "APPLICATION";
             // 
@@ -1164,58 +1105,11 @@
             this.zg1.Size = new System.Drawing.Size(843, 414);
             this.zg1.TabIndex = 1;
             // 
-            // gbBatchTrainTest
-            // 
-            this.gbBatchTrainTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gbBatchTrainTest.ForeColor = System.Drawing.Color.Purple;
-            this.gbBatchTrainTest.Location = new System.Drawing.Point(392, 21);
-            this.gbBatchTrainTest.Name = "gbBatchTrainTest";
-            this.gbBatchTrainTest.Size = new System.Drawing.Size(506, 121);
-            this.gbBatchTrainTest.TabIndex = 38;
-            this.gbBatchTrainTest.TabStop = false;
-            this.gbBatchTrainTest.Text = "BATCH TRAINING AND TEST";
-            // 
-            // cmbExperimentMode
-            // 
-            this.cmbExperimentMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbExperimentMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cmbExperimentMode.FormattingEnabled = true;
-            this.cmbExperimentMode.Items.AddRange(new object[] {
-            "Step-by-step",
-            "Batch"});
-            this.cmbExperimentMode.Location = new System.Drawing.Point(122, 21);
-            this.cmbExperimentMode.Name = "cmbExperimentMode";
-            this.cmbExperimentMode.Size = new System.Drawing.Size(175, 21);
-            this.cmbExperimentMode.TabIndex = 47;
-            this.cmbExperimentMode.SelectedIndexChanged += new System.EventHandler(this.cmbExperimentMode_SelectedIndexChanged);
-            // 
-            // lblExperimentMode
-            // 
-            this.lblExperimentMode.AutoSize = true;
-            this.lblExperimentMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblExperimentMode.ForeColor = System.Drawing.Color.Black;
-            this.lblExperimentMode.Location = new System.Drawing.Point(27, 24);
-            this.lblExperimentMode.Name = "lblExperimentMode";
-            this.lblExperimentMode.Size = new System.Drawing.Size(89, 13);
-            this.lblExperimentMode.TabIndex = 48;
-            this.lblExperimentMode.Text = "Experiment Mode";
-            // 
-            // lblInputFile
-            // 
-            this.lblInputFile.AutoSize = true;
-            this.lblInputFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblInputFile.ForeColor = System.Drawing.Color.Black;
-            this.lblInputFile.Location = new System.Drawing.Point(10, 55);
-            this.lblInputFile.Name = "lblInputFile";
-            this.lblInputFile.Size = new System.Drawing.Size(47, 13);
-            this.lblInputFile.TabIndex = 24;
-            this.lblInputFile.Text = "Input file";
-            // 
             // MainGUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(914, 696);
+            this.ClientSize = new System.Drawing.Size(914, 557);
             this.Controls.Add(this.tabMain);
             this.Controls.Add(this.label1);
             this.MaximizeBox = false;
@@ -1236,8 +1130,6 @@
             this.gbAnnSetting.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
-            this.groupBox9.ResumeLayout(false);
-            this.groupBox9.PerformLayout();
             this.GBModelChoice.ResumeLayout(false);
             this.GBModelChoice.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).EndInit();
@@ -1255,14 +1147,6 @@
         private System.Windows.Forms.TabControl tabMain;
         private System.Windows.Forms.TabPage tabApplication;
         private System.Windows.Forms.TabPage tabExperiment;
-        private System.Windows.Forms.GroupBox groupBox9;
-        private System.Windows.Forms.Button btnStepTrainAndTest;
-        private System.Windows.Forms.TextBox tbxEndDate;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.TextBox tbxStartDate;
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.TextBox tbxTrainingSize;
-        private System.Windows.Forms.Label label16;
         private System.Windows.Forms.GroupBox gbSVRSetting;
         private System.Windows.Forms.TextBox tbxNumFold;
         private System.Windows.Forms.Label lblNumFold;

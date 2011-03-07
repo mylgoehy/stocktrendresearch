@@ -9,102 +9,85 @@ namespace BUS
     public class ANNParameterBUS
     {
         #region Attributes
-        private static int _inputNode;
-        private static int _hiddenNode;
-        private static int _outputNode;
+        private static int inputNode;
+        private static int hiddenNode;
+        private static int outputNode;
 
-        private static double _learningRate;
-        private static double _momentum;
-        private static int _maxEpoch;
-        private static double _bias;
+        private static double learningRate;
+        private static double momentum;
+        private static int maxEpoch;
+        private static double bias;
 
-        private static int _trainingSize;
+        private static int trainingSize;
 
-        private static double _accuracy;
-        private static string _measureType;
+        private static double accuracy;
+        private static string measureType;
 
         #endregion
 
         #region Properties
         public static int InputNode
         {
-            get { return ANNParameterBUS._inputNode; }
-            set { ANNParameterBUS._inputNode = value; }
+            get { return ANNParameterBUS.inputNode; }
+            set { ANNParameterBUS.inputNode = value; }
         }
 
         public static int HiddenNode
         {
-            get { return ANNParameterBUS._hiddenNode; }
-            set { ANNParameterBUS._hiddenNode = value; }
+            get { return ANNParameterBUS.hiddenNode; }
+            set { ANNParameterBUS.hiddenNode = value; }
         }
 
         public static int OutputNode
         {
-            get { return ANNParameterBUS._outputNode; }
-            set { ANNParameterBUS._outputNode = value; }
+            get { return ANNParameterBUS.outputNode; }
+            set { ANNParameterBUS.outputNode = value; }
         }
 
         public static double LearningRate
         {
-            get { return ANNParameterBUS._learningRate; }
-            set { ANNParameterBUS._learningRate = value; }
+            get { return ANNParameterBUS.learningRate; }
+            set { ANNParameterBUS.learningRate = value; }
         }
 
         public static double Momentum
         {
-            get { return ANNParameterBUS._momentum; }
-            set { ANNParameterBUS._momentum = value; }
+            get { return ANNParameterBUS.momentum; }
+            set { ANNParameterBUS.momentum = value; }
         }
 
         public static int MaxEpoch
         {
-            get { return ANNParameterBUS._maxEpoch; }
-            set { ANNParameterBUS._maxEpoch = value; }
+            get { return ANNParameterBUS.maxEpoch; }
+            set { ANNParameterBUS.maxEpoch = value; }
         }
 
         public static double Bias
         {
-            get { return ANNParameterBUS._bias; }
-            set { ANNParameterBUS._bias = value; }
+            get { return ANNParameterBUS.bias; }
+            set { ANNParameterBUS.bias = value; }
         }
 
         public static int TrainingSize
         {
-            get { return ANNParameterBUS._trainingSize; }
-            set { ANNParameterBUS._trainingSize = value; }
+            get { return ANNParameterBUS.trainingSize; }
+            set { ANNParameterBUS.trainingSize = value; }
         }
 
         public static double Accuracy
         {
-            get { return ANNParameterBUS._accuracy; }
-            set { ANNParameterBUS._accuracy = value; }
+            get { return ANNParameterBUS.accuracy; }
+            set { ANNParameterBUS.accuracy = value; }
         }
 
         public static string MeasureType
         {
-            get { return ANNParameterBUS._measureType; }
-            set { ANNParameterBUS._measureType = value; }
+            get { return ANNParameterBUS.measureType; }
+            set { ANNParameterBUS.measureType = value; }
         }
         #endregion
 
-        #region Methods
-        public static void LoadParameter()
-        {
-            try
-            {
-                TextReader reader = new StreamReader(ANNModelBUS.AnnModelFile);
-
-                ANNParameterBUS.InputNode = int.Parse(reader.ReadLine());
-                ANNParameterBUS.HiddenNode = int.Parse(reader.ReadLine());
-                ANNParameterBUS.OutputNode = int.Parse(reader.ReadLine());
-
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        #region Methods       
         #endregion
     }
 }
