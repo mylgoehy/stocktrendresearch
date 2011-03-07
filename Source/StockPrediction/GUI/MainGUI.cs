@@ -905,7 +905,7 @@ namespace GUI
             StreamReader reader = new StreamReader(predictedFile);
             StreamWriter writer = new StreamWriter(statisticFile);
 
-            //read.ReadLine();// bỏ dòng đầu
+            reader.ReadLine();// bỏ dòng đầu
 
             strTemp = reader.ReadToEnd();
             reader.Close();
@@ -1012,6 +1012,7 @@ namespace GUI
             for (int i = 0; i < predictedFiles.Length; i++)
             {
                 StreamReader reader = new StreamReader(predictedFiles[i]);
+                reader.ReadLine();
                 strTemp += reader.ReadToEnd();
                 reader.Close();
             }
