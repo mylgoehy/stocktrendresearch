@@ -1,0 +1,5 @@
+Predicted Trend	 Actual Trend
+	Uptrend	Notrend	Downtrend
+Uptrend	4	0	0	
+Notrend	0	6	5	
+Downtrend	0	2	4	
