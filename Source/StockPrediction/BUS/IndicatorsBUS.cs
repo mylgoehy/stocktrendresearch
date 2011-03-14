@@ -194,6 +194,55 @@ namespace BUS
             }
             return bands;
         }
+        public static double[] CalculateRSI(double[] closePrices, int numDaysPeriod)
+        {
+            double[] results = new double[closePrices.Length];
+            double[] Upwards = new double[closePrices.Length];
+            double[] Downwards = new double[closePrices.Length];
+            
+            // Tính Upward changes and Downward changes
+            Upwards[0] = 0;
+            Downwards[0] = 0;
+            for (int i = 1; i < closePrices.Length; i++)
+            {
+                double dblTemp = closePrices[i] - closePrices[i - 1];
+                if (dblTemp > 0.0d)
+                {
+                    Upwards[i] = dblTemp;
+                    Downwards[i] = 0.0d;
+                }
+                else if(dblTemp < 0.0d)
+                {
+                    Downwards[i] = Math.Abs(dblTemp);
+                    Upwards[i] = 0.0d;
+                }
+                else // Giá đóng cửa ngày hiện tại không đổi so với ngày trước
+                {
+                    Upwards[i] = 0.0d;
+                    Downwards[i] = 0.0d;
+                }
+            }
+                        
+            // Tinh chi so RSI
+            double[] EMAUpwards = CalculateEMA(Upwards, numDaysPeriod);
+            double[] EMADownwards = CalculateEMA(Downwards, numDaysPeriod);
+
+            int iTemp = numDaysPeriod < closePrices.Length ? numDaysPeriod : closePrices.Length;
+            for (int i = 0; i < iTemp; i++)
+            {
+            
+                if (EMADownwards[i] == 0.0d)
+                {
+                    results[i] = 100;
+                }
+                else
+                {
+                    double dblTemp = EMAUpwards[i] / EMADownwards[i];
+                    results[i] = 100 - (100 / (1 + dblTemp));
+                }
+            }
+            return results;
+        }
 
         /// <summary>
         /// Tìm số ngày tính từ ngày cao (thấp) nhất đến ngày end (dùng cho Aroon)
