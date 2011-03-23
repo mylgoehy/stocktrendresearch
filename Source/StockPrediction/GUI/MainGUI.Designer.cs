@@ -34,16 +34,20 @@
             this.tabExperiment = new System.Windows.Forms.TabPage();
             this.lblExperimentMode = new System.Windows.Forms.Label();
             this.gbBatchTrainTest = new System.Windows.Forms.GroupBox();
+            this.lblBatchInputFile = new System.Windows.Forms.Label();
+            this.tbxBatchInputFile = new System.Windows.Forms.TextBox();
+            this.btnBatchBrowse = new System.Windows.Forms.Button();
+            this.tbxBatchTrainingRatio = new System.Windows.Forms.TextBox();
+            this.lblBatchTrainingRatio = new System.Windows.Forms.Label();
             this.cmbExperimentMode = new System.Windows.Forms.ComboBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.gbTest = new System.Windows.Forms.GroupBox();
             this.lblModelFile = new System.Windows.Forms.Label();
             this.btnModelBrowser = new System.Windows.Forms.Button();
             this.tbxModelFilePath = new System.Windows.Forms.TextBox();
             this.lblTestFile = new System.Windows.Forms.Label();
             this.btnTestBrowser = new System.Windows.Forms.Button();
             this.tbxTestFilePath = new System.Windows.Forms.TextBox();
-            this.btnTest = new System.Windows.Forms.Button();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.gbTraining = new System.Windows.Forms.GroupBox();
             this.lblTrainingFile = new System.Windows.Forms.Label();
             this.btnTrainBrowser = new System.Windows.Forms.Button();
             this.gbSVRSetting = new System.Windows.Forms.GroupBox();
@@ -57,7 +61,6 @@
             this.cmbModelSelection = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tbxTrainFilePath = new System.Windows.Forms.TextBox();
-            this.btnTrain = new System.Windows.Forms.Button();
             this.gbAnnSetting = new System.Windows.Forms.GroupBox();
             this.cmbActivationFunc = new System.Windows.Forms.ComboBox();
             this.cmbTrainingMeasure = new System.Windows.Forms.ComboBox();
@@ -75,14 +78,13 @@
             this.label12 = new System.Windows.Forms.Label();
             this.tbxLearningRate = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.gbPreprocess = new System.Windows.Forms.GroupBox();
             this.lblInputFile = new System.Windows.Forms.Label();
-            this.btnPreprocess = new System.Windows.Forms.Button();
             this.tbxCsvFilePath = new System.Windows.Forms.TextBox();
-            this.btnBrowser = new System.Windows.Forms.Button();
+            this.btnPreprocessBrowser = new System.Windows.Forms.Button();
             this.tbxTrainingRatio = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.GBModelChoice = new System.Windows.Forms.GroupBox();
+            this.lblTrainingRatio = new System.Windows.Forms.Label();
+            this.gbModelChoice = new System.Windows.Forms.GroupBox();
             this.rdSOMSVM = new System.Windows.Forms.RadioButton();
             this.nmNumCluster = new System.Windows.Forms.NumericUpDown();
             this.cmbNumDaysPredicted = new System.Windows.Forms.ComboBox();
@@ -113,14 +115,20 @@
             this.dtpFrom = new System.Windows.Forms.DateTimePicker();
             this.cmbStockID = new System.Windows.Forms.ComboBox();
             this.zg1 = new ZedGraph.ZedGraphControl();
+            this.lblBatchGuide = new System.Windows.Forms.Label();
+            this.btnBatchTrainTest = new System.Windows.Forms.Button();
+            this.btnTest = new System.Windows.Forms.Button();
+            this.btnTrain = new System.Windows.Forms.Button();
+            this.btnPreprocess = new System.Windows.Forms.Button();
             this.tabMain.SuspendLayout();
             this.tabExperiment.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.gbBatchTrainTest.SuspendLayout();
+            this.gbTest.SuspendLayout();
+            this.gbTraining.SuspendLayout();
             this.gbSVRSetting.SuspendLayout();
             this.gbAnnSetting.SuspendLayout();
-            this.groupBox5.SuspendLayout();
-            this.GBModelChoice.SuspendLayout();
+            this.gbPreprocess.SuspendLayout();
+            this.gbModelChoice.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).BeginInit();
             this.tabApplication.SuspendLayout();
             this.gbResult.SuspendLayout();
@@ -155,10 +163,10 @@
             this.tabExperiment.Controls.Add(this.lblExperimentMode);
             this.tabExperiment.Controls.Add(this.gbBatchTrainTest);
             this.tabExperiment.Controls.Add(this.cmbExperimentMode);
-            this.tabExperiment.Controls.Add(this.groupBox3);
-            this.tabExperiment.Controls.Add(this.groupBox2);
-            this.tabExperiment.Controls.Add(this.groupBox5);
-            this.tabExperiment.Controls.Add(this.GBModelChoice);
+            this.tabExperiment.Controls.Add(this.gbTest);
+            this.tabExperiment.Controls.Add(this.gbTraining);
+            this.tabExperiment.Controls.Add(this.gbPreprocess);
+            this.tabExperiment.Controls.Add(this.gbModelChoice);
             this.tabExperiment.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabExperiment.Location = new System.Drawing.Point(4, 22);
             this.tabExperiment.Name = "tabExperiment";
@@ -180,6 +188,13 @@
             // 
             // gbBatchTrainTest
             // 
+            this.gbBatchTrainTest.Controls.Add(this.btnBatchTrainTest);
+            this.gbBatchTrainTest.Controls.Add(this.lblBatchGuide);
+            this.gbBatchTrainTest.Controls.Add(this.lblBatchInputFile);
+            this.gbBatchTrainTest.Controls.Add(this.tbxBatchInputFile);
+            this.gbBatchTrainTest.Controls.Add(this.btnBatchBrowse);
+            this.gbBatchTrainTest.Controls.Add(this.tbxBatchTrainingRatio);
+            this.gbBatchTrainTest.Controls.Add(this.lblBatchTrainingRatio);
             this.gbBatchTrainTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbBatchTrainTest.ForeColor = System.Drawing.Color.Purple;
             this.gbBatchTrainTest.Location = new System.Drawing.Point(392, 21);
@@ -188,6 +203,58 @@
             this.gbBatchTrainTest.TabIndex = 38;
             this.gbBatchTrainTest.TabStop = false;
             this.gbBatchTrainTest.Text = "BATCH TRAINING AND TEST";
+            // 
+            // lblBatchInputFile
+            // 
+            this.lblBatchInputFile.AutoSize = true;
+            this.lblBatchInputFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblBatchInputFile.ForeColor = System.Drawing.Color.Black;
+            this.lblBatchInputFile.Location = new System.Drawing.Point(25, 24);
+            this.lblBatchInputFile.Name = "lblBatchInputFile";
+            this.lblBatchInputFile.Size = new System.Drawing.Size(47, 13);
+            this.lblBatchInputFile.TabIndex = 29;
+            this.lblBatchInputFile.Text = "Input file";
+            // 
+            // tbxBatchInputFile
+            // 
+            this.tbxBatchInputFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbxBatchInputFile.ForeColor = System.Drawing.Color.Black;
+            this.tbxBatchInputFile.Location = new System.Drawing.Point(78, 19);
+            this.tbxBatchInputFile.Name = "tbxBatchInputFile";
+            this.tbxBatchInputFile.Size = new System.Drawing.Size(348, 20);
+            this.tbxBatchInputFile.TabIndex = 25;
+            // 
+            // btnBatchBrowse
+            // 
+            this.btnBatchBrowse.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBatchBrowse.ForeColor = System.Drawing.Color.Black;
+            this.btnBatchBrowse.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnBatchBrowse.Location = new System.Drawing.Point(433, 16);
+            this.btnBatchBrowse.Name = "btnBatchBrowse";
+            this.btnBatchBrowse.Size = new System.Drawing.Size(59, 23);
+            this.btnBatchBrowse.TabIndex = 26;
+            this.btnBatchBrowse.Text = "Browse...";
+            this.btnBatchBrowse.UseVisualStyleBackColor = true;
+            this.btnBatchBrowse.Click += new System.EventHandler(this.btnBatchBrowse_Click);
+            // 
+            // tbxBatchTrainingRatio
+            // 
+            this.tbxBatchTrainingRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbxBatchTrainingRatio.Location = new System.Drawing.Point(133, 47);
+            this.tbxBatchTrainingRatio.Name = "tbxBatchTrainingRatio";
+            this.tbxBatchTrainingRatio.Size = new System.Drawing.Size(293, 20);
+            this.tbxBatchTrainingRatio.TabIndex = 28;
+            // 
+            // lblBatchTrainingRatio
+            // 
+            this.lblBatchTrainingRatio.AutoSize = true;
+            this.lblBatchTrainingRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblBatchTrainingRatio.ForeColor = System.Drawing.Color.Black;
+            this.lblBatchTrainingRatio.Location = new System.Drawing.Point(25, 51);
+            this.lblBatchTrainingRatio.Name = "lblBatchTrainingRatio";
+            this.lblBatchTrainingRatio.Size = new System.Drawing.Size(102, 13);
+            this.lblBatchTrainingRatio.TabIndex = 27;
+            this.lblBatchTrainingRatio.Text = "Training set ratio (%)";
             // 
             // cmbExperimentMode
             // 
@@ -203,23 +270,23 @@
             this.cmbExperimentMode.TabIndex = 47;
             this.cmbExperimentMode.SelectedIndexChanged += new System.EventHandler(this.cmbExperimentMode_SelectedIndexChanged);
             // 
-            // groupBox3
+            // gbTest
             // 
-            this.groupBox3.Controls.Add(this.lblModelFile);
-            this.groupBox3.Controls.Add(this.btnModelBrowser);
-            this.groupBox3.Controls.Add(this.tbxModelFilePath);
-            this.groupBox3.Controls.Add(this.lblTestFile);
-            this.groupBox3.Controls.Add(this.btnTestBrowser);
-            this.groupBox3.Controls.Add(this.tbxTestFilePath);
-            this.groupBox3.Controls.Add(this.btnTest);
-            this.groupBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.groupBox3.Location = new System.Drawing.Point(14, 304);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(356, 169);
-            this.groupBox3.TabIndex = 24;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "3. TEST";
+            this.gbTest.Controls.Add(this.lblModelFile);
+            this.gbTest.Controls.Add(this.btnModelBrowser);
+            this.gbTest.Controls.Add(this.tbxModelFilePath);
+            this.gbTest.Controls.Add(this.lblTestFile);
+            this.gbTest.Controls.Add(this.btnTestBrowser);
+            this.gbTest.Controls.Add(this.tbxTestFilePath);
+            this.gbTest.Controls.Add(this.btnTest);
+            this.gbTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbTest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.gbTest.Location = new System.Drawing.Point(14, 304);
+            this.gbTest.Name = "gbTest";
+            this.gbTest.Size = new System.Drawing.Size(356, 169);
+            this.gbTest.TabIndex = 24;
+            this.gbTest.TabStop = false;
+            this.gbTest.Text = "3. TEST";
             // 
             // lblModelFile
             // 
@@ -285,36 +352,22 @@
             this.tbxTestFilePath.Size = new System.Drawing.Size(222, 20);
             this.tbxTestFilePath.TabIndex = 29;
             // 
-            // btnTest
+            // gbTraining
             // 
-            this.btnTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnTest.ForeColor = System.Drawing.Color.Black;
-            this.btnTest.Image = global::GUI.Properties.Resources.Test;
-            this.btnTest.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnTest.Location = new System.Drawing.Point(115, 109);
-            this.btnTest.Name = "btnTest";
-            this.btnTest.Size = new System.Drawing.Size(124, 49);
-            this.btnTest.TabIndex = 6;
-            this.btnTest.Text = "Test";
-            this.btnTest.UseVisualStyleBackColor = true;
-            this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.lblTrainingFile);
-            this.groupBox2.Controls.Add(this.btnTrainBrowser);
-            this.groupBox2.Controls.Add(this.gbSVRSetting);
-            this.groupBox2.Controls.Add(this.tbxTrainFilePath);
-            this.groupBox2.Controls.Add(this.btnTrain);
-            this.groupBox2.Controls.Add(this.gbAnnSetting);
-            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.groupBox2.Location = new System.Drawing.Point(392, 154);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(506, 321);
-            this.groupBox2.TabIndex = 23;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "2. TRAINING";
+            this.gbTraining.Controls.Add(this.lblTrainingFile);
+            this.gbTraining.Controls.Add(this.btnTrainBrowser);
+            this.gbTraining.Controls.Add(this.gbSVRSetting);
+            this.gbTraining.Controls.Add(this.tbxTrainFilePath);
+            this.gbTraining.Controls.Add(this.btnTrain);
+            this.gbTraining.Controls.Add(this.gbAnnSetting);
+            this.gbTraining.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbTraining.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.gbTraining.Location = new System.Drawing.Point(392, 154);
+            this.gbTraining.Name = "gbTraining";
+            this.gbTraining.Size = new System.Drawing.Size(506, 321);
+            this.gbTraining.TabIndex = 23;
+            this.gbTraining.TabStop = false;
+            this.gbTraining.Text = "2. TRAINING";
             // 
             // lblTrainingFile
             // 
@@ -462,20 +515,6 @@
             this.tbxTrainFilePath.Name = "tbxTrainFilePath";
             this.tbxTrainFilePath.Size = new System.Drawing.Size(329, 20);
             this.tbxTrainFilePath.TabIndex = 26;
-            // 
-            // btnTrain
-            // 
-            this.btnTrain.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnTrain.ForeColor = System.Drawing.Color.Black;
-            this.btnTrain.Image = global::GUI.Properties.Resources.Train;
-            this.btnTrain.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnTrain.Location = new System.Drawing.Point(318, 259);
-            this.btnTrain.Name = "btnTrain";
-            this.btnTrain.Size = new System.Drawing.Size(124, 41);
-            this.btnTrain.TabIndex = 6;
-            this.btnTrain.Text = "Train";
-            this.btnTrain.UseVisualStyleBackColor = true;
-            this.btnTrain.Click += new System.EventHandler(this.btnTrain_Click);
             // 
             // gbAnnSetting
             // 
@@ -675,22 +714,22 @@
             this.label13.TabIndex = 26;
             this.label13.Text = "Learning rate";
             // 
-            // groupBox5
+            // gbPreprocess
             // 
-            this.groupBox5.Controls.Add(this.lblInputFile);
-            this.groupBox5.Controls.Add(this.btnPreprocess);
-            this.groupBox5.Controls.Add(this.tbxCsvFilePath);
-            this.groupBox5.Controls.Add(this.btnBrowser);
-            this.groupBox5.Controls.Add(this.tbxTrainingRatio);
-            this.groupBox5.Controls.Add(this.label5);
-            this.groupBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.groupBox5.Location = new System.Drawing.Point(14, 154);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(357, 134);
-            this.groupBox5.TabIndex = 25;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "1. DATA PREPROCESS";
+            this.gbPreprocess.Controls.Add(this.lblInputFile);
+            this.gbPreprocess.Controls.Add(this.btnPreprocess);
+            this.gbPreprocess.Controls.Add(this.tbxCsvFilePath);
+            this.gbPreprocess.Controls.Add(this.btnPreprocessBrowser);
+            this.gbPreprocess.Controls.Add(this.tbxTrainingRatio);
+            this.gbPreprocess.Controls.Add(this.lblTrainingRatio);
+            this.gbPreprocess.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbPreprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.gbPreprocess.Location = new System.Drawing.Point(14, 154);
+            this.gbPreprocess.Name = "gbPreprocess";
+            this.gbPreprocess.Size = new System.Drawing.Size(357, 134);
+            this.gbPreprocess.TabIndex = 25;
+            this.gbPreprocess.TabStop = false;
+            this.gbPreprocess.Text = "1. DATA PREPROCESS";
             // 
             // lblInputFile
             // 
@@ -703,19 +742,6 @@
             this.lblInputFile.TabIndex = 24;
             this.lblInputFile.Text = "Input file";
             // 
-            // btnPreprocess
-            // 
-            this.btnPreprocess.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnPreprocess.ForeColor = System.Drawing.Color.Black;
-            this.btnPreprocess.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnPreprocess.Location = new System.Drawing.Point(115, 85);
-            this.btnPreprocess.Name = "btnPreprocess";
-            this.btnPreprocess.Size = new System.Drawing.Size(124, 41);
-            this.btnPreprocess.TabIndex = 7;
-            this.btnPreprocess.Text = "Preprocess";
-            this.btnPreprocess.UseVisualStyleBackColor = true;
-            this.btnPreprocess.Click += new System.EventHandler(this.btnPreprocess_Click);
-            // 
             // tbxCsvFilePath
             // 
             this.tbxCsvFilePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -725,18 +751,18 @@
             this.tbxCsvFilePath.Size = new System.Drawing.Size(222, 20);
             this.tbxCsvFilePath.TabIndex = 18;
             // 
-            // btnBrowser
+            // btnPreprocessBrowser
             // 
-            this.btnBrowser.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnBrowser.ForeColor = System.Drawing.Color.Black;
-            this.btnBrowser.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnBrowser.Location = new System.Drawing.Point(289, 26);
-            this.btnBrowser.Name = "btnBrowser";
-            this.btnBrowser.Size = new System.Drawing.Size(59, 23);
-            this.btnBrowser.TabIndex = 19;
-            this.btnBrowser.Text = "Browse...";
-            this.btnBrowser.UseVisualStyleBackColor = true;
-            this.btnBrowser.Click += new System.EventHandler(this.btnBrowser_Click);
+            this.btnPreprocessBrowser.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPreprocessBrowser.ForeColor = System.Drawing.Color.Black;
+            this.btnPreprocessBrowser.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnPreprocessBrowser.Location = new System.Drawing.Point(289, 26);
+            this.btnPreprocessBrowser.Name = "btnPreprocessBrowser";
+            this.btnPreprocessBrowser.Size = new System.Drawing.Size(59, 23);
+            this.btnPreprocessBrowser.TabIndex = 19;
+            this.btnPreprocessBrowser.Text = "Browse...";
+            this.btnPreprocessBrowser.UseVisualStyleBackColor = true;
+            this.btnPreprocessBrowser.Click += new System.EventHandler(this.btnPreprocessBrowser_Click);
             // 
             // tbxTrainingRatio
             // 
@@ -746,35 +772,35 @@
             this.tbxTrainingRatio.Size = new System.Drawing.Size(167, 20);
             this.tbxTrainingRatio.TabIndex = 23;
             // 
-            // label5
+            // lblTrainingRatio
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.ForeColor = System.Drawing.Color.Black;
-            this.label5.Location = new System.Drawing.Point(8, 58);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(102, 13);
-            this.label5.TabIndex = 22;
-            this.label5.Text = "Training set ratio (%)";
+            this.lblTrainingRatio.AutoSize = true;
+            this.lblTrainingRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTrainingRatio.ForeColor = System.Drawing.Color.Black;
+            this.lblTrainingRatio.Location = new System.Drawing.Point(8, 58);
+            this.lblTrainingRatio.Name = "lblTrainingRatio";
+            this.lblTrainingRatio.Size = new System.Drawing.Size(102, 13);
+            this.lblTrainingRatio.TabIndex = 22;
+            this.lblTrainingRatio.Text = "Training set ratio (%)";
             // 
-            // GBModelChoice
+            // gbModelChoice
             // 
-            this.GBModelChoice.Controls.Add(this.rdSOMSVM);
-            this.GBModelChoice.Controls.Add(this.nmNumCluster);
-            this.GBModelChoice.Controls.Add(this.cmbNumDaysPredicted);
-            this.GBModelChoice.Controls.Add(this.lblNumCluster);
-            this.GBModelChoice.Controls.Add(this.rdSVM);
-            this.GBModelChoice.Controls.Add(this.rdANN);
-            this.GBModelChoice.Controls.Add(this.label10);
-            this.GBModelChoice.Controls.Add(this.rdKSVMeans);
-            this.GBModelChoice.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GBModelChoice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.GBModelChoice.Location = new System.Drawing.Point(14, 57);
-            this.GBModelChoice.Name = "GBModelChoice";
-            this.GBModelChoice.Size = new System.Drawing.Size(356, 87);
-            this.GBModelChoice.TabIndex = 19;
-            this.GBModelChoice.TabStop = false;
-            this.GBModelChoice.Text = "MODEL CHOICE";
+            this.gbModelChoice.Controls.Add(this.rdSOMSVM);
+            this.gbModelChoice.Controls.Add(this.nmNumCluster);
+            this.gbModelChoice.Controls.Add(this.cmbNumDaysPredicted);
+            this.gbModelChoice.Controls.Add(this.lblNumCluster);
+            this.gbModelChoice.Controls.Add(this.rdSVM);
+            this.gbModelChoice.Controls.Add(this.rdANN);
+            this.gbModelChoice.Controls.Add(this.label10);
+            this.gbModelChoice.Controls.Add(this.rdKSVMeans);
+            this.gbModelChoice.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbModelChoice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.gbModelChoice.Location = new System.Drawing.Point(14, 57);
+            this.gbModelChoice.Name = "gbModelChoice";
+            this.gbModelChoice.Size = new System.Drawing.Size(356, 87);
+            this.gbModelChoice.TabIndex = 19;
+            this.gbModelChoice.TabStop = false;
+            this.gbModelChoice.Text = "MODEL CHOICE";
             // 
             // rdSOMSVM
             // 
@@ -1105,6 +1131,73 @@
             this.zg1.Size = new System.Drawing.Size(843, 414);
             this.zg1.TabIndex = 1;
             // 
+            // lblBatchGuide
+            // 
+            this.lblBatchGuide.AutoSize = true;
+            this.lblBatchGuide.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblBatchGuide.ForeColor = System.Drawing.Color.Maroon;
+            this.lblBatchGuide.Location = new System.Drawing.Point(25, 88);
+            this.lblBatchGuide.Name = "lblBatchGuide";
+            this.lblBatchGuide.Size = new System.Drawing.Size(249, 13);
+            this.lblBatchGuide.TabIndex = 30;
+            this.lblBatchGuide.Text = "*Fill the ANN or SVM settings below before \"Do it\" !";
+            // 
+            // btnBatchTrainTest
+            // 
+            this.btnBatchTrainTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBatchTrainTest.ForeColor = System.Drawing.Color.Black;
+            this.btnBatchTrainTest.Image = global::GUI.Properties.Resources.doit1;
+            this.btnBatchTrainTest.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnBatchTrainTest.Location = new System.Drawing.Point(302, 74);
+            this.btnBatchTrainTest.Name = "btnBatchTrainTest";
+            this.btnBatchTrainTest.Size = new System.Drawing.Size(124, 41);
+            this.btnBatchTrainTest.TabIndex = 31;
+            this.btnBatchTrainTest.Text = "Do it";
+            this.btnBatchTrainTest.UseVisualStyleBackColor = true;
+            this.btnBatchTrainTest.Click += new System.EventHandler(this.btnBatchTrainTest_Click);
+            // 
+            // btnTest
+            // 
+            this.btnTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnTest.ForeColor = System.Drawing.Color.Black;
+            this.btnTest.Image = global::GUI.Properties.Resources.Test;
+            this.btnTest.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnTest.Location = new System.Drawing.Point(115, 109);
+            this.btnTest.Name = "btnTest";
+            this.btnTest.Size = new System.Drawing.Size(124, 41);
+            this.btnTest.TabIndex = 6;
+            this.btnTest.Text = "Test";
+            this.btnTest.UseVisualStyleBackColor = true;
+            this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+            // 
+            // btnTrain
+            // 
+            this.btnTrain.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnTrain.ForeColor = System.Drawing.Color.Black;
+            this.btnTrain.Image = global::GUI.Properties.Resources.Train;
+            this.btnTrain.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnTrain.Location = new System.Drawing.Point(302, 259);
+            this.btnTrain.Name = "btnTrain";
+            this.btnTrain.Size = new System.Drawing.Size(124, 41);
+            this.btnTrain.TabIndex = 6;
+            this.btnTrain.Text = "Train";
+            this.btnTrain.UseVisualStyleBackColor = true;
+            this.btnTrain.Click += new System.EventHandler(this.btnTrain_Click);
+            // 
+            // btnPreprocess
+            // 
+            this.btnPreprocess.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPreprocess.ForeColor = System.Drawing.Color.Black;
+            this.btnPreprocess.Image = global::GUI.Properties.Resources.preprocess1;
+            this.btnPreprocess.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnPreprocess.Location = new System.Drawing.Point(115, 85);
+            this.btnPreprocess.Name = "btnPreprocess";
+            this.btnPreprocess.Size = new System.Drawing.Size(124, 41);
+            this.btnPreprocess.TabIndex = 7;
+            this.btnPreprocess.Text = "Preprocess";
+            this.btnPreprocess.UseVisualStyleBackColor = true;
+            this.btnPreprocess.Click += new System.EventHandler(this.btnPreprocess_Click);
+            // 
             // MainGUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1120,18 +1213,20 @@
             this.tabMain.ResumeLayout(false);
             this.tabExperiment.ResumeLayout(false);
             this.tabExperiment.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.gbBatchTrainTest.ResumeLayout(false);
+            this.gbBatchTrainTest.PerformLayout();
+            this.gbTest.ResumeLayout(false);
+            this.gbTest.PerformLayout();
+            this.gbTraining.ResumeLayout(false);
+            this.gbTraining.PerformLayout();
             this.gbSVRSetting.ResumeLayout(false);
             this.gbSVRSetting.PerformLayout();
             this.gbAnnSetting.ResumeLayout(false);
             this.gbAnnSetting.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            this.GBModelChoice.ResumeLayout(false);
-            this.GBModelChoice.PerformLayout();
+            this.gbPreprocess.ResumeLayout(false);
+            this.gbPreprocess.PerformLayout();
+            this.gbModelChoice.ResumeLayout(false);
+            this.gbModelChoice.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).EndInit();
             this.tabApplication.ResumeLayout(false);
             this.tabApplication.PerformLayout();
@@ -1153,13 +1248,13 @@
         private System.Windows.Forms.ComboBox cmbModelSelection;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Button btnBrowser;
+        private System.Windows.Forms.Button btnPreprocessBrowser;
         private System.Windows.Forms.TextBox tbxCsvFilePath;
-        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.GroupBox gbPreprocess;
         private System.Windows.Forms.Button btnPreprocess;
         private System.Windows.Forms.TextBox tbxTrainingRatio;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Label lblTrainingRatio;
+        private System.Windows.Forms.GroupBox gbTest;
         private System.Windows.Forms.Label lblModelFile;
         private System.Windows.Forms.Button btnModelBrowser;
         private System.Windows.Forms.TextBox tbxModelFilePath;
@@ -1167,12 +1262,12 @@
         private System.Windows.Forms.Button btnTestBrowser;
         private System.Windows.Forms.TextBox tbxTestFilePath;
         private System.Windows.Forms.Button btnTest;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox gbTraining;
         private System.Windows.Forms.Label lblTrainingFile;
         private System.Windows.Forms.Button btnTrainBrowser;
         private System.Windows.Forms.TextBox tbxTrainFilePath;
         private System.Windows.Forms.Button btnTrain;
-        private System.Windows.Forms.GroupBox GBModelChoice;
+        private System.Windows.Forms.GroupBox gbModelChoice;
         private System.Windows.Forms.RadioButton rdSVM;
         private System.Windows.Forms.RadioButton rdANN;
         private ZedGraph.ZedGraphControl zg1;
@@ -1227,6 +1322,13 @@
         private System.Windows.Forms.ComboBox cmbExperimentMode;
         private System.Windows.Forms.Label lblExperimentMode;
         private System.Windows.Forms.Label lblInputFile;
+        private System.Windows.Forms.Label lblBatchInputFile;
+        private System.Windows.Forms.TextBox tbxBatchInputFile;
+        private System.Windows.Forms.Button btnBatchBrowse;
+        private System.Windows.Forms.TextBox tbxBatchTrainingRatio;
+        private System.Windows.Forms.Label lblBatchTrainingRatio;
+        private System.Windows.Forms.Label lblBatchGuide;
+        private System.Windows.Forms.Button btnBatchTrainTest;
     }
 }
 

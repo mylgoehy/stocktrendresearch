@@ -32,9 +32,13 @@ namespace GUI
 
         private StockRecordDTO _stockRecordDTO;
         private StockRecordBUS _stockRecordBUS;
-        private string strStockPath;
-        private double pricePredict = 0;
-        private double trendPredict = 0;
+        private string _stockPath;
+        private double _pricePredict = 0;
+        private double _trendPredict = 0;
+
+        private string _trainFilePath;
+        private string _testFilePath;
+        private string _modelFilePath;
         #endregion
 
         public MainGUI()
@@ -52,15 +56,89 @@ namespace GUI
 
             writer.Close();
         }
+
+        private void Preprocess(bool isBatchMode)
+        {
+            string strInputFile = null;
+            double dblTrainingSetRatio = 0;
+
+            if (isBatchMode)
+            {
+                strInputFile = tbxBatchInputFile.Text;
+                dblTrainingSetRatio = Convert.ToDouble(tbxBatchTrainingRatio.Text);
+            }
+            else
+            {
+                strInputFile = tbxCsvFilePath.Text;
+                dblTrainingSetRatio = Convert.ToDouble(tbxTrainingRatio.Text);
+            }
+            //1. Đọc dữ liệu từ file .csv vào mảng và tiền xử lý
+            StockRecordBUS stockRecordBUS = new StockRecordBUS();
+            StockRecordDTO stockRecordDTO = stockRecordBUS.LoadData(strInputFile);
+            double[] dblClosePrices = new double[stockRecordDTO.Entries.Count];
+            double[] dblVolumes = new double[stockRecordDTO.Entries.Count];
+            int i = 0;
+            foreach (EntryDTO entryDTO in stockRecordDTO.Entries)
+            {
+                dblClosePrices[i] = entryDTO.ClosePrice;
+                dblVolumes[i] = entryDTO.Volume;
+                i++;
+            }
+
+            //2. Chuyển sang định dạng của LibSVM (dựa vào số node đầu vào)
+            ConverterBUS converter = new ConverterBUS();
+            int iPos = strInputFile.LastIndexOf('\\');
+            string strFolderPath = strInputFile.Remove(iPos + 1);
+            string strTotalFile = strFolderPath + stockRecordDTO.ID + ".txt";
+            int numDaysPredicted = Int32.Parse(cmbNumDaysPredicted.Text);
+            int iNumLine = 0;
+
+            ConverterBUS.Convert(dblClosePrices, dblVolumes, numDaysPredicted, strTotalFile, out iNumLine);
+
+            //3. Từ file chứa toàn bộ dữ liệu ta phân phối vào 2 file train và test (dựa vào tỉ lệ bộ train)
+            string strTrainFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_train.txt";
+            string strTestFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_test.txt";
+            StreamReader reader = new StreamReader(strTotalFile);
+            StreamWriter trainWriter = new StreamWriter(strTrainFile);
+            StreamWriter testWriter = new StreamWriter(strTestFile);
+
+            //int iBound = numDaysPredicted > iNumInputNode ? 2 * numDaysPredicted : numDaysPredicted + iNumInputNode;
+            //int iNumLine = dblSource.Length - iBound + 1;
+            int iDivideLine = (int)(dblTrainingSetRatio * iNumLine / 100);
+            for (i = 0; i < iDivideLine; i++)
+            {
+                string strLine = reader.ReadLine();
+                trainWriter.WriteLine(strLine);
+            }
+            for (; i < iNumLine; i++)
+            {
+                string strLine = reader.ReadLine();
+                testWriter.WriteLine(strLine);
+            }
+
+            testWriter.Close();
+            trainWriter.Close();
+            reader.Close();
+
+        }
         /// <summary>
         /// Phần train cho SVM
         /// </summary>
-        private void TrainSVM()
+        private void TrainSVM(bool isBatchMode)
         {
-            int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
-            string strMutualPath = tbxTrainFilePath.Text.Remove(iPos + 1);
+            string strTrainFile = null;
+            if (isBatchMode)
+            {
+                strTrainFile = _trainFilePath;
+            }
+            else
+            {
+                strTrainFile = tbxTrainFilePath.Text;
+            }
+            int iPos = strTrainFile.LastIndexOf('_');
+            string strMutualPath = strTrainFile.Remove(iPos + 1);
             string strModelFile = strMutualPath + "model.txt";
-            Problem prob = Problem.Read(tbxTrainFilePath.Text);
+            Problem prob = Problem.Read(strTrainFile);
             Parameter param = new Parameter();
 
             if (cmbModelSelection.SelectedItem.ToString() == "Grid search")
@@ -94,11 +172,21 @@ namespace GUI
         /// <summary>
         /// Phần train cho K-SVMeans
         /// </summary>
-        private void TrainKSVMeans()
+        private void TrainKSVMeans(bool isBatchMode)
         {
+            string strTrainFile = null;
+            if (isBatchMode)
+            {
+                strTrainFile = _trainFilePath;
+            }
+            else
+            {
+                strTrainFile = tbxTrainFilePath.Text;
+            }
+
             int iNumCluster = (int)nmNumCluster.Value;
-            int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
-            string strMutualPath = tbxTrainFilePath.Text.Remove(iPos + 1);
+            int iPos = strTrainFile.LastIndexOf('_');
+            string strMutualPath = strTrainFile.Remove(iPos + 1);
             string strClusterModelFile = strMutualPath + "_clusterModel.txt";
             string[] strClusterResultFiles = new string[iNumCluster];
             string[] strSVMModelFiles = new string[iNumCluster];
@@ -110,7 +198,7 @@ namespace GUI
             }
             // Thực hiện cluster
             SampleDataBUS samDataBUS = new SampleDataBUS();
-            samDataBUS.Read(tbxTrainFilePath.Text);
+            samDataBUS.Read(strTrainFile);
             Clustering clustering = new Clustering(iNumCluster, samDataBUS.Samples, DistanceType.Manhattan);
             clustering.Run(strClusterModelFile, false);
             samDataBUS.WriteIntoCluster(strClusterResultFiles, clustering.SampleData.ClusterIndices);
@@ -152,10 +240,20 @@ namespace GUI
         /// <summary>
         /// Phần train cho ANN
         /// </summary>
-        private void TrainANN()
+        private void TrainANN(bool isBatchMode)
         {
-            int iPos = tbxTrainFilePath.Text.LastIndexOf('_');
-            string strModelFile = tbxTrainFilePath.Text.Remove(iPos + 1) + "ANNmodel.txt";
+            string strTrainFile = null;
+            if (isBatchMode)
+            {
+                strTrainFile = _trainFilePath;
+            }
+            else
+            {
+                strTrainFile = tbxTrainFilePath.Text;
+            }
+
+            int iPos = strTrainFile.LastIndexOf('_');
+            string strModelFile = strTrainFile.Remove(iPos + 1) + "model.txt";
 
             //khởi tạo các tham số cho mạng
             ANNParameterBUS.InputNode = int.Parse(tbxANNInputNode.Text);
@@ -201,7 +299,7 @@ namespace GUI
             bpNetwork.SetLearningRate(ANNParameterBUS.LearningRate);
 
             TrainingSet trainSet = new TrainingSet(ANNParameterBUS.InputNode, ANNParameterBUS.OutputNode);
-            trainSet.CreateTrainingSet(tbxTrainFilePath.Text);
+            trainSet.CreateTrainingSet(strTrainFile);
 
             bpNetwork.Learn(trainSet, ANNParameterBUS.MaxEpoch);
 
@@ -214,14 +312,27 @@ namespace GUI
         /// <summary>
         /// Phần test cho SVM
         /// </summary>
-        private void TestSVM()
+        private void TestSVM(bool isBatchMode)
         {
-            int iPos = tbxTestFilePath.Text.LastIndexOf('_');
-            string strMutualPath = tbxTestFilePath.Text.Remove(iPos + 1);
+            string strModelFile = null;
+            string strTestFile = null;
+            if (isBatchMode)
+            {
+                strModelFile = _modelFilePath;
+                strTestFile = _testFilePath;
+            }
+            else
+            {
+                strModelFile = tbxModelFilePath.Text;
+                strTestFile = tbxTestFilePath.Text;
+            }
+
+            int iPos = strTestFile.LastIndexOf('_');
+            string strMutualPath = strTestFile.Remove(iPos + 1);
             string strPredictedFile = strMutualPath + "predict.txt";
             string strStatisticFile = strMutualPath + "statistic.txt";
-            Problem prob = Problem.Read(tbxTestFilePath.Text);
-            Model model = Model.Read(tbxModelFilePath.Text);
+            Problem prob = Problem.Read(strTestFile);
+            Model model = Model.Read(strModelFile);
             double dblPrecision = Prediction.Predict(prob, strPredictedFile, model, ckbProbEstimation.Checked);
             StatisticTrend2File(strPredictedFile, strStatisticFile);
             StreamWriter writer = new StreamWriter(strMutualPath + "performance.txt");
@@ -231,10 +342,23 @@ namespace GUI
         /// <summary>
         /// Phần test cho K-SVMeans
         /// </summary>
-        private void TestKSVMeans()
+        private void TestKSVMeans(bool isBatchMode)
         {
-            int iPos = tbxTestFilePath.Text.LastIndexOf('_');
-            string strMutualPath = tbxTestFilePath.Text.Remove(iPos + 1);
+            string strModelFile = null;
+            string strTestFile = null;
+            if (isBatchMode)
+            {
+                strModelFile = _modelFilePath;
+                strTestFile = _testFilePath;
+            }
+            else
+            {
+                strModelFile = tbxModelFilePath.Text;
+                strTestFile = tbxTestFilePath.Text;
+            }
+
+            int iPos = strTestFile.LastIndexOf('_');
+            string strMutualPath = strTestFile.Remove(iPos + 1);
             int iNumCluster = (int)nmNumCluster.Value;
             string strClusterModelFile = strMutualPath + "_clusterModel.txt";
             string[] strClusterResultFiles = new string[iNumCluster];
@@ -249,7 +373,7 @@ namespace GUI
             }
             // Thực hiện cluster
             SampleDataBUS samDataBUS = new SampleDataBUS();
-            samDataBUS.Read(tbxTestFilePath.Text);
+            samDataBUS.Read(strTestFile);
             Clustering clustering = new Clustering(samDataBUS.Samples, DistanceType.Manhattan);
             clustering.Run(strClusterModelFile, true);
             samDataBUS.WriteIntoCluster(strClusterResultFiles, clustering.SampleData.ClusterIndices);
@@ -274,22 +398,36 @@ namespace GUI
         /// <summary>
         /// Phần test cho ANN
         /// </summary>
-        private void TestANN()
+        private void TestANN(bool isBatchMode)
         {
-            int iPos = tbxTestFilePath.Text.LastIndexOf('_');
-            string strPredictedFile = tbxTestFilePath.Text.Remove(iPos + 1) + "predict.txt";
-            string strStatisticFile = tbxTestFilePath.Text.Remove(iPos + 1) + "statistic.txt";
+            string strModelFile = null;
+            string strTestFile = null;
+            if (isBatchMode)
+            {
+                strModelFile = _modelFilePath;
+                strTestFile = _testFilePath;
+            }
+            else
+            {
+                strModelFile = tbxModelFilePath.Text;
+                strTestFile = tbxTestFilePath.Text;
+            }
+
+            int iPos = strTestFile.LastIndexOf('_');
+            string strMutualPath = strTestFile.Remove(iPos + 1);
+            string strPredictedFile = strMutualPath + "predict.txt";
+            string strStatisticFile = strMutualPath + "statistic.txt";
 
             // Load model lên
             BackpropagationNetwork bpNetwork;
-            Stream stream = File.Open(tbxModelFilePath.Text, FileMode.Open);
+            Stream stream = File.Open(strModelFile, FileMode.Open);
             BinaryFormatter bformatter = new BinaryFormatter();
             bpNetwork = (BackpropagationNetwork)bformatter.Deserialize(stream);
             stream.Close();
 
             // Tạo tập mẫu để test
             TrainingSet testSet = new TrainingSet(bpNetwork.InputLayer.NeuronCount, bpNetwork.OutputLayer.NeuronCount);
-            testSet.CreateTrainingSet(tbxTestFilePath.Text);
+            testSet.CreateTrainingSet(strTestFile);
 
             // Ma trận với dòng thứ 1 chứa các giá trị thực và dòng thứ 2 chứa các giá trị dự đoán.
             double[][] dblActual_Forecast = new double[2][];
@@ -311,7 +449,7 @@ namespace GUI
             // Thực hiện thống kế theo ma trận xu hướng và ghi xuống file
             StatisticTrend2File(strPredictedFile, strStatisticFile);
             // Ghi kết quả độ chính xác dự đoán được xuống file
-            WriteAccurancy2File(tbxTestFilePath.Text.Remove(iPos + 1) + "PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
+            WriteAccurancy2File(strMutualPath + "PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
         }
 
         private void btnTrain_Click(object sender, EventArgs e)
@@ -324,20 +462,20 @@ namespace GUI
 
             if (rdSVM.Checked)
             {
-                TrainSVM();
+                TrainSVM(false);
             }
             else if (rdKSVMeans.Checked)
             {
-                TrainKSVMeans();
+                TrainKSVMeans(false);
             }
             else if(rdANN.Checked)//Mô hình ANN
             {
-                TrainANN();
+                TrainANN(false);
             }
             MessageBox.Show("Finish!");
         }
 
-        private void btnBrowser_Click(object sender, EventArgs e)
+        private void btnPreprocessBrowser_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDlg = new OpenFileDialog();
             openFileDlg.Filter = "(*.csv)|*.csv";
@@ -360,15 +498,15 @@ namespace GUI
 
             if (rdSVM.Checked)
             {
-                TestSVM();
+                TestSVM(true);
             }
             else if (rdKSVMeans.Checked)
             {
-                TestKSVMeans();
+                TestKSVMeans(true);
             }
             else if(rdANN.Checked)
             {
-                TestANN();
+                TestANN(true);
             }
 
             MessageBox.Show("Finish!");           
@@ -381,56 +519,8 @@ namespace GUI
                 MessageBox.Show("Error: You must fill all required inputs!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            //1. Đọc dữ liệu từ file .csv vào mảng và tiền xử lý
-            StockRecordBUS stockRecordBUS = new StockRecordBUS();
-            StockRecordDTO stockRecordDTO = stockRecordBUS.LoadData(tbxCsvFilePath.Text);
-            double[] dblClosePrices = new double[stockRecordDTO.Entries.Count];
-            double[] dblVolumes = new double[stockRecordDTO.Entries.Count];
-            int i = 0;
-            foreach (EntryDTO entryDTO in stockRecordDTO.Entries)
-            {
-                dblClosePrices[i] = entryDTO.ClosePrice;
-                dblVolumes[i] = entryDTO.Volume;
-                i++;
-            }
-            
-            //2. Chuyển sang định dạng của LibSVM (dựa vào số node đầu vào)
-            ConverterBUS converter = new ConverterBUS();
-            int iPos = tbxCsvFilePath.Text.LastIndexOf('\\');
-            string strFolderPath = tbxCsvFilePath.Text.Remove(iPos+1);
-            string strTotalFile = strFolderPath + stockRecordDTO.ID + ".txt";
-            int numDaysPredicted = Int32.Parse(cmbNumDaysPredicted.Text);
-            int iNumLine = 0;
-
-            ConverterBUS.Convert(dblClosePrices, dblVolumes, numDaysPredicted, strTotalFile, out iNumLine);
-
-            //3. Từ file chứa toàn bộ dữ liệu ta phân phối vào 2 file train và test (dựa vào tỉ lệ bộ train)
-            string strTrainFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_train.txt";
-            string strTestFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_test.txt";
-            StreamReader reader = new StreamReader(strTotalFile);
-            StreamWriter trainWriter = new StreamWriter(strTrainFile);
-            StreamWriter testWriter = new StreamWriter(strTestFile);
-
-            double dblTrainingSetRatio = Convert.ToDouble(tbxTrainingRatio.Text);
-            //int iBound = numDaysPredicted > iNumInputNode ? 2 * numDaysPredicted : numDaysPredicted + iNumInputNode;
-            //int iNumLine = dblSource.Length - iBound + 1;
-            int iDivideLine = (int)(dblTrainingSetRatio * iNumLine/100);
-            for (i = 0; i < iDivideLine; i++)
-            {
-                string strLine = reader.ReadLine();
-                trainWriter.WriteLine(strLine);
-            }
-            for (; i < iNumLine; i++)
-            {
-                string strLine = reader.ReadLine();
-                testWriter.WriteLine(strLine);
-            }
-
-            testWriter.Close();
-            trainWriter.Close();
-            reader.Close();
-
-            MessageBox.Show("Finish!");
+            Preprocess(false);
+            MessageBox.Show("Finish!");  
         }
 
         private void MainGUI_Load(object sender, EventArgs e)
@@ -438,12 +528,14 @@ namespace GUI
             //Khởi gán
             cmbNumDaysPredicted.SelectedIndex = 0;
             tbxTrainingRatio.Text = "80";
+            tbxBatchTrainingRatio.Text = "80";
             cmbModelSelection.SelectedIndex = 0;
             cmbTrainingMeasure.SelectedIndex = 0;
             cmbActivationFunc.SelectedIndex = 0;
-            lblNumCluster.Enabled = false;
-            nmNumCluster.Enabled = false;
             cmbExperimentMode.SelectedIndex = 0;
+            _trainFilePath = "";
+            _testFilePath = "";
+            _modelFilePath = "";
 
             //Khởi gán tham số ANN
             tbxANNInputNode.Text = 10.ToString();
@@ -451,8 +543,10 @@ namespace GUI
             tbxLearningRate.Text = 0.3.ToString();
             tbxMaxLoops.Text = 2000.ToString();
             tbxBias.Text = 0.ToString();
-            tbxMomentum.Text = 0.01.ToString();            
+            tbxMomentum.Text = 0.01.ToString();
 
+            lblNumCluster.Enabled = false;
+            nmNumCluster.Enabled = false;
             if (rdANN.Checked == true)
             {
                 gbAnnSetting.Enabled = true;
@@ -466,7 +560,7 @@ namespace GUI
 
             _stockRecordBUS = new StockRecordBUS();
             _stockRecordDTO = null;
-            strStockPath = "";
+            _stockPath = "";
         }
 
         private void CreateGraph(ZedGraphControl zgc)
@@ -649,8 +743,8 @@ namespace GUI
         {
             if (cmbStockID.SelectedItem != null)
             {
-                strStockPath = "Excel" + "\\" + cmbStockID.SelectedItem.ToString() + ".csv";
-                _stockRecordDTO = _stockRecordBUS.LoadData(strStockPath);
+                _stockPath = "Excel" + "\\" + cmbStockID.SelectedItem.ToString() + ".csv";
+                _stockRecordDTO = _stockRecordBUS.LoadData(_stockPath);
                 dtpFrom.Value = ((EntryDTO)_stockRecordDTO.Entries[0]).Date;
                 dtpTo.Value = ((EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1]).Date;
                 dtpInputDay.Value = ((EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1]).Date;
@@ -734,7 +828,7 @@ namespace GUI
             //annPredict.LoadDataSet(@"TestPrice.txt");
             //Tạm thời bỏ dòng này chưa sử dụng trong predict
             //dblActual_Forecast = annPredict.MainProcessTrend();
-            pricePredict = dblActual_Forecast[1][0];
+            _pricePredict = dblActual_Forecast[1][0];
             tbxANNPrice.Text = Math.Round(dblActual_Forecast[1][0], 2).ToString();
             #endregion
             string[] strArgs = new string[3];
@@ -825,7 +919,7 @@ namespace GUI
                 //ANNPredictBUS annPredictTrend = new ANNPredictBUS();
                 //annPredictTrend.LoadDataSet(@"TestTrend.txt");
                // dblActual_Forecast = annPredictTrend.MainProcessTrend();
-                trendPredict = dblActual_Forecast[1][0];
+                _trendPredict = dblActual_Forecast[1][0];
                 tbxANNTrend.Text = dblActual_Forecast[1][0] > 0 ? "Tăng" : "Giảm";
 
                 strArgs[0] = @"TestTrend.txt";
@@ -1124,24 +1218,26 @@ namespace GUI
 
         private void EnableStepByStepTrainAndTest(bool isEnable)
         {
-            btnPreprocess.Enabled = isEnable;
+            //btnPreprocess.Enabled = isEnable;
             btnTrain.Enabled = isEnable;
-            btnTest.Enabled = isEnable;
+            //btnTest.Enabled = isEnable;
 
-            btnBrowser.Enabled = isEnable; ;
-            btnTestBrowser.Enabled = isEnable;
+            //btnPreprocessBrowser.Enabled = isEnable; ;
+            //btnTestBrowser.Enabled = isEnable;
             btnTrainBrowser.Enabled = isEnable;
-            btnModelBrowser.Enabled = isEnable;
+            //btnModelBrowser.Enabled = isEnable;
 
-            tbxCsvFilePath.Enabled = isEnable;
+            //tbxCsvFilePath.Enabled = isEnable;
             tbxTrainFilePath.Enabled = isEnable;
-            tbxTestFilePath.Enabled = isEnable;
-            tbxModelFilePath.Enabled = isEnable;
+            //tbxTestFilePath.Enabled = isEnable;
+            //tbxModelFilePath.Enabled = isEnable;
 
-            lblInputFile.Enabled = isEnable;
-            lblTestFile.Enabled = isEnable;
-            lblModelFile.Enabled = isEnable;
+            //lblInputFile.Enabled = isEnable;
+            //lblTestFile.Enabled = isEnable;
+            //lblModelFile.Enabled = isEnable;
             lblTrainingFile.Enabled = isEnable;
+            gbTest.Enabled = isEnable;
+            gbPreprocess.Enabled = isEnable;
         }
 
         private void cmbExperimentMode_SelectedIndexChanged(object sender, EventArgs e)
@@ -1156,6 +1252,52 @@ namespace GUI
                 gbBatchTrainTest.Enabled = false;
                 EnableStepByStepTrainAndTest(true);
             }
+        }
+
+        private void btnBatchBrowse_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDlg = new OpenFileDialog();
+            openFileDlg.Filter = "(*.csv)|*.csv";
+            if (openFileDlg.ShowDialog() == DialogResult.OK)
+            {
+                tbxBatchInputFile.Text = openFileDlg.FileName;
+                _trainFilePath = openFileDlg.FileName.Replace(".csv", "") + "_" + cmbNumDaysPredicted.Text + "_train.txt";
+                _testFilePath = openFileDlg.FileName.Replace(".csv", "") + "_" + cmbNumDaysPredicted.Text + "_test.txt";
+                _modelFilePath = openFileDlg.FileName.Replace(".csv", "") + "_" + cmbNumDaysPredicted.Text + "_model.txt";
+            }
+            else
+            {
+                _trainFilePath = "";
+                _testFilePath = "";
+                _modelFilePath = "";
+            }
+        }
+
+        private void btnBatchTrainTest_Click(object sender, EventArgs e)
+        {
+            if (tbxBatchInputFile.Text == "" || tbxBatchTrainingRatio.Text == "")
+            {
+                MessageBox.Show("Error: You must fill all required inputs!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            Preprocess(true);
+            if (rdSVM.Checked)
+            {
+                TrainSVM(true);
+                TestSVM(true);
+            }
+            else if (rdKSVMeans.Checked)
+            {
+                TrainKSVMeans(true);
+                TestKSVMeans(true);
+            }
+            else if (rdANN.Checked)//Mô hình ANN
+            {
+                TrainANN(true);
+                TestANN(true);
+            }
+            MessageBox.Show("Finish!");
         }
     }
 }
