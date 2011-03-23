@@ -103,6 +103,21 @@
   <ItemGroup>
     <None Include="Resources\Fast-Forward-32-h-p8.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\doit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\preprocess.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\training.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\preprocess1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\doit.gif" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
