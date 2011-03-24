@@ -148,12 +148,19 @@ namespace GUI
                 double dblGamma;
                 ParameterSelection paramSel = new ParameterSelection();
                 paramSel.NFOLD = Int32.Parse(tbxNumFold.Text);
+                paramSel.EndEpochEvent += new CrossEpochEventHandler(
+                    delegate(object senderNetwork, CrossEpochEventArgs args)
+                    {
+                        prgTrainingProgress.Value = (int)(args.TrainingIteration * 100d / args.Cycles);
+                        Application.DoEvents();
+                    });
                 paramSel.Grid(prob, param, strLogFile, out dblC, out dblGamma);
                 param.C = dblC;
                 param.Gamma = dblGamma;
                 param.Probability = ckbProbEstimation.Checked;
                 Model model = Training.Train(prob, param);
                 Model.Write(strModelFile, model);
+                prgTrainingProgress.Value = 0; 
             }
             else if (cmbModelSelection.SelectedItem.ToString() == "Use default values")
             {
@@ -203,11 +210,12 @@ namespace GUI
             clustering.Run(strClusterModelFile, false);
             samDataBUS.WriteIntoCluster(strClusterResultFiles, clustering.SampleData.ClusterIndices);
             // Thực hiện train SVM
+            int iProgressBaseline = 0;
             for (int i = 0; i < iNumCluster; i++)
             {
                 Problem prob = Problem.Read(strClusterResultFiles[i]);
                 Parameter param = new Parameter();
-
+                iProgressBaseline = i * 100 / iNumCluster;
                 if (cmbModelSelection.SelectedItem.ToString() == "Grid search")
                 {
                     string strLogFile = strMutualPath + "GridCluster" + (i + 1).ToString() + ".txt";
@@ -215,6 +223,12 @@ namespace GUI
                     double dblGamma;
                     ParameterSelection paramSel = new ParameterSelection();
                     paramSel.NFOLD = Int32.Parse(tbxNumFold.Text);
+                    paramSel.EndEpochEvent += new CrossEpochEventHandler(
+                    delegate(object senderNetwork, CrossEpochEventArgs args)
+                    {
+                        prgTrainingProgress.Value = iProgressBaseline + (int)(args.TrainingIteration * 100d / (args.Cycles * iNumCluster));
+                        Application.DoEvents();
+                    });
                     paramSel.Grid(prob, param, strLogFile, out dblC, out dblGamma);
                     param.C = dblC;
                     param.Gamma = dblGamma;
@@ -235,7 +249,9 @@ namespace GUI
                     Model model = Training.Train(prob, param);
                     Model.Write(strSVMModelFiles[i], model);
                 }
+                
             }
+            prgTrainingProgress.Value = 0; 
         }
         /// <summary>
         /// Phần train cho ANN
@@ -300,14 +316,20 @@ namespace GUI
 
             TrainingSet trainSet = new TrainingSet(ANNParameterBUS.InputNode, ANNParameterBUS.OutputNode);
             trainSet.CreateTrainingSet(strTrainFile);
-
+            bpNetwork.EndEpochEvent += new TrainingEpochEventHandler(
+                    delegate(object senderNetwork, TrainingEpochEventArgs args)
+                    {
+                        prgTrainingProgress.Value = (int)(args.TrainingIteration * 100d / ANNParameterBUS.MaxEpoch);
+                        Application.DoEvents();
+                    });
             bpNetwork.Learn(trainSet, ANNParameterBUS.MaxEpoch);
 
             // Lưu lại model
             Stream stream = File.Open(strModelFile, FileMode.Create);
             BinaryFormatter bformatter = new BinaryFormatter();
             bformatter.Serialize(stream, bpNetwork);
-            stream.Close();                
+            stream.Close();
+            prgTrainingProgress.Value = 0;  
         }
         /// <summary>
         /// Phần test cho SVM
