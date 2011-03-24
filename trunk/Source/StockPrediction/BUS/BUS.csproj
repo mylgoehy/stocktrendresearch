@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A4A55317-215B-4819-B2C8-05BC534B1ECC}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -105,6 +105,7 @@
     <Compile Include="StockRecordBUS.cs" />
     <Compile Include="SupportClass.cs" />
     <Compile Include="SVM\Cache.cs" />
+    <Compile Include="SVM\CrossEpochEventArgs.cs" />
     <Compile Include="SVM\GaussianTransform.cs" />
     <Compile Include="SVM\IRangeTransform.cs" />
     <Compile Include="SVM\Kernel.cs" />
