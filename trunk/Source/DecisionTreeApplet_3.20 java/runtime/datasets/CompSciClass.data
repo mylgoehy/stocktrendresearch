@@ -1,0 +1,14 @@
+7,ugrad,no,no,no,yes,no,kw,v,kw,kw,v,kw,kw,v,v,v,v,v,v,v,v,v,v,n,v,v,v,v,n,n,v,n,v,v,n,n
+8,ugrad,yes,yes,yes,yes,no,kw,kw,v,kw,kw,kw,kw,kw,kw,kw,kw,kw,v,kw,kw,kw,v,v,v,v,kw,v,v,v,v,v,n,n,n,n
+7,ugrad,yes,yes,yes,yes,no,v,kw,v,v,v,kw,v,v,kw,kw,kw,kw,v,kw,v,kw,v,n,n,v,v,n,v,v,v,v,n,v,n,n
+9,ugrad,yes,yes,no,yes,no,v,kw,v,v,v,kw,kw,kw,kw,kw,kw,v,kw,kw,kw,kw,n,n,v,kw,v,n,kw,v,kw,n,n,n,n,n
+9,ugrad,yes,no,yes,yes,no,kw,v,kw,v,v,n,n,n,kw,kw,kw,v,kw,kw,kw,kw,v,n,n,v,v,v,v,n,v,v,n,n,n,n
+9,grad,no,no,yes,yes,yes,v,v,kw,kw,kw,kw,v,n,kw,v,v,n,v,kw,n,n,kw,v,n,v,n,n,v,v,n,n,n,kw,n,v
+8,ugrad,yes,yes,yes,yes,no,n,v,v,v,n,v,v,v,v,v,v,n,v,v,n,n,n,n,v,v,v,v,n,n,v,n,n,n,n,n
+9,grad,yes,no,no,yes,no,kw,kw,kw,v,kw,kw,kw,kw,v,v,kw,n,v,v,n,n,kw,n,n,n,kw,n,n,n,kw,n,v,v,v,v
+7,grad,no,no,yes,yes,yes,n,v,v,v,n,v,v,n,n,n,n,n,n,n,n,n,n,n,n,n,n,n,v,n,n,n,n,n,n,n
+8,ugrad,yes,yes,yes,yes,yes,v,v,v,kw,kw,kw,kw,kw,kw,kw,kw,kw,v,kw,v,kw,v,v,v,kw,v,n,v,n,v,v,n,n,n,n
+8,grad,yes,yes,yes,yes,no,kw,v,kw,kw,kw,kw,kw,kw,n,v,n,n,n,v,n,n,v,n,n,kw,v,n,kw,n,v,n,n,n,n,n
+8,grad,no,no,yes,yes,no,v,v,v,kw,v,kw,v,v,kw,v,kw,n,v,v,n,n,v,n,kw,v,v,n,v,n,v,n,v,n,n,n
+9,grad,yes,yes,yes,yes,no,kw,kw,kw,kw,v,kw,v,kw,v,v,v,v,n,kw,n,v,v,n,v,v,v,v,v,n,v,v,n,v,n,n
+8,grad,yes,no,yes,yes,yes,v,v,v,v,v,v,v,n,v,v,n,n,v,v,n,n,v,n,kw,kw,v,v,v,v,v,kw,v,v,n,n

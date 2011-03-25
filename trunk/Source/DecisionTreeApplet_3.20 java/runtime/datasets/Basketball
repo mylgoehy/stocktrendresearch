@@ -1,0 +1,19 @@
+/*
+   The information you've gathered for the office basketball pool.
+*/
+
+CONCLUSION = 
+
+  "Outcome"      = { 'Won','Lost' } 
+ 
+FEATURES = 
+
+  "Where"          = { 'Home','Away' },   
+  "When"           = { '5pm','7pm','9pm' },
+  "Fred Starts"    = { 'Yes','No' },
+  "JoeOffence"     = { 'Center','Forward' },
+  "JoeDefense"     = { 'Center','Forward' },
+  "OppCenter"      = { 'Tall','Short' }
+
+TRAINDATA = "Basketball.data"
+

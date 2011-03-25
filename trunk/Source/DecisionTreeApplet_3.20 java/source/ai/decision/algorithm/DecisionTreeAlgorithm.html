@@ -1,0 +1,171 @@
+
+<function name="BuildDT">
+
+<font color="red">function </font> <font color="blue">BuildDT( </font>
+<i>All_Examples, Attributes</i> <font color="blue"> )</font>: Decision_Tree.
+
+<tab><font color="blue">LearnDT( </font>
+     <i>Training_Examples, Attributes, Default</i> <font color="blue"> )</font>.
+
+<tab><font color="blue">PruneDT( </font>
+     <i>Testing_Examples,</i>
+     <font color="blue">RootOf( </font> <i>Decision_Tree</i>
+     <font color="blue"> )</font> <i>
+     <meta name="prunealg"></meta></i><font color="blue"> )</font>.
+
+</function>
+
+
+<function name="LearnDT">
+
+<font color="red">function </font> <font color="blue">LearnDT( </font>
+<i>Training_Examples, Attributes, Default</i> <font color="blue"> )</font>:
+ Decision_Tree.
+
+<tab><font color="red">if</font>
+     <font color="blue">IsEmptySet(</font> <i>Training_Examples</i>
+     <font color="blue"> )</font><font color="red"> then</font>
+     <font color="red"> return</font>
+     <font color="blue"> leaf( </font><i>Default</i>
+     <font color="blue"> )</font>.
+
+<tab><font color="red">if</font>
+     <font color="blue">AllSameClass(</font> <i>Training_Examples</i>
+     <font color="blue"> )</font><font color="red"> then</font>
+     <font color="red"> return</font><font color="blue">  leaf(
+     ClassOf( </font><i>Examples[1]</i> <font color="blue"> ) </font>).
+
+<tab><font color="red">if</font>
+     <font color="blue">IsEmptySet(</font> <i>Attributes</i>
+     <font color="blue"> )</font><font color="red"> then</font>
+     <font color="red"> return</font><font color="blue">  leaf(
+     MajorityValue( </font><i>Training_Examples</i>
+     <font color="blue"> ) </font>).
+
+<tab><i>bestAttr</i> &lt;-
+     <font color="blue">ChooseAttribute( </font>
+     <i>Training_Examples, Attributes, <meta name="splitfun"></meta></i>
+     <font color="blue"> )</font>.
+
+<tab><i>node</i> &lt;- new node( <i>bestAttr</i> ).
+
+<tab><font color="red">for each</font> value
+     <i>v_i</i> <font color="red">of</font> <i>bestAttr</i>
+     <font color="red"> do</font>.
+
+<tab><tab><i>Training_Examples_i</i> &lt;- &nbsp;
+          {elements of <i>Training_Examples</i> with
+	  <i> bestAttr</i> == <i>v_i</i>}.
+
+<tab><tab><i>subtree</i> &lt;-
+    <font color="blue"> LearnDT(</font>
+	  <i> Training_Examples_i, Attributes - bestAttr,</i>
+	  <font color="blue"> MajorityValue(</font>
+	  <i> Training_Examples</i><font color="blue"> ) )</font>.
+
+<tab><tab>add branch: <i>node</i> --- <i>v_i</i> --&gt;
+          <i>subtree</i>.
+
+<tab><font color="red">end for</font>.
+
+<tab><font color="red">return</font> <i>node</i>.
+
+<font color="red">end</font>.
+
+</function>
+
+
+<function name="PruneReducedErrorDT">
+
+<font color="red">function </font>
+<font color="blue">PruneReducedErrorDT( </font>
+<i>Testing_Examples, Root_Node</i> <font color="blue"> )</font>: Decision_Tree.
+
+<tab><font color="red">if </font>
+     <font color="blue">IsLeaf(</font> <i>Root_Node</i>
+     <font color="blue"> )</font><font color="red"> then return
+     </font> <i>Root_Node</i>.
+
+<tab><i>current_err</i> &lt;- 0.
+
+<tab><font color="red">for each</font> child
+     <i>N_i</i> <font color="red">of</font> <i>Root_Node</i>
+     <font color="red"> do</font>.
+
+<tab><tab><i>Testing_Examples_i</i> &lt;- &nbsp;
+          {elements of <i> Testing_Examples </i>
+          that reach <i>N_i</i>}.
+
+<tab><tab><i>current_err</i> &lt;- <i>current_err</i> +
+          <font color="blue">Error( </font>
+          <font color="blue">PruneReducedErrorDT( </font>
+          <i>Testing_Examples_i, N_i</i>
+          <font color="blue"> )</font><i>, Testing_Examples</i>
+          <font color="blue"> )</font>.
+
+<tab><font color="red">end for</font>.
+
+<tab><i>prune_err</i> &lt;-
+     <font color="blue">Error( LeafWithBestTargetVal( </font><i>Root_Node</i>
+     <font color="blue"> )<i>, Testing_Examples</i>
+     <font color="blue"> )</font>.
+
+<tab><font color="red">if</font>
+     <i> prune_err </i> &lt; <i> current_err </i>
+     <font color="red"> then</font>
+     <font color="red"> return</font>
+     <font color="blue"> leaf( BestTargetValue( </font><i>Root_Node</i>
+     <font color="blue"> )<i>, Testing_Examples</i>
+     <font color="blue"> )</font>.
+
+<font color="red">end</font>.
+
+</function>
+
+
+<function name="PrunePessimisticDT">
+
+<font color="red">function </font>
+<font color="blue">PrunePessimisticDT( </font>
+<i>Testing_Examples, Root_Node</i> <font color="blue"> )</font>: Decision_Tree.
+
+<tab><font color="red">if </font>
+     <font color="blue">IsLeaf(</font> <i>Root_Node</i>
+     <font color="blue"> )</font><font color="red"> then return
+     </font> <i>Root_Node</i>.
+
+<tab><i>current_err</i> &lt;- 0.
+
+<tab><font color="red">for each</font> child
+     <i>N_i</i> <font color="red">of</font> <i>Root_Node</i>
+     <font color="red"> do</font>.
+
+<tab><tab><i>Testing_Examples_i</i> &lt;- &nbsp;
+          {elements of <i> Testing_Examples </i>
+          that reach <i>N_i</i>}.
+
+<tab><tab><i>current_err</i> &lt;- <i>current_err</i> +
+          <font color="blue">ErrorPPP( </font>
+          <font color="blue">PrunePessimisticDT( </font>
+          <i>Testing_Examples_i, N_i</i>
+          <font color="blue"> )</font><i>, Testing_Examples</i>
+          <font color="blue"> )</font>.
+
+<tab><font color="red">end for</font>.
+
+<tab><i>prune_err</i> &lt;-
+     <font color="blue">ErrorPPP( LeafWithBestTargetVal( </font><i>Root_Node</i>
+     <font color="blue"> )<i>, Testing_Examples</i>
+     <font color="blue"> )</font>.
+
+<tab><font color="red">if</font>
+     <i> prune_err </i> &lt; <i> current_err </i>
+     <font color="red"> then</font>
+     <font color="red"> return</font>
+     <font color="blue"> leaf( BestTargetValue( </font><i>Root_Node</i>
+     <font color="blue"> )<i>, Testing_Examples</i>
+     <font color="blue"> )</font>.
+
+<font color="red">end</font>.
+
+</function>
