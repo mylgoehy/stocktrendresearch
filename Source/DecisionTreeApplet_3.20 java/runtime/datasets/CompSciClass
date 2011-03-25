@@ -1,0 +1,53 @@
+/*
+  Data from Dr. Greiner's Cmput 466/551 class, Winter 2001
+*/
+
+CONCLUSION = 
+
+  "Grade"      = { '7','8','9' } 
+ 
+FEATURES = 
+
+  "Grad/Ungrad"			= { 'ugrad','grad' },
+
+  "Lisp"  			= { 'yes','no' },
+  "Prolog"  			= { 'yes','no' },
+  "Java"  			= { 'yes','no' },
+  "C/C++"  			= { 'yes','no' },
+  "VisualBasic"  		= { 'yes','no' },
+	
+  "Combinatorial explosion"	= { 'kw','v','n' },
+  "Dynamic programming"		= { 'kw','v','n' },
+  "Graph"			= { 'kw','v','n' },
+  "NP-hard"			= { 'kw','v','n' },
+  "Hill-climbing"		= { 'kw','v','n' },
+  "O(f(n))"			= { 'kw','v','n' },
+  "Heuristic"			= { 'kw','v','n' },
+  "HOrn clauses"		= { 'kw','v','n' },
+
+  "Bayes rule"			= { 'kw','v','n' },
+  "Bayesian network"		= { 'kw','v','n' },
+  "Independence"		= { 'kw','v','n' },
+  "Influence"			= { 'kw','v','n' },
+  "Information"			= { 'kw','v','n' },
+  "Markov property"		= { 'kw','v','n' },
+  "POMDP"			= { 'kw','v','n' },
+  "Utility"			= { 'kw','v','n' },
+
+  "Backpropagation"		= { 'kw','v','n' },
+  "Bias/Variance Tradeoff"	= { 'kw','v','n' },
+  "Clustering"			= { 'kw','v','n' },
+  "Decision tree"		= { 'kw','v','n' },
+  "Genetic algorithm"		= { 'kw','v','n' },
+  "Gradient descent"		= { 'kw','v','n' },
+  "Hypothesis testing"		= { 'kw','v','n' },
+  "Learning rate"		= { 'kw','v','n' },
+  "Neural net"			= { 'kw','v','n' },
+  "Overfitting"			= { 'kw','v','n' },
+  "PAC learning"		= { 'kw','v','n' },
+  "Perceptron"			= { 'kw','v','n' },
+  "Q learning"			= { 'kw','v','n' },
+  "TD learning"			= { 'kw','v','n' }
+
+TRAINDATA = "CompSciClass.data"
+

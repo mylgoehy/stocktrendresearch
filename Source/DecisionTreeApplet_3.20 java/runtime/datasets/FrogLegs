@@ -1,0 +1,69 @@
+/*
+ A demonstration of decision trees built using
+ uncorrelated data.
+
+ The target attribute indicates whether or not
+ the 'FrogLegs' basketball team won or lost a particular
+ game.  The uncorrelated attributes indicate whether
+ each of the first 50 attendees has a birthday in the first
+ half or second half of the year. 
+*/
+
+CONCLUSION =
+
+   "Outcome"   = { 'Won', 'Lost' }
+
+FEATURES =
+
+   "Birthday 1"  = { 'First Half', 'Second Half' },
+   "Birthday 2"  = { 'First Half', 'Second Half' },
+   "Birthday 3"  = { 'First Half', 'Second Half' },
+   "Birthday 4"  = { 'First Half', 'Second Half' },
+   "Birthday 5"  = { 'First Half', 'Second Half' },
+   "Birthday 6"  = { 'First Half', 'Second Half' },
+   "Birthday 7"  = { 'First Half', 'Second Half' },
+   "Birthday 8"  = { 'First Half', 'Second Half' },
+   "Birthday 9"  = { 'First Half', 'Second Half' },
+   "Birthday 10" = { 'First Half', 'Second Half' },
+   "Birthday 11" = { 'First Half', 'Second Half' },
+   "Birthday 12" = { 'First Half', 'Second Half' },
+   "Birthday 13" = { 'First Half', 'Second Half' },
+   "Birthday 14" = { 'First Half', 'Second Half' },
+   "Birthday 15" = { 'First Half', 'Second Half' },
+   "Birthday 16" = { 'First Half', 'Second Half' },
+   "Birthday 17" = { 'First Half', 'Second Half' },
+   "Birthday 18" = { 'First Half', 'Second Half' },
+   "Birthday 19" = { 'First Half', 'Second Half' },
+   "Birthday 20" = { 'First Half', 'Second Half' },
+   "Birthday 21" = { 'First Half', 'Second Half' },
+   "Birthday 22" = { 'First Half', 'Second Half' },
+   "Birthday 23" = { 'First Half', 'Second Half' },
+   "Birthday 24" = { 'First Half', 'Second Half' },
+   "Birthday 25" = { 'First Half', 'Second Half' },
+   "Birthday 26" = { 'First Half', 'Second Half' },
+   "Birthday 27" = { 'First Half', 'Second Half' },
+   "Birthday 28" = { 'First Half', 'Second Half' },
+   "Birthday 29" = { 'First Half', 'Second Half' },
+   "Birthday 30" = { 'First Half', 'Second Half' },
+   "Birthday 31" = { 'First Half', 'Second Half' },
+   "Birthday 32" = { 'First Half', 'Second Half' },
+   "Birthday 33" = { 'First Half', 'Second Half' },
+   "Birthday 34" = { 'First Half', 'Second Half' },
+   "Birthday 35" = { 'First Half', 'Second Half' },
+   "Birthday 36" = { 'First Half', 'Second Half' },
+   "Birthday 37" = { 'First Half', 'Second Half' },
+   "Birthday 38" = { 'First Half', 'Second Half' },
+   "Birthday 39" = { 'First Half', 'Second Half' },
+   "Birthday 40" = { 'First Half', 'Second Half' },
+   "Birthday 41" = { 'First Half', 'Second Half' },
+   "Birthday 42" = { 'First Half', 'Second Half' },
+   "Birthday 43" = { 'First Half', 'Second Half' },
+   "Birthday 44" = { 'First Half', 'Second Half' },
+   "Birthday 45" = { 'First Half', 'Second Half' },
+   "Birthday 46" = { 'First Half', 'Second Half' },
+   "Birthday 47" = { 'First Half', 'Second Half' },   
+   "Birthday 48" = { 'First Half', 'Second Half' },
+   "Birthday 49" = { 'First Half', 'Second Half' },
+   "Birthday 50" = { 'First Half', 'Second Half' }
+
+TRAINDATA = "FrogLegs.data"

@@ -1,0 +1,20 @@
+Decision Tree Applet Outstanding Issues and Bug List:
+-----------------------------------------------------
+
+- Bug 1: Horizontal scroll bar vanishing on 
+         AlgorithmPanel resize.
+
+  Resizing the AlgorithmPanel (first large, then small) 
+  causes the horizontal scroll bar to disappear from the 
+  internal CodePanel.  Suspected Swing bug.
+
+- Bug 2: Table rows fail to highlight under 
+         Windows NT.
+ 
+  Under NT, clicking on table rows in the DatasetPanel
+  *does* select the rows, but the rows are not 
+  highlighted (in yellow) as they should be.  Code to
+  turn table row/column selection on and to set the
+  table selection color to yellow is part of the 
+  applet - but seems to have no effect. 
+ 

@@ -1,0 +1,18 @@
+/*
+   This is the meta file for the "Play Tennis?" decision tree dataset.
+   (Ref: page 59 of Quinlan)
+*/
+
+CONCLUSION = 
+
+  "Play Tennis?"      = { 'No','Yes' } 
+ 
+FEATURES = 
+
+  "Outlook"     = { 'Sunny','Overcast','Rainy' },   
+  "Temperature" = { 'Hot','Mild','Cold' },
+  "Humidity"    = { 'High','Normal' },
+  "Windy"       = { 'True','False' }
+
+TRAINDATA = "PlayTennis.data"
+
