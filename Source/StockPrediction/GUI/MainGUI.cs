@@ -520,15 +520,15 @@ namespace GUI
 
             if (rdSVM.Checked)
             {
-                TestSVM(true);
+                TestSVM(false);
             }
             else if (rdKSVMeans.Checked)
             {
-                TestKSVMeans(true);
+                TestKSVMeans(false);
             }
             else if(rdANN.Checked)
             {
-                TestANN(true);
+                TestANN(false);
             }
 
             MessageBox.Show("Finish!");           

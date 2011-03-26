@@ -227,18 +227,17 @@ namespace BUS
             double[] EMAUpwards = CalculateEMA(Upwards, numDaysPeriod);
             double[] EMADownwards = CalculateEMA(Downwards, numDaysPeriod);
 
-            int iTemp = numDaysPeriod < closePrices.Length ? numDaysPeriod : closePrices.Length;
-            for (int i = 0; i < iTemp; i++)
+            for (int i = 0; i < results.Length; i++)
             {
             
                 if (EMADownwards[i] == 0.0d)
                 {
-                    results[i] = 100;
+                    results[i] = 1;
                 }
                 else
                 {
                     double dblTemp = EMAUpwards[i] / EMADownwards[i];
-                    results[i] = 100 - (100 / (1 + dblTemp));
+                    results[i] = 1 - (1 / (1 + dblTemp));   // Công thức có thay đổi bằng cách chia 100 cho quy về đoạn [0,1]
                 }
             }
             return results;
