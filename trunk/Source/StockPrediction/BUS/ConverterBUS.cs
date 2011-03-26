@@ -263,6 +263,7 @@ namespace BUS
                 double[] dblBollingerUp = IndicatorsBUS.CalculateBollingerband(closePrices, 20, 2, true);
                 double[] dblBollingerMid = IndicatorsBUS.CalculateSMA(closePrices, 20);
                 double[] dblBollingerLow = IndicatorsBUS.CalculateBollingerband(closePrices, 20, 2, false);
+                double[] dblRSI = IndicatorsBUS.CalculateRSI(closePrices, iAroonPeriod);
                 // Scale các chỉ số (ngoại trừ Aroon) về -1 1
                 double dblMax = 0;
                 double dblMaxVol = 0;
@@ -315,7 +316,7 @@ namespace BUS
                     strLine += (j++).ToString() + ":" + dblBollingerLow[iPastIndex].ToString() + " ";
                     strLine += (j++).ToString() + ":" + dblAroonUps[iPastIndex].ToString() + " ";
                     strLine += (j++).ToString() + ":" + dblAroonDowns[iPastIndex].ToString() + " ";
-                    
+                    strLine += (j++).ToString() + ":" + dblRSI[iPastIndex].ToString();
                     writer.WriteLine(strLine);
                 }
 
