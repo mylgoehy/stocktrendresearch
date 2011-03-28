@@ -51,10 +51,11 @@
             this.tbxTestFilePath = new System.Windows.Forms.TextBox();
             this.btnTest = new System.Windows.Forms.Button();
             this.gbTraining = new System.Windows.Forms.GroupBox();
+            this.prgTrainingProgress = new System.Windows.Forms.ProgressBar();
             this.lblTrainingFile = new System.Windows.Forms.Label();
             this.btnTrainBrowser = new System.Windows.Forms.Button();
             this.gbSVRSetting = new System.Windows.Forms.GroupBox();
-            this.ckbProbEstimation = new System.Windows.Forms.CheckBox();
+            this.ckbProbEstimate = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.tbxGamma = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -120,7 +121,6 @@
             this.dtpFrom = new System.Windows.Forms.DateTimePicker();
             this.cmbStockID = new System.Windows.Forms.ComboBox();
             this.zg1 = new ZedGraph.ZedGraphControl();
-            this.prgTrainingProgress = new System.Windows.Forms.ProgressBar();
             this.tabMain.SuspendLayout();
             this.tabExperiment.SuspendLayout();
             this.gbBatchTrainTest.SuspendLayout();
@@ -249,6 +249,7 @@
             this.tbxBatchInputFile.Name = "tbxBatchInputFile";
             this.tbxBatchInputFile.Size = new System.Drawing.Size(348, 20);
             this.tbxBatchInputFile.TabIndex = 25;
+            this.tbxBatchInputFile.Click += new System.EventHandler(this.btnBatchBrowse_Click);
             // 
             // btnBatchBrowse
             // 
@@ -410,6 +411,14 @@
             this.gbTraining.TabStop = false;
             this.gbTraining.Text = "2. TRAINING";
             // 
+            // prgTrainingProgress
+            // 
+            this.prgTrainingProgress.Location = new System.Drawing.Point(258, 233);
+            this.prgTrainingProgress.Name = "prgTrainingProgress";
+            this.prgTrainingProgress.Size = new System.Drawing.Size(230, 23);
+            this.prgTrainingProgress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.prgTrainingProgress.TabIndex = 45;
+            // 
             // lblTrainingFile
             // 
             this.lblTrainingFile.AutoSize = true;
@@ -436,7 +445,7 @@
             // 
             // gbSVRSetting
             // 
-            this.gbSVRSetting.Controls.Add(this.ckbProbEstimation);
+            this.gbSVRSetting.Controls.Add(this.ckbProbEstimate);
             this.gbSVRSetting.Controls.Add(this.label3);
             this.gbSVRSetting.Controls.Add(this.tbxGamma);
             this.gbSVRSetting.Controls.Add(this.label2);
@@ -454,17 +463,17 @@
             this.gbSVRSetting.TabStop = false;
             this.gbSVRSetting.Text = "SVM SETTINGS";
             // 
-            // ckbProbEstimation
+            // ckbProbEstimate
             // 
-            this.ckbProbEstimation.AutoSize = true;
-            this.ckbProbEstimation.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ckbProbEstimation.ForeColor = System.Drawing.Color.Black;
-            this.ckbProbEstimation.Location = new System.Drawing.Point(14, 25);
-            this.ckbProbEstimation.Name = "ckbProbEstimation";
-            this.ckbProbEstimation.Size = new System.Drawing.Size(125, 17);
-            this.ckbProbEstimation.TabIndex = 47;
-            this.ckbProbEstimation.Text = "Probability Estimation";
-            this.ckbProbEstimation.UseVisualStyleBackColor = true;
+            this.ckbProbEstimate.AutoSize = true;
+            this.ckbProbEstimate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ckbProbEstimate.ForeColor = System.Drawing.Color.Black;
+            this.ckbProbEstimate.Location = new System.Drawing.Point(14, 25);
+            this.ckbProbEstimate.Name = "ckbProbEstimate";
+            this.ckbProbEstimate.Size = new System.Drawing.Size(122, 17);
+            this.ckbProbEstimate.TabIndex = 47;
+            this.ckbProbEstimate.Text = "Probability Estimates";
+            this.ckbProbEstimate.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -819,6 +828,7 @@
             this.tbxCsvFilePath.Name = "tbxCsvFilePath";
             this.tbxCsvFilePath.Size = new System.Drawing.Size(222, 20);
             this.tbxCsvFilePath.TabIndex = 18;
+            this.tbxCsvFilePath.Click += new System.EventHandler(this.btnPreprocessBrowser_Click);
             // 
             // btnPreprocessBrowser
             // 
@@ -1200,14 +1210,6 @@
             this.zg1.Size = new System.Drawing.Size(843, 414);
             this.zg1.TabIndex = 1;
             // 
-            // prgTrainingProgress
-            // 
-            this.prgTrainingProgress.Location = new System.Drawing.Point(258, 233);
-            this.prgTrainingProgress.Name = "prgTrainingProgress";
-            this.prgTrainingProgress.Size = new System.Drawing.Size(230, 23);
-            this.prgTrainingProgress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.prgTrainingProgress.TabIndex = 45;
-            // 
             // MainGUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1310,7 +1312,7 @@
         private System.Windows.Forms.RadioButton rdKSVMeans;
         private System.Windows.Forms.NumericUpDown nmNumCluster;
         private System.Windows.Forms.Label lblNumCluster;
-        private System.Windows.Forms.CheckBox ckbProbEstimation;
+        private System.Windows.Forms.CheckBox ckbProbEstimate;
         private System.Windows.Forms.ComboBox cmbActivationFunc;
         private System.Windows.Forms.Label lblActivationFunc;
         private System.Windows.Forms.GroupBox gbAnnSetting;

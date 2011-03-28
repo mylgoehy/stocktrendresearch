@@ -157,7 +157,7 @@ namespace GUI
                 paramSel.Grid(prob, param, strLogFile, out dblC, out dblGamma);
                 param.C = dblC;
                 param.Gamma = dblGamma;
-                param.Probability = ckbProbEstimation.Checked;
+                param.Probability = ckbProbEstimate.Checked;
                 Model model = Training.Train(prob, param);
                 Model.Write(strModelFile, model);
                 prgTrainingProgress.Value = 0; 
@@ -171,7 +171,7 @@ namespace GUI
                 }
                 param.C = double.Parse(tbxC.Text);
                 param.Gamma = double.Parse(tbxGamma.Text);
-                param.Probability = ckbProbEstimation.Checked;
+                param.Probability = ckbProbEstimate.Checked;
                 Model model = Training.Train(prob, param);
                 Model.Write(strModelFile, model);
             }
@@ -232,7 +232,7 @@ namespace GUI
                     paramSel.Grid(prob, param, strLogFile, out dblC, out dblGamma);
                     param.C = dblC;
                     param.Gamma = dblGamma;
-                    param.Probability = ckbProbEstimation.Checked;
+                    param.Probability = ckbProbEstimate.Checked;
                     Model model = Training.Train(prob, param);
                     Model.Write(strSVMModelFiles[i], model);
                 }
@@ -245,7 +245,7 @@ namespace GUI
                     }
                     param.C = double.Parse(tbxC.Text);
                     param.Gamma = double.Parse(tbxGamma.Text);
-                    param.Probability = ckbProbEstimation.Checked;
+                    param.Probability = ckbProbEstimate.Checked;
                     Model model = Training.Train(prob, param);
                     Model.Write(strSVMModelFiles[i], model);
                 }
@@ -355,7 +355,7 @@ namespace GUI
             string strStatisticFile = strMutualPath + "statistic.txt";
             Problem prob = Problem.Read(strTestFile);
             Model model = Model.Read(strModelFile);
-            double dblPrecision = Prediction.Predict(prob, strPredictedFile, model, ckbProbEstimation.Checked);
+            double dblPrecision = Prediction.Predict(prob, strPredictedFile, model, ckbProbEstimate.Checked);
             StatisticTrend2File(strPredictedFile, strStatisticFile);
             StreamWriter writer = new StreamWriter(strMutualPath + "performance.txt");
             writer.WriteLine(dblPrecision);
@@ -406,7 +406,7 @@ namespace GUI
             {
                 Problem prob = Problem.Read(strClusterResultFiles[i]);
                 Model model = Model.Read(strSVMModelFiles[i]);
-                double dblPrecision = Prediction.Predict(prob, strPredictedFiles[i], model, ckbProbEstimation.Checked);
+                double dblPrecision = Prediction.Predict(prob, strPredictedFiles[i], model, ckbProbEstimate.Checked);
                 writer.WriteLine("Cluster " + (i + 1).ToString() + ": " + dblPrecision);
                 if (clustering.Clusters[i].NumSample > 0)
                 {
@@ -1289,6 +1289,7 @@ namespace GUI
             }
             else
             {
+                tbxBatchInputFile.Text = "";
                 _trainFilePath = "";
                 _testFilePath = "";
                 _modelFilePath = "";
