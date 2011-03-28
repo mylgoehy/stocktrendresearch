@@ -31,7 +31,7 @@ namespace BUS.ANN
     [Serializable]
     public sealed class TrainingSet : ISerializable
     {
-        private readonly int inputVectorLength;
+        private int inputVectorLength;
         private readonly int outputVectorLength;
         private readonly IList<TrainingSample> trainingSamples;
 
@@ -105,20 +105,20 @@ namespace BUS.ANN
             get { return trainingSamples[index]; }
         }
 
-        /// <summary>
-        /// Creates a new unsupervised training set
-        /// </summary>
-        /// <param name="vectorSize">
-        /// Expected size of the vectors in the training set.
-        /// (Note : This should be equal to number of input neurons.)
-        /// </param>
-        /// <exception cref="ArgumentException">
-        /// If vectorSize is zero or negative
-        /// </exception>
-        public TrainingSet(int vectorSize)
-            : this(vectorSize, 0)
-        {
-        }
+        ///// <summary>
+        ///// Creates a new unsupervised training set
+        ///// </summary>
+        ///// <param name="vectorSize">
+        ///// Expected size of the vectors in the training set.
+        ///// (Note : This should be equal to number of input neurons.)
+        ///// </param>
+        ///// <exception cref="ArgumentException">
+        ///// If vectorSize is zero or negative
+        ///// </exception>
+        //public TrainingSet(int vectorSize)
+        //    : this(vectorSize, 0)
+        //{
+        //}
 
         /// <summary>
         /// Creates a new supervised training set
@@ -142,6 +142,18 @@ namespace BUS.ANN
             this.inputVectorLength = inputVectorLength;
             this.outputVectorLength = outputVectorLength;
             this.trainingSamples = new List<TrainingSample>();
+        }
+
+        public TrainingSet(string trainFile, int outputVectorLength)
+        {
+            // Validation
+            Helper.ValidateNotNegative(outputVectorLength, "outputVectorLength");
+
+            // Initialize instance variables
+            this.inputVectorLength = 0;
+            this.outputVectorLength = outputVectorLength;
+            this.trainingSamples = new List<TrainingSample>();
+            CreateTrainingSet(trainFile);
         }
 
         /// <summary>
@@ -172,19 +184,28 @@ namespace BUS.ANN
         /// </param>
         public void CreateTrainingSet(string trainingFile)
         {
-            double[] dblInputs = new double[InputVectorLength];
-            double[] dblOutputs = new double[OutputVectorLength];
-            
             StreamReader reader = null;
 
             try
             {
+                double[] dblOutputs = new double[OutputVectorLength];
                 reader = new StreamReader(trainingFile);
                 string strTemps = reader.ReadToEnd();
                 reader.Close();
 
                 string[] strLines = Regex.Split(strTemps, "\r\n");
 
+                
+                string[] strTemp = strLines[0].Split(' ');
+                for (int i = 1; i < strTemp.Length; i++)
+                {
+                    if (strTemp[i] != "")
+                    {
+                        this.inputVectorLength++;
+                    }
+                }
+
+                double[] dblInputs = new double[InputVectorLength];
                 int numPattern = strLines.Length - 1;
                 for (int i = 0; i < numPattern; i++)
                 {

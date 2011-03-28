@@ -254,7 +254,7 @@ namespace BUS
                     dblLabels[i] = IndicatorsBUS.DetermineTrend(closePrices, dblFastSMAs, dblLowSMAs, i + LOW_PERIOD, 5, 1);
                 }
                 // Tính chỉ số aroon với period bằng 2 lần số ngày cần dự đoán, nếu dự đoán 1 ngày thì period = 5
-                int iAroonPeriod = (numDaysPeriod < 5) ? 10 : numDaysPeriod * 4;
+                int iAroonPeriod = (numDaysPeriod < 10) ? 5 : numDaysPeriod * 2;
                 double[] dblAroonUps = IndicatorsBUS.CalculateAroon(closePrices, iAroonPeriod, true);
                 double[] dblAroonDowns = IndicatorsBUS.CalculateAroon(closePrices, iAroonPeriod, false);
 
