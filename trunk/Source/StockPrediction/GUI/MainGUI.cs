@@ -272,19 +272,17 @@ namespace GUI
             string strModelFile = strTrainFile.Remove(iPos + 1) + "model.txt";
 
             //khởi tạo các tham số cho mạng
-            ANNParameterBUS.InputNode = int.Parse(tbxANNInputNode.Text);
             ANNParameterBUS.HiddenNode = int.Parse(tbxANNHiddenNode.Text);
             ANNParameterBUS.OutputNode = 3;
             ANNParameterBUS.MaxEpoch = int.Parse(tbxMaxLoops.Text);
             ANNParameterBUS.LearningRate = double.Parse(tbxLearningRate.Text);
             ANNParameterBUS.Momentum = double.Parse(tbxMomentum.Text);
             ANNParameterBUS.Bias = double.Parse(tbxBias.Text);                       
-            //ANNParameterBUS.MeasureType = cmbTrainingMeasure.SelectedItem.ToString();
 
             //Tiến hành train
             BackpropagationNetwork bpNetwork;
-
-            LinearLayer inputLayer = new LinearLayer(ANNParameterBUS.InputNode);
+            TrainingSet trainSet = new TrainingSet(strTrainFile, ANNParameterBUS.OutputNode);
+            LinearLayer inputLayer = new LinearLayer(trainSet.InputVectorLength);
             ActivationLayer hidenLayer = null;
             ActivationLayer outputLayer = null;
             switch (cmbActivationFunc.SelectedItem.ToString())
@@ -314,8 +312,6 @@ namespace GUI
 
             bpNetwork.SetLearningRate(ANNParameterBUS.LearningRate);
 
-            TrainingSet trainSet = new TrainingSet(ANNParameterBUS.InputNode, ANNParameterBUS.OutputNode);
-            trainSet.CreateTrainingSet(strTrainFile);
             bpNetwork.EndEpochEvent += new TrainingEpochEventHandler(
                     delegate(object senderNetwork, TrainingEpochEventArgs args)
                     {
@@ -448,8 +444,7 @@ namespace GUI
             stream.Close();
 
             // Tạo tập mẫu để test
-            TrainingSet testSet = new TrainingSet(bpNetwork.InputLayer.NeuronCount, bpNetwork.OutputLayer.NeuronCount);
-            testSet.CreateTrainingSet(strTestFile);
+            TrainingSet testSet = new TrainingSet(strTestFile, bpNetwork.OutputLayer.NeuronCount);
 
             // Ma trận với dòng thứ 1 chứa các giá trị thực và dòng thứ 2 chứa các giá trị dự đoán.
             double[][] dblActual_Forecast = new double[2][];
@@ -474,6 +469,237 @@ namespace GUI
             WriteAccurancy2File(strMutualPath + "PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
         }
 
+
+        private void StatisticTrend2File(string predictedFile, string statisticFile)
+        {
+            string strTemp;
+            double[][] actual_Forecasts = new double[2][];
+
+            // Đọc từ file predict lên
+            StreamReader reader = new StreamReader(predictedFile);
+            StreamWriter writer = new StreamWriter(statisticFile);
+
+            reader.ReadLine();// bỏ dòng đầu
+
+            strTemp = reader.ReadToEnd();
+            reader.Close();
+
+            // Xây dựng lại ma trận kết quả thực và dự đoán từ file
+            string[] strActual_Forecasts = Regex.Split(strTemp, "\n");
+            int iLen = 0;
+            for (int i = 0; i < strActual_Forecasts.Length; i++)
+            {
+                if (strActual_Forecasts[i] != "")
+                {
+                    iLen++;
+                }
+            }
+            actual_Forecasts[0] = new double[iLen];
+            actual_Forecasts[1] = new double[iLen];
+
+            for (int i = 0; i < strActual_Forecasts.Length; i++)
+            {
+                if (strActual_Forecasts[i] != "")
+                {
+                    actual_Forecasts[0][i] = double.Parse(Regex.Split(strActual_Forecasts[i], " ")[0]);
+                    actual_Forecasts[1][i] = double.Parse(Regex.Split(strActual_Forecasts[i], " ")[1]);
+                }
+            }
+
+            // Thông kê kết quả dự đoán so với thực tế
+            strTemp = "Predicted Trend\t Actual Trend\n\tUptrend\tNotrend\tDowntrend";
+            writer.WriteLine(strTemp);
+
+            int[][] tables;
+            tables = new int[3][];
+            for (int i = 0; i < tables.Length; i++)
+            {
+                tables[i] = new int[3];
+            }
+            for (int i = 0; i < actual_Forecasts[0].Length; i++)
+            {
+                int iTemp = (int)actual_Forecasts[0][i];
+                switch (iTemp)
+                {
+                    case 1:// Với trường hợp xu hướng tăng
+                        if (actual_Forecasts[1][i] == 1)
+                        {
+                            tables[0][0]++;
+                        }
+                        else if (actual_Forecasts[1][i] == 0)
+                        {
+                            tables[0][1]++;
+                        }
+                        else
+                        {
+                            tables[0][2]++;
+                        }
+                        break;
+                    case 0:// Với trường hợp không có xu hướng
+                        if (actual_Forecasts[1][i] == 1)
+                        {
+                            tables[1][0]++;
+                        }
+                        else if (actual_Forecasts[1][i] == 0)
+                        {
+                            tables[1][1]++;
+                        }
+                        else
+                        {
+                            tables[1][2]++;
+                        }
+                        break;
+                    case -1:// Với trường hợp xu hướng giảm
+                        if (actual_Forecasts[1][i] == 1)
+                        {
+                            tables[2][0]++;
+                        }
+                        else if (actual_Forecasts[1][i] == 0)
+                        {
+                            tables[2][1]++;
+                        }
+                        else
+                        {
+                            tables[2][2]++;
+                        }
+                        break;
+                }
+            }
+
+            // Thực hiện ghi kết quả thống kê xuống file
+            string[] strLables = { "Uptrend", "Notrend", "Downtrend" };
+            for (int i = 0; i < tables.Length; i++)
+            {
+                strTemp = "";
+                strTemp += strLables[i] + "\t";
+                for (int j = 0; j < tables.Length; j++)
+                {
+                    strTemp += tables[i][j].ToString() + "\t";
+                }
+                writer.WriteLine(strTemp);
+            }
+            writer.Close();
+        }
+
+        private void StatisticTrend2File(string[] predictedFiles, string statisticFile)
+        {
+            string strTemp = "";
+            double[][] actual_Forecasts = new double[2][];
+
+            // Đọc từ file predict lên
+            for (int i = 0; i < predictedFiles.Length; i++)
+            {
+                StreamReader reader = new StreamReader(predictedFiles[i]);
+                reader.ReadLine();
+                strTemp += reader.ReadToEnd();
+                reader.Close();
+            }
+
+            StreamWriter writer = new StreamWriter(statisticFile);
+            string[] strActual_Forecasts = Regex.Split(strTemp, "\n");
+            int iLen = 0;
+            for (int i = 0; i < strActual_Forecasts.Length; i++)
+            {
+                if (strActual_Forecasts[i] != "")
+                {
+                    iLen++;
+                }
+            }
+            actual_Forecasts[0] = new double[iLen];
+            actual_Forecasts[1] = new double[iLen];
+
+            for (int i = 0; i < strActual_Forecasts.Length; i++)
+            {
+                if (strActual_Forecasts[i] != "")
+                {
+                    actual_Forecasts[0][i] = double.Parse(Regex.Split(strActual_Forecasts[i], " ")[0]);
+                    actual_Forecasts[1][i] = double.Parse(Regex.Split(strActual_Forecasts[i], " ")[1]);
+                }
+            }
+
+            //thông kê kết quả dự đoán so với thực tế
+            strTemp = "Predicted Trend\t Actual Trend\n\tUptrend\tNotrend\tDowntrend";
+            writer.WriteLine(strTemp);
+
+            int[][] tables;
+            tables = new int[3][];
+            for (int i = 0; i < tables.Length; i++)
+            {
+                tables[i] = new int[3];
+            }
+            for (int i = 0; i < actual_Forecasts[0].Length; i++)
+            {
+                int iTemp = (int)actual_Forecasts[0][i];
+                switch (iTemp)
+                {
+                    case 1:
+                        if (actual_Forecasts[1][i] == 1)
+                        {
+                            tables[0][0]++;
+                        }
+                        else if (actual_Forecasts[1][i] == 0)
+                        {
+                            tables[0][1]++;
+                        }
+                        else
+                        {
+                            tables[0][2]++;
+                        }
+                        break;
+                    case 0:
+                        if (actual_Forecasts[1][i] == 1)
+                        {
+                            tables[1][0]++;
+                        }
+                        else if (actual_Forecasts[1][i] == 0)
+                        {
+                            tables[1][1]++;
+                        }
+                        else
+                        {
+                            tables[1][2]++;
+                        }
+                        break;
+                    case -1:
+                        if (actual_Forecasts[1][i] == 1)
+                        {
+                            tables[2][0]++;
+                        }
+                        else if (actual_Forecasts[1][i] == 0)
+                        {
+                            tables[2][1]++;
+                        }
+                        else
+                        {
+                            tables[2][2]++;
+                        }
+                        break;
+                }
+            }
+            string[] strLables = { "Uptrend", "Notrend", "Downtrend" };
+            for (int i = 0; i < tables.Length; i++)
+            {
+                strTemp = "";
+                strTemp += strLables[i] + "\t";
+                for (int j = 0; j < tables.Length; j++)
+                {
+                    strTemp += tables[i][j].ToString() + "\t";
+                }
+                writer.WriteLine(strTemp);
+            }
+            writer.Close();
+        }
+
+        private void Finish()
+        {
+            MessageBox.Show("Finish!", "Message", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void ShowException(string mes)
+        {
+            MessageBox.Show(mes, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
         private void btnTrain_Click(object sender, EventArgs e)
         {
             if (tbxTrainFilePath.Text == "")
@@ -482,19 +708,27 @@ namespace GUI
                 return;
             }
 
-            if (rdSVM.Checked)
+            try
             {
-                TrainSVM(false);
+                if (rdSVM.Checked)
+                {
+                    TrainSVM(false);
+                }
+                else if (rdKSVMeans.Checked)
+                {
+                    TrainKSVMeans(false);
+                }
+                else if (rdANN.Checked)//Mô hình ANN
+                {
+                    TrainANN(false);
+                }
             }
-            else if (rdKSVMeans.Checked)
+            catch (Exception ex)
             {
-                TrainKSVMeans(false);
+                ShowException(ex.Message);
+                throw;
             }
-            else if(rdANN.Checked)//Mô hình ANN
-            {
-                TrainANN(false);
-            }
-            MessageBox.Show("Finish!");
+            Finish();
         }
 
         private void btnPreprocessBrowser_Click(object sender, EventArgs e)
@@ -518,20 +752,27 @@ namespace GUI
                 return;
             }
 
-            if (rdSVM.Checked)
+            try
             {
-                TestSVM(false);
+                if (rdSVM.Checked)
+                {
+                    TestSVM(false);
+                }
+                else if (rdKSVMeans.Checked)
+                {
+                    TestKSVMeans(false);
+                }
+                else if (rdANN.Checked)
+                {
+                    TestANN(false);
+                }
             }
-            else if (rdKSVMeans.Checked)
+            catch (Exception ex)
             {
-                TestKSVMeans(false);
-            }
-            else if(rdANN.Checked)
-            {
-                TestANN(false);
+                ShowException(ex.Message);
             }
 
-            MessageBox.Show("Finish!");           
+            Finish();          
         }
 
         private void btnPreprocess_Click(object sender, EventArgs e)
@@ -541,8 +782,17 @@ namespace GUI
                 MessageBox.Show("Error: You must fill all required inputs!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            Preprocess(false);
-            MessageBox.Show("Finish!");  
+
+            try
+            {
+                Preprocess(false);
+            }
+            catch (Exception ex)
+            {
+                ShowException(ex.Message);
+            }
+
+            Finish();
         }
 
         private void MainGUI_Load(object sender, EventArgs e)
@@ -552,7 +802,6 @@ namespace GUI
             tbxTrainingRatio.Text = "80";
             tbxBatchTrainingRatio.Text = "80";
             cmbModelSelection.SelectedIndex = 0;
-            cmbTrainingMeasure.SelectedIndex = 0;
             cmbActivationFunc.SelectedIndex = 0;
             cmbExperimentMode.SelectedIndex = 0;
             _trainFilePath = "";
@@ -560,7 +809,6 @@ namespace GUI
             _modelFilePath = "";
 
             //Khởi gán tham số ANN
-            tbxANNInputNode.Text = 10.ToString();
             tbxANNHiddenNode.Text = 4.ToString();
             tbxLearningRate.Text = 0.3.ToString();
             tbxMaxLoops.Text = 2000.ToString();
@@ -662,103 +910,6 @@ namespace GUI
         {
             gbAnnSetting.Enabled = rdANN.Checked;
             gbSVRSetting.Enabled = !rdANN.Checked;
-        }
-
-        private void btnStepTrainAndTest_Click(object sender, EventArgs e)
-        {
-            //try
-            //{
-            //    bool isSVR = true;
-            //    if (rdANN.Checked == true)
-            //    {
-            //        isSVR = false;
-            //        ANNParameterBUS.HiddenNode = Convert.ToInt16(tbxANNHiddenNode.Text);
-            //        ANNParameterBUS.OutputNode = 1;
-            //        ANNParameterBUS.MaxEpoch = Convert.ToInt16(tbxMaxLoops.Text);
-            //        ANNParameterBUS.LearningRate = Convert.ToDouble(tbxLearningRate.Text);
-            //        ANNParameterBUS.Momentum = Convert.ToDouble(tbxMomentum.Text);
-            //        ANNParameterBUS.Bias = Convert.ToDouble(tbxBias.Text);
-            //    }
-
-            //    double[][] dblActual_Forecast = new double[2][];
-            //    StepTrainingBUS stepTrainingBUS = new StepTrainingBUS();
-            //    stepTrainingBUS.NumInputNode = Convert.ToInt16(NUM_NODE);
-            //    stepTrainingBUS.TrainingSize = Convert.ToInt16(tbxTrainingSize.Text);
-            //    //stepTrainingBUS.Preprocess = cmbPreprocess.SelectedItem.ToString();
-            //    stepTrainingBUS.ModelSelection = cmbModelSelection.SelectedItem.ToString();
-            //    stepTrainingBUS.NumFold = tbxNumFold.Text;
-            //    stepTrainingBUS.ImprovedDirection = true;
-
-            //    switch (cmbTrainingMeasure.SelectedItem.ToString())
-            //    {
-            //        case "MSE":
-            //            stepTrainingBUS.TrainingMeasure = MSE;
-            //            break;
-            //        case "NMSE":
-            //            stepTrainingBUS.TrainingMeasure = NMSE;
-            //            break;
-            //        case "RMSE":
-            //            stepTrainingBUS.TrainingMeasure = RMSE;
-            //            break;
-            //        case "Sign":
-            //            stepTrainingBUS.TrainingMeasure = SIGN;
-            //            break;
-            //    }
-            //    stepTrainingBUS.LoadWholdeData(tbxCsvFilePath.Text);
-
-            //    if (tbxStartDate.Text == "WholeData")
-            //    {
-            //        stepTrainingBUS.CurrentDateIndex = stepTrainingBUS.TrainingSize - 1;
-            //    }
-            //    else
-            //    {
-            //        stepTrainingBUS.CurrentDateIndex =
-            //            stepTrainingBUS.FindIndex(DateTime.ParseExact(tbxStartDate.Text, "d/M/yyyy", null));
-            //    }
-            //    int iEndIndex;
-            //    if (tbxEndDate.Text == "WholeData")
-            //    {
-            //        iEndIndex = stepTrainingBUS.WholeData.Entries.Count-2;
-            //    }
-            //    else
-            //    {
-            //        iEndIndex =
-            //            stepTrainingBUS.FindIndex(DateTime.ParseExact(tbxEndDate.Text, "d/M/yyyy", null));
-            //    }
-            //    if (iEndIndex == -1 || iEndIndex > stepTrainingBUS.WholeData.Entries.Count - 2 || iEndIndex < stepTrainingBUS.CurrentDateIndex)
-            //    {
-            //        MessageBox.Show("Error: Invalid input!");
-            //        return;
-            //    }
-
-            //    int iLen = iEndIndex + 1 - stepTrainingBUS.CurrentDateIndex;
-            //    dblActual_Forecast[0] = new double[iLen];
-            //    dblActual_Forecast[1] = new double[iLen];
-            //    for (int i = 0; i < iLen; i++)
-            //    {
-            //        EntryDTO entryDTO = (EntryDTO)stepTrainingBUS.WholeData.Entries[stepTrainingBUS.CurrentDateIndex + 1];
-            //        dblActual_Forecast[0][i] = entryDTO.ClosePrice;
-            //        //Tạm thời bỏ dòng này chưa sử dụng step training cho ANN
-            //        //dblActual_Forecast[1][i] = stepTrainingBUS.TrainAndPredict(isSVR);
-            //        stepTrainingBUS.CurrentDateIndex++;
-            //    }
-
-            //    //Ghi kết quả cuối cùng ra file
-            //    StreamWriter finalResult = new StreamWriter("StepPredict.txt");
-            //    for (int i = 0; i < iLen; i++)
-            //    {
-            //        finalResult.WriteLine(dblActual_Forecast[0][i].ToString() + "\t" + dblActual_Forecast[1][i].ToString());
-            //    }
-            //    finalResult.Close();
-
-            //    HandleMeasure("StepMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
-            //    MessageBox.Show("Finish!");
-            //}
-            //catch (Exception ex)
-            //{
-
-            //    throw ex;
-            //}
         }
 
         private void cmbStockID_SelectedIndexChanged(object sender, EventArgs e)
@@ -965,20 +1116,28 @@ namespace GUI
 
         private void tabOption_Selected(object sender, TabControlEventArgs e)
         {
-            //Load tất cả mã chứng khoán lên combobox
-            string[] fileNames = Directory.GetFiles("Excel");
-            cmbStockID.Items.Clear();
-            for (int i = 0; i < fileNames.Length; i++)
-            {
-                string strTemp = fileNames[i].Substring(fileNames[i].LastIndexOf('\\') + 1);
-                strTemp = strTemp.Remove(strTemp.IndexOf('.')).ToUpper();
 
-                cmbStockID.Items.Add(strTemp);
+            try
+            {
+                //Load tất cả mã chứng khoán lên combobox
+                string[] fileNames = Directory.GetFiles("Excel");
+                cmbStockID.Items.Clear();
+                for (int i = 0; i < fileNames.Length; i++)
+                {
+                    string strTemp = fileNames[i].Substring(fileNames[i].LastIndexOf('\\') + 1);
+                    strTemp = strTemp.Remove(strTemp.IndexOf('.')).ToUpper();
+
+                    cmbStockID.Items.Add(strTemp);
+                }
+
+                if (cmbStockID.Items.Count > 0)
+                {
+                    cmbStockID.SelectedIndex = 0;
+                }
             }
-
-            if (cmbStockID.Items.Count > 0)
+            catch (Exception ex)
             {
-                cmbStockID.SelectedIndex = 0;
+                ShowException(ex.Message);
             }
         }
 
@@ -1006,226 +1165,6 @@ namespace GUI
             }
         }
 
-        private void StatisticTrend2File(string predictedFile, string statisticFile)
-        {
-            string strTemp;
-            double[][] actual_Forecasts = new double[2][];            
-
-            // Đọc từ file predict lên
-            StreamReader reader = new StreamReader(predictedFile);
-            StreamWriter writer = new StreamWriter(statisticFile);
-
-            reader.ReadLine();// bỏ dòng đầu
-
-            strTemp = reader.ReadToEnd();
-            reader.Close();
-
-            // Xây dựng lại ma trận kết quả thực và dự đoán từ file
-            string[] strActual_Forecasts = Regex.Split(strTemp,"\n");
-            int iLen = 0;
-            for (int i = 0; i < strActual_Forecasts.Length; i++)
-            {
-                if(strActual_Forecasts[i] != "")
-                {
-                    iLen++;
-                }
-            }
-            actual_Forecasts[0] = new double[iLen];
-            actual_Forecasts[1] = new double[iLen];
-
-            for (int i = 0; i < strActual_Forecasts.Length; i++)
-            {
-                if (strActual_Forecasts[i] != "")
-                {
-                    actual_Forecasts[0][i] = double.Parse(Regex.Split(strActual_Forecasts[i], " ")[0]);
-                    actual_Forecasts[1][i] = double.Parse(Regex.Split(strActual_Forecasts[i], " ")[1]);
-                }
-            }
-
-            // Thông kê kết quả dự đoán so với thực tế
-            strTemp = "Predicted Trend\t Actual Trend\n\tUptrend\tNotrend\tDowntrend";
-            writer.WriteLine(strTemp);
-
-            int[][] tables;
-            tables = new int[3][];
-            for (int i = 0; i < tables.Length; i++)
-            {
-                tables[i] = new int[3];
-            }
-            for (int i = 0; i < actual_Forecasts[0].Length; i++)
-            {
-                int iTemp = (int)actual_Forecasts[0][i];
-                switch (iTemp)
-                {
-                    case 1:// Với trường hợp xu hướng tăng
-                        if (actual_Forecasts[1][i] == 1)
-                        {
-                            tables[0][0]++;
-                        }
-                        else if (actual_Forecasts[1][i] == 0)
-                        {
-                            tables[0][1]++;
-                        }
-                        else
-                        {
-                            tables[0][2]++;
-                        }
-                        break;
-                    case 0:// Với trường hợp không có xu hướng
-                        if (actual_Forecasts[1][i] == 1)
-                        {
-                            tables[1][0]++;
-                        }
-                        else if (actual_Forecasts[1][i] == 0)
-                        {
-                            tables[1][1]++;
-                        }
-                        else
-                        {
-                            tables[1][2]++;
-                        }
-                        break;
-                    case -1:// Với trường hợp xu hướng giảm
-                        if (actual_Forecasts[1][i] == 1)
-                        {
-                            tables[2][0]++;
-                        }
-                        else if (actual_Forecasts[1][i] == 0)
-                        {
-                            tables[2][1]++;
-                        }
-                        else
-                        {
-                            tables[2][2]++;
-                        }
-                        break;
-                }
-            }
-
-            // Thực hiện ghi kết quả thống kê xuống file
-            string[] strLables = { "Uptrend", "Notrend", "Downtrend" };
-            for (int i = 0; i < tables.Length; i++)
-            {
-                strTemp = "";
-                strTemp += strLables[i] + "\t";
-                for (int j = 0; j < tables.Length; j++)
-                {
-                    strTemp += tables[i][j].ToString() + "\t";
-                }
-                writer.WriteLine(strTemp);
-            }
-            writer.Close();
-        }
-        
-        private void StatisticTrend2File(string[] predictedFiles, string statisticFile)
-        {
-            string strTemp = "";
-            double[][] actual_Forecasts = new double[2][];
-
-            // Đọc từ file predict lên
-            for (int i = 0; i < predictedFiles.Length; i++)
-            {
-                StreamReader reader = new StreamReader(predictedFiles[i]);
-                reader.ReadLine();
-                strTemp += reader.ReadToEnd();
-                reader.Close();
-            }
-
-            StreamWriter writer = new StreamWriter(statisticFile);
-            string[] strActual_Forecasts = Regex.Split(strTemp, "\n");
-            int iLen = 0;
-            for (int i = 0; i < strActual_Forecasts.Length; i++)
-            {
-                if (strActual_Forecasts[i] != "")
-                {
-                    iLen++;
-                }
-            }
-            actual_Forecasts[0] = new double[iLen];
-            actual_Forecasts[1] = new double[iLen];
-
-            for (int i = 0; i < strActual_Forecasts.Length; i++)
-            {
-                if (strActual_Forecasts[i] != "")
-                {
-                    actual_Forecasts[0][i] = double.Parse(Regex.Split(strActual_Forecasts[i], " ")[0]);
-                    actual_Forecasts[1][i] = double.Parse(Regex.Split(strActual_Forecasts[i], " ")[1]);
-                }
-            }
-
-            //thông kê kết quả dự đoán so với thực tế
-            strTemp = "Predicted Trend\t Actual Trend\n\tUptrend\tNotrend\tDowntrend";
-            writer.WriteLine(strTemp);
-
-            int[][] tables;
-            tables = new int[3][];
-            for (int i = 0; i < tables.Length; i++)
-            {
-                tables[i] = new int[3];
-            }
-            for (int i = 0; i < actual_Forecasts[0].Length; i++)
-            {
-                int iTemp = (int)actual_Forecasts[0][i];
-                switch (iTemp)
-                {
-                    case 1:
-                        if (actual_Forecasts[1][i] == 1)
-                        {
-                            tables[0][0]++;
-                        }
-                        else if (actual_Forecasts[1][i] == 0)
-                        {
-                            tables[0][1]++;
-                        }
-                        else
-                        {
-                            tables[0][2]++;
-                        }
-                        break;
-                    case 0:
-                        if (actual_Forecasts[1][i] == 1)
-                        {
-                            tables[1][0]++;
-                        }
-                        else if (actual_Forecasts[1][i] == 0)
-                        {
-                            tables[1][1]++;
-                        }
-                        else
-                        {
-                            tables[1][2]++;
-                        }
-                        break;
-                    case -1:
-                        if (actual_Forecasts[1][i] == 1)
-                        {
-                            tables[2][0]++;
-                        }
-                        else if (actual_Forecasts[1][i] == 0)
-                        {
-                            tables[2][1]++;
-                        }
-                        else
-                        {
-                            tables[2][2]++;
-                        }
-                        break;
-                }
-            }
-            string[] strLables = { "Uptrend", "Notrend", "Downtrend" };
-            for (int i = 0; i < tables.Length; i++)
-            {
-                strTemp = "";
-                strTemp += strLables[i] + "\t";
-                for (int j = 0; j < tables.Length; j++)
-                {
-                    strTemp += tables[i][j].ToString() + "\t";
-                }
-                writer.WriteLine(strTemp);
-            }
-            writer.Close();
-        }
-
         private void rdKSVMeans_CheckedChanged(object sender, EventArgs e)
         {
             lblNumCluster.Enabled = rdKSVMeans.Checked;
@@ -1240,23 +1179,9 @@ namespace GUI
 
         private void EnableStepByStepTrainAndTest(bool isEnable)
         {
-            //btnPreprocess.Enabled = isEnable;
             btnTrain.Enabled = isEnable;
-            //btnTest.Enabled = isEnable;
-
-            //btnPreprocessBrowser.Enabled = isEnable; ;
-            //btnTestBrowser.Enabled = isEnable;
             btnTrainBrowser.Enabled = isEnable;
-            //btnModelBrowser.Enabled = isEnable;
-
-            //tbxCsvFilePath.Enabled = isEnable;
             tbxTrainFilePath.Enabled = isEnable;
-            //tbxTestFilePath.Enabled = isEnable;
-            //tbxModelFilePath.Enabled = isEnable;
-
-            //lblInputFile.Enabled = isEnable;
-            //lblTestFile.Enabled = isEnable;
-            //lblModelFile.Enabled = isEnable;
             lblTrainingFile.Enabled = isEnable;
             gbTest.Enabled = isEnable;
             gbPreprocess.Enabled = isEnable;
@@ -1294,6 +1219,7 @@ namespace GUI
                 _testFilePath = "";
                 _modelFilePath = "";
             }
+            
         }
 
         private void btnBatchTrainTest_Click(object sender, EventArgs e)
@@ -1304,23 +1230,30 @@ namespace GUI
                 return;
             }
 
-            Preprocess(true);
-            if (rdSVM.Checked)
+            try
             {
-                TrainSVM(true);
-                TestSVM(true);
+                Preprocess(true);
+                if (rdSVM.Checked)
+                {
+                    TrainSVM(true);
+                    TestSVM(true);
+                }
+                else if (rdKSVMeans.Checked)
+                {
+                    TrainKSVMeans(true);
+                    TestKSVMeans(true);
+                }
+                else if (rdANN.Checked)//Mô hình ANN
+                {
+                    TrainANN(true);
+                    TestANN(true);
+                }
             }
-            else if (rdKSVMeans.Checked)
+            catch (Exception ex)
             {
-                TrainKSVMeans(true);
-                TestKSVMeans(true);
+                ShowException(ex.Message);
             }
-            else if (rdANN.Checked)//Mô hình ANN
-            {
-                TrainANN(true);
-                TestANN(true);
-            }
-            MessageBox.Show("Finish!");
+            Finish();
         }
     }
 }
