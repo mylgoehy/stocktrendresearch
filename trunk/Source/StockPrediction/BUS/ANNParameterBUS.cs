@@ -87,7 +87,7 @@ namespace BUS
         }
         #endregion
 
-        #region Methods       
+        #region Methods
         #endregion
     }
 }
