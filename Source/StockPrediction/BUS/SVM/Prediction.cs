@@ -74,6 +74,19 @@ namespace BUS.SVM
                     }
                 }
             }
+            else
+            {
+                Procedures.svm_get_labels(model, labels);
+                if (output != null)
+                {
+                    output.Write("labels");
+                    for (int j = 0; j < nr_class; j++)
+                    {
+                        output.Write(" " + labels[j]);
+                    }
+                    output.Write("\n");
+                }
+            }
             for (int i = 0; i < problem.Count; i++)
             {
                 double target = problem.Y[i];
