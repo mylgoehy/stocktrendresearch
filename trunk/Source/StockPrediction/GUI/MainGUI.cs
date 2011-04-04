@@ -920,7 +920,7 @@ namespace GUI
                 _stockRecordDTO = _stockRecordBUS.LoadData(_stockPath);
                 dtpFrom.Value = ((EntryDTO)_stockRecordDTO.Entries[0]).Date;
                 dtpTo.Value = ((EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1]).Date;
-                dtpInputDay.Value = ((EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1]).Date;
+                //dtpInputDay.Value = ((EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1]).Date;
                 CreateGraph(zg1);
             }            
         }
@@ -932,185 +932,185 @@ namespace GUI
             dblActual_Forecast[0] = null;
             dblActual_Forecast[1] = null;
 
-            #region Price
-            #region Ghi File Test
-            //Dùng tạm số node input = 5, sau này bổ sung hàm đọc file số node input
-            int numInputNode = 5;
+           // #region Price
+           // #region Ghi File Test
+           // //Dùng tạm số node input = 5, sau này bổ sung hàm đọc file số node input
+           // int numInputNode = 5;
 
-            //Tìm ngày cần dự đoán
-            DateTime inputDay = dtpInputDay.Value;
-            DateTime Today = ((EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1]).Date;
-            int i;
-            for (i = 0; i < _stockRecordDTO.Entries.Count - numInputNode; i++)
-            {
-                EntryDTO curEntry = (EntryDTO)_stockRecordDTO.Entries[i + numInputNode];
-                if (inputDay.Subtract(curEntry.Date).Days <= 0 && inputDay.Subtract(Today).Days <= 0)
-                {
-                    break;
-                }
-            }
+           // //Tìm ngày cần dự đoán
+           // DateTime inputDay = dtpInputDay.Value;
+           // DateTime Today = ((EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1]).Date;
+           // int i;
+           // for (i = 0; i < _stockRecordDTO.Entries.Count - numInputNode; i++)
+           // {
+           //     EntryDTO curEntry = (EntryDTO)_stockRecordDTO.Entries[i + numInputNode];
+           //     if (inputDay.Subtract(curEntry.Date).Days <= 0 && inputDay.Subtract(Today).Days <= 0)
+           //     {
+           //         break;
+           //     }
+           // }
 
-            //Ghi bộ input đầu vào cho ngày dự đoán
-            double[] dblSource = new double[numInputNode + 1];
-            if (i < _stockRecordDTO.Entries.Count - numInputNode)
-            {
-                //1. Đọc dữ liệu vào mảng
-                double[] dblTemp = new double[_stockRecordDTO.Entries.Count];
-                for (int j = 0; j < _stockRecordDTO.Entries.Count; j++)
-                {
-                    EntryDTO curEntry = (EntryDTO)_stockRecordDTO.Entries[j];
-                    dblTemp[j] = curEntry.ClosePrice;
-                }
+           // //Ghi bộ input đầu vào cho ngày dự đoán
+           // double[] dblSource = new double[numInputNode + 1];
+           // if (i < _stockRecordDTO.Entries.Count - numInputNode)
+           // {
+           //     //1. Đọc dữ liệu vào mảng
+           //     double[] dblTemp = new double[_stockRecordDTO.Entries.Count];
+           //     for (int j = 0; j < _stockRecordDTO.Entries.Count; j++)
+           //     {
+           //         EntryDTO curEntry = (EntryDTO)_stockRecordDTO.Entries[j];
+           //         dblTemp[j] = curEntry.ClosePrice;
+           //     }
 
-                for (int j = 0; j < numInputNode; j++)
-                {
-                    EntryDTO curEntry = (EntryDTO)_stockRecordDTO.Entries[i + j];
-                    dblSource[j] = curEntry.ClosePrice;
-                }
+           //     for (int j = 0; j < numInputNode; j++)
+           //     {
+           //         EntryDTO curEntry = (EntryDTO)_stockRecordDTO.Entries[i + j];
+           //         dblSource[j] = curEntry.ClosePrice;
+           //     }
 
-                PreprocessBUS preprocessBUS = new PreprocessBUS();
-                preprocessBUS.FindMinMax(dblTemp);
-                dblSource = preprocessBUS.PreprocessByMinMax(dblSource);
+           //     PreprocessBUS preprocessBUS = new PreprocessBUS();
+           //     preprocessBUS.FindMinMax(dblTemp);
+           //     dblSource = preprocessBUS.PreprocessByMinMax(dblSource);
 
-                //2. Tạo file test. File test này chỉ có 2 dòng:
-                //+Dòng 1: Chứa thông tin tiền xử lý
-                //+Dòng 2: Giống như 1 dòng của file training, nhưng giá trị đích không biết (để bằng 0)
-                StreamWriter writer = new StreamWriter(@"TestPrice.txt");
-                writer.WriteLine("ScaleByMinMax " + preprocessBUS.Min.ToString() + " " + preprocessBUS.Max.ToString());
+           //     //2. Tạo file test. File test này chỉ có 2 dòng:
+           //     //+Dòng 1: Chứa thông tin tiền xử lý
+           //     //+Dòng 2: Giống như 1 dòng của file training, nhưng giá trị đích không biết (để bằng 0)
+           //     StreamWriter writer = new StreamWriter(@"TestPrice.txt");
+           //     writer.WriteLine("ScaleByMinMax " + preprocessBUS.Min.ToString() + " " + preprocessBUS.Max.ToString());
 
-                string strLine = "0 ";
-                for (int j = 0; j < numInputNode; j++)
-                {
-                    strLine += (j + 1).ToString() + ":" + dblSource[j].ToString() + " ";
-                }
-                writer.WriteLine(strLine);
+           //     string strLine = "0 ";
+           //     for (int j = 0; j < numInputNode; j++)
+           //     {
+           //         strLine += (j + 1).ToString() + ":" + dblSource[j].ToString() + " ";
+           //     }
+           //     writer.WriteLine(strLine);
 
-                writer.Close();
-            }
-            else
-            {
-                MessageBox.Show("Error: Invalid input!");
-            }
-            #endregion
-            #region Dự đoán ANN
-            //ANNModelBUS.AnnModelFile = @"AppModel\ANNPrice\" + cmbStockID.SelectedItem.ToString() + "_1_model.txt";
+           //     writer.Close();
+           // }
+           // else
+           // {
+           //     MessageBox.Show("Error: Invalid input!");
+           // }
+           // #endregion
+           // #region Dự đoán ANN
+           // //ANNModelBUS.AnnModelFile = @"AppModel\ANNPrice\" + cmbStockID.SelectedItem.ToString() + "_1_model.txt";
 
-           // ANNParameterBUS.LoadParameter();
+           //// ANNParameterBUS.LoadParameter();
 
-            //ANNPredictBUS annPredict = new ANNPredictBUS();
-            //annPredict.LoadDataSet(@"TestPrice.txt");
-            //Tạm thời bỏ dòng này chưa sử dụng trong predict
-            //dblActual_Forecast = annPredict.MainProcessTrend();
-            _pricePredict = dblActual_Forecast[1][0];
-            tbxANNPrice.Text = Math.Round(dblActual_Forecast[1][0], 2).ToString();
-            #endregion
-            string[] strArgs = new string[3];
-            strArgs[0] = @"TestPrice.txt";
-            strArgs[1] = @"AppModel\SVRPrice\" + cmbStockID.SelectedItem.ToString() + "_1_model.txt";
-            strArgs[2] = "price_predicted.txt";
-            //dblActual_Forecast = svm_predict.MainProcess(strArgs);
-            tbxSVMPrice.Text = Math.Round(dblActual_Forecast[1][0], 2).ToString();
-            #endregion
-            #region Trend
-            //Dùng tạm số node input = 5, sau này bổ sung hàm đọc file số node input
-            numInputNode = 5;
+           // //ANNPredictBUS annPredict = new ANNPredictBUS();
+           // //annPredict.LoadDataSet(@"TestPrice.txt");
+           // //Tạm thời bỏ dòng này chưa sử dụng trong predict
+           // //dblActual_Forecast = annPredict.MainProcessTrend();
+           // _pricePredict = dblActual_Forecast[1][0];
+           // //tbxANNPrice.Text = Math.Round(dblActual_Forecast[1][0], 2).ToString();
+           // #endregion
+           // string[] strArgs = new string[3];
+           // strArgs[0] = @"TestPrice.txt";
+           // strArgs[1] = @"AppModel\SVRPrice\" + cmbStockID.SelectedItem.ToString() + "_1_model.txt";
+           // strArgs[2] = "price_predicted.txt";
+           // //dblActual_Forecast = svm_predict.MainProcess(strArgs);
+           // tbxSVMPrice.Text = Math.Round(dblActual_Forecast[1][0], 2).ToString();
+           // #endregion
+           // #region Trend
+           // //Dùng tạm số node input = 5, sau này bổ sung hàm đọc file số node input
+           // numInputNode = 5;
 
-            //Tìm ngày cần dự đoán
-            inputDay = dtpInputDay.Value;
-            Today = ((EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1]).Date;
-            for (i = 0; i < _stockRecordDTO.Entries.Count; i++)
-            {
-                EntryDTO curEntry = (EntryDTO)_stockRecordDTO.Entries[i];
-                if (inputDay.Subtract(curEntry.Date).Days <= 0 && inputDay.Subtract(Today).Days <= 0)
-                {
-                    break;
-                }
-            }
-            int numDaysPredicted = 1; 
-            if (!int.TryParse(tbxNumDayTrendPredict.Text, out numDaysPredicted))
-            {
-                MessageBox.Show("Please enter a number");
-                return;
-            } 
+           // //Tìm ngày cần dự đoán
+           // inputDay = dtpInputDay.Value;
+           // Today = ((EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1]).Date;
+           // for (i = 0; i < _stockRecordDTO.Entries.Count; i++)
+           // {
+           //     EntryDTO curEntry = (EntryDTO)_stockRecordDTO.Entries[i];
+           //     if (inputDay.Subtract(curEntry.Date).Days <= 0 && inputDay.Subtract(Today).Days <= 0)
+           //     {
+           //         break;
+           //     }
+           // }
+           // int numDaysPredicted = 1; 
+           // if (!int.TryParse(tbxNumDayTrendPredict.Text, out numDaysPredicted))
+           // {
+           //     MessageBox.Show("Please enter a number");
+           //     return;
+           // } 
 
-            //Ghi bộ input đầu vào cho ngày dự đoán
-            dblSource = new double[numInputNode * numDaysPredicted + numDaysPredicted + 1];
-            if (i < _stockRecordDTO.Entries.Count && i > numInputNode * numDaysPredicted)
-            {
-                for (int k = 0; k < dblSource.Length; k++)
-                {
-                    dblSource[k] = 0;
-                }
-                //1. Đọc dữ liệu vào mảng
-                for (int j = 0; j < numInputNode * numDaysPredicted; j++)
-                {
-                    EntryDTO curEntry = (EntryDTO)_stockRecordDTO.Entries[i - j];
-                    dblSource[j] = curEntry.ClosePrice;
-                }
-                for (int k = 0; k < dblSource.Length; k++)
-                {
-                    if (dblSource[k] == 0)
-                    {
-                        dblSource[k] = dblSource[0];
-                    }
-                }
-                PreprocessBUS preprocessBUS = new PreprocessBUS();
-                dblSource = preprocessBUS.Scale_SVR_Return(dblSource.Length, dblSource, 1, 1);
+           // //Ghi bộ input đầu vào cho ngày dự đoán
+           // dblSource = new double[numInputNode * numDaysPredicted + numDaysPredicted + 1];
+           // if (i < _stockRecordDTO.Entries.Count && i > numInputNode * numDaysPredicted)
+           // {
+           //     for (int k = 0; k < dblSource.Length; k++)
+           //     {
+           //         dblSource[k] = 0;
+           //     }
+           //     //1. Đọc dữ liệu vào mảng
+           //     for (int j = 0; j < numInputNode * numDaysPredicted; j++)
+           //     {
+           //         EntryDTO curEntry = (EntryDTO)_stockRecordDTO.Entries[i - j];
+           //         dblSource[j] = curEntry.ClosePrice;
+           //     }
+           //     for (int k = 0; k < dblSource.Length; k++)
+           //     {
+           //         if (dblSource[k] == 0)
+           //         {
+           //             dblSource[k] = dblSource[0];
+           //         }
+           //     }
+           //     PreprocessBUS preprocessBUS = new PreprocessBUS();
+           //     dblSource = preprocessBUS.Scale_SVR_Return(dblSource.Length, dblSource, 1, 1);
 
-                //2. Chuyển sang định dạng của LibSVM (dựa vào số node đầu vào)
-                ConverterBUS converter = new ConverterBUS();
+           //     //2. Chuyển sang định dạng của LibSVM (dựa vào số node đầu vào)
+           //     ConverterBUS converter = new ConverterBUS();
                   
-                int iNumLine = 0;
+           //     int iNumLine = 0;
 
-                converter.ConvertForTrend(numDaysPredicted, numInputNode, dblSource, "TestTrend.txt", out iNumLine, 2, true);
+           //     converter.ConvertForTrend(numDaysPredicted, numInputNode, dblSource, "TestTrend.txt", out iNumLine, 2, true);
 
-                #region Dự đoán ANN
+           //     #region Dự đoán ANN
 
-                if (numDaysPredicted >= 1 && numDaysPredicted < 5)
-                {
-                    //ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_1_model.txt";
-                    strArgs[1] = @"AppModel\SVRTrend\" + cmbStockID.SelectedItem.ToString() + "_1_model.txt";
-                }
-                else if (numDaysPredicted >= 5 && numDaysPredicted < 10)
-                {
-                    //ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_5_model.txt";
-                    strArgs[1] = @"AppModel\SVRTrend\" + cmbStockID.SelectedItem.ToString() + "_5_model.txt";
-                }
-                else if (numDaysPredicted >= 10 && numDaysPredicted < 30)
-                {
-                    //ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_10_model.txt";
-                    strArgs[1] = @"AppModel\SVRTrend\" + cmbStockID.SelectedItem.ToString() + "_10_model.txt";
-                }
-                else
-                {
-                    //ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_30_model.txt";
-                    strArgs[1] = @"AppModel\SVRTrend\" + cmbStockID.SelectedItem.ToString() + "_30_model.txt";
-                }
+           //     if (numDaysPredicted >= 1 && numDaysPredicted < 5)
+           //     {
+           //         //ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_1_model.txt";
+           //         strArgs[1] = @"AppModel\SVRTrend\" + cmbStockID.SelectedItem.ToString() + "_1_model.txt";
+           //     }
+           //     else if (numDaysPredicted >= 5 && numDaysPredicted < 10)
+           //     {
+           //         //ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_5_model.txt";
+           //         strArgs[1] = @"AppModel\SVRTrend\" + cmbStockID.SelectedItem.ToString() + "_5_model.txt";
+           //     }
+           //     else if (numDaysPredicted >= 10 && numDaysPredicted < 30)
+           //     {
+           //         //ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_10_model.txt";
+           //         strArgs[1] = @"AppModel\SVRTrend\" + cmbStockID.SelectedItem.ToString() + "_10_model.txt";
+           //     }
+           //     else
+           //     {
+           //         //ANNModelBUS.AnnModelFile = @"AppModel\ANNTrend\" + cmbStockID.SelectedItem.ToString() + "_30_model.txt";
+           //         strArgs[1] = @"AppModel\SVRTrend\" + cmbStockID.SelectedItem.ToString() + "_30_model.txt";
+           //     }
 
-               // ANNParameterBUS.LoadParameter();
+           //    // ANNParameterBUS.LoadParameter();
 
-                //ANNPredictBUS annPredictTrend = new ANNPredictBUS();
-                //annPredictTrend.LoadDataSet(@"TestTrend.txt");
-               // dblActual_Forecast = annPredictTrend.MainProcessTrend();
-                _trendPredict = dblActual_Forecast[1][0];
-                tbxANNTrend.Text = dblActual_Forecast[1][0] > 0 ? "Tăng" : "Giảm";
+           //     //ANNPredictBUS annPredictTrend = new ANNPredictBUS();
+           //     //annPredictTrend.LoadDataSet(@"TestTrend.txt");
+           //    // dblActual_Forecast = annPredictTrend.MainProcessTrend();
+           //     _trendPredict = dblActual_Forecast[1][0];
+           //     tbxANNTrend.Text = dblActual_Forecast[1][0] > 0 ? "Tăng" : "Giảm";
 
-                strArgs[0] = @"TestTrend.txt";
-                strArgs[2] = "trend_predicted.txt";
-                //dblActual_Forecast = svm_predict.MainProcess(strArgs);
-                tbxSVMTrend.Text = dblActual_Forecast[1][0] > 0 ? "Tăng" : "Giảm";
+           //     strArgs[0] = @"TestTrend.txt";
+           //     strArgs[2] = "trend_predicted.txt";
+           //     //dblActual_Forecast = svm_predict.MainProcess(strArgs);
+           //     tbxSVMTrend.Text = dblActual_Forecast[1][0] > 0 ? "Tăng" : "Giảm";
 
-                #endregion
+           //     #endregion
                 
  
               
-            }
-            else
-            {
-                MessageBox.Show("Error: Invalid input!");
-            }            
+           // }
+           // else
+           // {
+           //     MessageBox.Show("Error: Invalid input!");
+           // }            
             
-            #endregion            
+           // #endregion            
             
         }
 
