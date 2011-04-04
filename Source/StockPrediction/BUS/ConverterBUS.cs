@@ -13,6 +13,7 @@ namespace BUS
     {
 
         #region Attributes
+        static int NUM_DISTINC_VAL = 10;
 		static int FAST_PERIOD = 25;
         static int LOW_PERIOD = 65; 
 	    #endregion
@@ -254,7 +255,7 @@ namespace BUS
                     dblLabels[i] = IndicatorsBUS.DetermineTrend(closePrices, dblFastSMAs, dblLowSMAs, i + LOW_PERIOD, 5, 1);
                 }
                 // Tính chỉ số aroon với period bằng 2 lần số ngày cần dự đoán, nếu dự đoán 1 ngày thì period = 5
-                int iAroonPeriod = (numDaysPeriod < 10) ? 5 : numDaysPeriod * 2;
+                int iAroonPeriod = (numDaysPeriod < 10) ? 5 : numDaysPeriod * 3;
                 double[] dblAroonUps = IndicatorsBUS.CalculateAroon(closePrices, iAroonPeriod, true);
                 double[] dblAroonDowns = IndicatorsBUS.CalculateAroon(closePrices, iAroonPeriod, false);
 
@@ -296,12 +297,14 @@ namespace BUS
                     dblBollingerMid[i] = dblBollingerMid[i] / dblMax;
                     dblBollingerLow[i] = dblBollingerLow[i] / dblMax;
                 }
-
-                TextWriter writer = new StreamWriter(destFileName);
+                WriteMetaForDT(destFileName + ".meta", destFileName + ".meta");
+                TextWriter commonWriter = new StreamWriter(destFileName);
+                TextWriter dataDTWriter = new StreamWriter(destFileName + ".data");
                 numLines = 0;
                 for (int i = numDaysPeriod - 1; i < dblLabels.Length; i++)
                 {
                     numLines++;
+                    // phần ghi dữ liệu thông thường: dùng làm đầu vào cho ANN, SVM
                     string strLine = dblLabels[i].ToString() + " ";
                     int j = 1;
                     int iPastIndex = LOW_PERIOD + i - numDaysPeriod;
@@ -317,16 +320,31 @@ namespace BUS
                     strLine += (j++).ToString() + ":" + dblAroonUps[iPastIndex].ToString() + " ";
                     strLine += (j++).ToString() + ":" + dblAroonDowns[iPastIndex].ToString() + " ";
                     //strLine += (j++).ToString() + ":" + dblRSI[iPastIndex].ToString();
-                    writer.WriteLine(strLine);
+                    commonWriter.WriteLine(strLine);
+                    // phần ghi dữ liệu cho decision tree
+                    strLine = dblLabels[i].ToString() + ", ";
+                    strLine += DetermineDistincValue(closePrices[iPastIndex]) + ", ";
+                    strLine += DetermineDistincValue(dblFastSMAs[iPastIndex]) + ", ";
+                    strLine += DetermineDistincValue(dblLowSMAs[iPastIndex]) + ", ";
+                    strLine += DetermineDistincValue(dblMACD[iPastIndex]) + ", ";
+                    strLine += DetermineDistincValue(dblMACDHist[iPastIndex]) + ", ";
+                    strLine += DetermineDistincValue(dblBollingerUp[iPastIndex]) + ", ";
+                    strLine += DetermineDistincValue(dblBollingerMid[iPastIndex]) + ", ";
+                    strLine += DetermineDistincValue(dblBollingerLow[iPastIndex]) + ", ";
+                    strLine += DetermineDistincValue(dblAroonUps[iPastIndex]) + ", ";
+                    strLine += DetermineDistincValue(dblAroonDowns[iPastIndex]) + ", ";
+                    dataDTWriter.WriteLine(strLine);
                 }
+                commonWriter.Close();
+                dataDTWriter.Close();
 
-                writer.Close();
+                
+
             }
             catch(Exception ex)
             {
                 throw ex;
             }
-
         }
 
         public static int Convert2Trend(double[] outputValues)        
@@ -340,6 +358,80 @@ namespace BUS
                 return 0;// NOTREND
             }
             return 1;
+        }
+
+        private static int DetermineDistincValue(double val)
+        {
+            if (-1 <= val && val < -0.8)
+            {
+                return 0;
+            }
+            else if( -0.8 <= val && val < -0.6)
+            {
+                return 1;
+            }
+            else if( -0.6 <= val && val < -0.4)
+            {
+                return 2;
+            }
+            else if( -0.4 <= val && val < -0.2)
+            {
+                return 3;
+            }
+            else if( -0.2 <= val && val < 0)
+            {
+                return 4;
+            }
+            else if( 0 <= val && val < 0.2)
+            {
+                return 5;
+            }
+            else if( 0.2 <= val && val < 0.4)
+            {
+                return 6;
+            }
+            else if( 0.4 <= val && val < 0.6)
+            {
+                return 7;
+            }
+            else if( 0.6 <= val && val < 0.8) 
+            {
+                return 8;
+            }
+            return 9;
+        }
+
+        private static void WriteMetaForDT(string metaFile, string dataFile)
+        {
+            TextWriter metaWriter = new StreamWriter(metaFile);
+            string[] strFeatureNames = { "ClosePrice", "FastSMA", "LowSMA", "MACD", "MACDHist", "BollingerUp", "BollingerMid", "BollingerLow", "AroonUp", "AroonDown" };
+            metaWriter.WriteLine("CONCLUSION =");
+            metaWriter.WriteLine();
+            metaWriter.WriteLine("\"OutCome\" = { '-1', '0', '1' }");
+            metaWriter.WriteLine();
+            metaWriter.WriteLine("FEATURES =");
+            metaWriter.WriteLine();
+            for (int j = 0; j < 10; j++)
+            {
+                for (int i = 0; i < NUM_DISTINC_VAL; i++)
+                {
+                    metaWriter.Write("\"" + strFeatureNames[i] + "\" = { ");
+                    metaWriter.Write("'" + i + "'");
+                    if (i != NUM_DISTINC_VAL - 1)
+                    {
+                        metaWriter.Write(", ");
+                    }
+                }
+                if (j != 9)
+                {
+                    metaWriter.Write(" },\n");
+                }
+                else
+                {
+                    metaWriter.WriteLine();
+                }
+            }
+            metaWriter.WriteLine("TRAINDATA = \"" + dataFile + "\"");
         }
         #endregion
 
