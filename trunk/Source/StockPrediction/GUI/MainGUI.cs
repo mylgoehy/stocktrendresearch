@@ -151,7 +151,8 @@ namespace GUI
                 paramSel.EndEpochEvent += new CrossEpochEventHandler(
                     delegate(object senderNetwork, CrossEpochEventArgs args)
                     {
-                        prgTrainingProgress.Value = (int)(args.TrainingIteration * 100d / args.Cycles);
+                        tlsProgressBar.Value = (int)(args.TrainingIteration * 100d / args.Cycles);
+                        tlsStatus.Text = "Current parameter set: " + args.TrainingIteration;
                         Application.DoEvents();
                     });
                 paramSel.Grid(prob, param, strLogFile, out dblC, out dblGamma);
@@ -160,7 +161,7 @@ namespace GUI
                 param.Probability = ckbProbEstimate.Checked;
                 Model model = Training.Train(prob, param);
                 Model.Write(strModelFile, model);
-                prgTrainingProgress.Value = 0; 
+                tlsProgressBar.Value = 0; 
             }
             else if (cmbModelSelection.SelectedItem.ToString() == "Use default values")
             {
@@ -226,7 +227,8 @@ namespace GUI
                     paramSel.EndEpochEvent += new CrossEpochEventHandler(
                     delegate(object senderNetwork, CrossEpochEventArgs args)
                     {
-                        prgTrainingProgress.Value = iProgressBaseline + (int)(args.TrainingIteration * 100d / (args.Cycles * iNumCluster));
+                        tlsProgressBar.Value = iProgressBaseline + (int)(args.TrainingIteration * 100d / (args.Cycles * iNumCluster));
+                        tlsStatus.Text = "Cluster: " + (i + 1) + " | Current parameter set: " + args.TrainingIteration;
                         Application.DoEvents();
                     });
                     paramSel.Grid(prob, param, strLogFile, out dblC, out dblGamma);
@@ -251,7 +253,7 @@ namespace GUI
                 }
                 
             }
-            prgTrainingProgress.Value = 0; 
+            tlsProgressBar.Value = 0; 
         }
         /// <summary>
         /// Phần train cho ANN
@@ -315,7 +317,8 @@ namespace GUI
             bpNetwork.EndEpochEvent += new TrainingEpochEventHandler(
                     delegate(object senderNetwork, TrainingEpochEventArgs args)
                     {
-                        prgTrainingProgress.Value = (int)(args.TrainingIteration * 100d / ANNParameterBUS.MaxEpoch);
+                        tlsProgressBar.Value = (int)(args.TrainingIteration * 100d / ANNParameterBUS.MaxEpoch);
+                        tlsStatus.Text = "Current iteration: " + args.TrainingIteration;
                         Application.DoEvents();
                     });
             bpNetwork.Learn(trainSet, ANNParameterBUS.MaxEpoch);
@@ -325,7 +328,7 @@ namespace GUI
             BinaryFormatter bformatter = new BinaryFormatter();
             bformatter.Serialize(stream, bpNetwork);
             stream.Close();
-            prgTrainingProgress.Value = 0;  
+            tlsProgressBar.Value = 0;  
         }
         /// <summary>
         /// Phần test cho SVM

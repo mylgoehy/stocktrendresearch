@@ -51,7 +51,6 @@
             this.tbxTestFilePath = new System.Windows.Forms.TextBox();
             this.btnTest = new System.Windows.Forms.Button();
             this.gbTraining = new System.Windows.Forms.GroupBox();
-            this.prgTrainingProgress = new System.Windows.Forms.ProgressBar();
             this.lblTrainingFile = new System.Windows.Forms.Label();
             this.btnTrainBrowser = new System.Windows.Forms.Button();
             this.gbSVRSetting = new System.Windows.Forms.GroupBox();
@@ -105,6 +104,9 @@
             this.zg1 = new ZedGraph.ZedGraphControl();
             this.lblBackTitle = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.staMainProgress = new System.Windows.Forms.StatusStrip();
+            this.tlsProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.tlsStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabMain.SuspendLayout();
             this.tabExperiment.SuspendLayout();
             this.gbBatchTrainTest.SuspendLayout();
@@ -116,6 +118,7 @@
             this.gbModelChoice.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).BeginInit();
             this.tabDiagram.SuspendLayout();
+            this.staMainProgress.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabMain
@@ -367,7 +370,6 @@
             // 
             // gbTraining
             // 
-            this.gbTraining.Controls.Add(this.prgTrainingProgress);
             this.gbTraining.Controls.Add(this.lblTrainingFile);
             this.gbTraining.Controls.Add(this.btnTrainBrowser);
             this.gbTraining.Controls.Add(this.gbSVRSetting);
@@ -382,14 +384,6 @@
             this.gbTraining.TabIndex = 23;
             this.gbTraining.TabStop = false;
             this.gbTraining.Text = "2. TRAINING";
-            // 
-            // prgTrainingProgress
-            // 
-            this.prgTrainingProgress.Location = new System.Drawing.Point(197, 233);
-            this.prgTrainingProgress.Name = "prgTrainingProgress";
-            this.prgTrainingProgress.Size = new System.Drawing.Size(171, 20);
-            this.prgTrainingProgress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.prgTrainingProgress.TabIndex = 45;
             // 
             // lblTrainingFile
             // 
@@ -1023,11 +1017,33 @@
             this.label1.Text = "STOCK TREND PREDICTION";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // staMainProgress
+            // 
+            this.staMainProgress.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tlsProgressBar,
+            this.tlsStatus});
+            this.staMainProgress.Location = new System.Drawing.Point(0, 540);
+            this.staMainProgress.Name = "staMainProgress";
+            this.staMainProgress.Size = new System.Drawing.Size(784, 22);
+            this.staMainProgress.TabIndex = 11;
+            this.staMainProgress.Text = "staMainProgress";
+            // 
+            // tlsProgressBar
+            // 
+            this.tlsProgressBar.Name = "tlsProgressBar";
+            this.tlsProgressBar.Size = new System.Drawing.Size(100, 16);
+            // 
+            // tlsStatus
+            // 
+            this.tlsStatus.Name = "tlsStatus";
+            this.tlsStatus.Size = new System.Drawing.Size(0, 17);
+            // 
             // MainGUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 562);
+            this.Controls.Add(this.staMainProgress);
             this.Controls.Add(this.tabMain);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lblBackTitle);
@@ -1056,7 +1072,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).EndInit();
             this.tabDiagram.ResumeLayout(false);
             this.tabDiagram.PerformLayout();
+            this.staMainProgress.ResumeLayout(false);
+            this.staMainProgress.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -1135,8 +1154,10 @@
         private System.Windows.Forms.Label lblBatchTrainingRatio;
         private System.Windows.Forms.Label lblBatchGuide;
         private System.Windows.Forms.Button btnBatchTrainTest;
-        private System.Windows.Forms.ProgressBar prgTrainingProgress;
         private System.Windows.Forms.Label lblBackTitle;
+        private System.Windows.Forms.StatusStrip staMainProgress;
+        private System.Windows.Forms.ToolStripStatusLabel tlsStatus;
+        private System.Windows.Forms.ToolStripProgressBar tlsProgressBar;
     }
 }
 
