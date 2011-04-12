@@ -194,6 +194,13 @@ namespace BUS
             }
             return bands;
         }
+
+        /// <summary>
+        /// Tính chỉ số RSI
+        /// </summary>
+        /// <param name="closePrices"> Chuỗi giái đóng cửa</param>
+        /// <param name="numDaysPeriod">Chu kì</param>
+        /// <returns></returns>
         public static double[] CalculateRSI(double[] closePrices, int numDaysPeriod)
         {
             double[] results = new double[closePrices.Length];
@@ -226,10 +233,9 @@ namespace BUS
             // Tinh chi so RSI
             double[] EMAUpwards = CalculateEMA(Upwards, numDaysPeriod);
             double[] EMADownwards = CalculateEMA(Downwards, numDaysPeriod);
-
-            for (int i = 0; i < results.Length; i++)
-            {
-            
+           
+            for (int i = 0; i < closePrices.Length; i++)
+            {            
                 if (EMADownwards[i] == 0.0d)
                 {
                     results[i] = 1;

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A4A55317-215B-4819-B2C8-05BC534B1ECC}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -93,6 +93,13 @@
     <Compile Include="ANN\TrainingSampleEventArgs.cs" />
     <Compile Include="ANN\TrainingSet.cs" />
     <Compile Include="ConverterBUS.cs" />
+    <Compile Include="DecisionTree\Attribute.cs" />
+    <Compile Include="DecisionTree\AttributeMask.cs" />
+    <Compile Include="DecisionTree\Dataset.cs" />
+    <Compile Include="DecisionTree\DecisionTree.cs" />
+    <Compile Include="DecisionTree\DecisionTreeAlgorithm.cs" />
+    <Compile Include="DecisionTree\DecisionTreeNode.cs" />
+    <Compile Include="DecisionTree\FileParser.cs" />
     <Compile Include="IndicatorsBUS.cs" />
     <Compile Include="KMeans\Cluster.cs" />
     <Compile Include="KMeans\Clustering.cs" />
