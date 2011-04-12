@@ -255,7 +255,7 @@ namespace BUS
                     dblLabels[i] = IndicatorsBUS.DetermineTrend(closePrices, dblFastSMAs, dblLowSMAs, i + LOW_PERIOD, 5, 1);
                 }
                 // Tính chỉ số aroon với period bằng 2 lần số ngày cần dự đoán, nếu dự đoán 1 ngày thì period = 5
-                int iAroonPeriod = (numDaysPeriod < 10) ? 5 : numDaysPeriod * 3;
+                int iAroonPeriod = (numDaysPeriod < 5) ? 5 : numDaysPeriod * 2;
                 double[] dblAroonUps = IndicatorsBUS.CalculateAroon(closePrices, iAroonPeriod, true);
                 double[] dblAroonDowns = IndicatorsBUS.CalculateAroon(closePrices, iAroonPeriod, false);
 
@@ -297,7 +297,8 @@ namespace BUS
                     dblBollingerMid[i] = dblBollingerMid[i] / dblMax;
                     dblBollingerLow[i] = dblBollingerLow[i] / dblMax;
                 }
-                WriteMetaForDT(destFileName + ".meta", destFileName + ".meta");
+
+                WriteMetaForDT(destFileName + ".meta");
                 TextWriter commonWriter = new StreamWriter(destFileName);
                 TextWriter dataDTWriter = new StreamWriter(destFileName + ".data");
                 numLines = 0;
@@ -401,7 +402,7 @@ namespace BUS
             return 9;
         }
 
-        private static void WriteMetaForDT(string metaFile, string dataFile)
+        private static void WriteMetaForDT(string metaFile)
         {
             TextWriter metaWriter = new StreamWriter(metaFile);
             string[] strFeatureNames = { "ClosePrice", "FastSMA", "LowSMA", "MACD", "MACDHist", "BollingerUp", "BollingerMid", "BollingerLow", "AroonUp", "AroonDown" };
@@ -413,9 +414,10 @@ namespace BUS
             metaWriter.WriteLine();
             for (int j = 0; j < 10; j++)
             {
+                metaWriter.Write("\"" + strFeatureNames[j] + "\" = { ");
                 for (int i = 0; i < NUM_DISTINC_VAL; i++)
                 {
-                    metaWriter.Write("\"" + strFeatureNames[i] + "\" = { ");
+                    
                     metaWriter.Write("'" + i + "'");
                     if (i != NUM_DISTINC_VAL - 1)
                     {
@@ -428,10 +430,11 @@ namespace BUS
                 }
                 else
                 {
-                    metaWriter.WriteLine();
+                    metaWriter.Write("}\n");
                 }
             }
-            metaWriter.WriteLine("TRAINDATA = \"" + dataFile + "\"");
+            //metaWriter.WriteLine("TRAINDATA = \"" + dataFile + "\"");
+            metaWriter.Close();
         }
         #endregion
 
