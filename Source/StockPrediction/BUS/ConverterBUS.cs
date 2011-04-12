@@ -15,7 +15,11 @@ namespace BUS
         #region Attributes
         static int NUM_DISTINC_VAL = 10;
 		static int FAST_PERIOD = 25;
-        static int LOW_PERIOD = 65; 
+        static int LOW_PERIOD = 65;
+        /// <summary>
+        /// Mảng các cận trên và dưới của từng thuộc tính
+        /// </summary>
+        static private double[][] _attBounds;
 	    #endregion
 
         #region Methods
@@ -284,10 +288,19 @@ namespace BUS
                         dblMaxVol = volumes[i];
                     }
                 }
-                // Scale
+                _attBounds = new double[10][]; // 10 là số thuộc tính - số chiều, 2 là cận trên và dưới
+                for (int i = 0; i < _attBounds.Length; i++)
+                {
+                    _attBounds[i] = new double[2];
+                    _attBounds[i][0] = -1;  // khởi gán cận trên
+                    _attBounds[i][1] = 1;   // khởi gán cận dưới
+                }
+                _attBounds[8][0] = _attBounds[9][0] = 1;    // cận trên cho Aroonup và AroonDown
+                _attBounds[8][1] = _attBounds[9][1] = 0;    // cận dưới cho AroonUp và AroonDown
+                // Scale và tìm cận trên và dưới
                 for (int i = 0; i < closePrices.Length; i++)
                 {
-                    volumes[i] = volumes[i] / dblMaxVol;
+                    //volumes[i] = volumes[i] / dblMaxVol;
                     closePrices[i] = closePrices[i] / dblMax;
                     dblFastSMAs[i] = dblFastSMAs[i] / dblMax;
                     dblLowSMAs[i] = dblLowSMAs[i] / dblMax;
@@ -296,6 +309,79 @@ namespace BUS
                     dblBollingerUp[i] = dblBollingerUp[i] / dblMax;
                     dblBollingerMid[i] = dblBollingerMid[i] / dblMax;
                     dblBollingerLow[i] = dblBollingerLow[i] / dblMax;
+
+                    if(_attBounds[0][0] < closePrices[i])
+                    {
+                        _attBounds[0][0] = closePrices[i];
+                    }
+                    if(_attBounds[0][1] > closePrices[i])
+                    {
+                        _attBounds[0][1] = closePrices[i];
+                    }
+
+                    if (_attBounds[1][0] < dblFastSMAs[i])
+                    {
+                        _attBounds[1][0] = dblFastSMAs[i];
+                    }
+                    if (_attBounds[1][1] > dblFastSMAs[i])
+                    {
+                        _attBounds[1][1] = dblFastSMAs[i];
+                    }
+
+                    if (_attBounds[2][0] < dblLowSMAs[i])
+                    {
+                        _attBounds[2][0] = dblLowSMAs[i];
+                    }
+                    if (_attBounds[2][1] > dblLowSMAs[i])
+                    {
+                        _attBounds[2][1] = dblLowSMAs[i];
+                    }
+
+                    if (_attBounds[3][0] < dblMACD[i])
+                    {
+                        _attBounds[3][0] = dblMACD[i];
+                    }
+                    if (_attBounds[3][1] > dblMACD[i])
+                    {
+                        _attBounds[3][1] = dblMACD[i];
+                    }
+
+                    if (_attBounds[4][0] < dblMACDHist[i])
+                    {
+                        _attBounds[4][0] = dblMACDHist[i];
+                    }
+                    if (_attBounds[4][1] > dblMACDHist[i])
+                    {
+                        _attBounds[4][1] = dblMACDHist[i];
+                    }
+
+                    if (_attBounds[5][0] < dblBollingerUp[i])
+                    {
+                        _attBounds[5][0] = dblBollingerUp[i];
+                    }
+                    if (_attBounds[5][1] > dblBollingerUp[i])
+                    {
+                        _attBounds[5][1] = dblBollingerUp[i];
+                    }
+
+                    if (_attBounds[6][0] < dblBollingerMid[i])
+                    {
+                        _attBounds[6][0] = dblBollingerMid[i];
+                    }
+                    if (_attBounds[6][1] > dblBollingerMid[i])
+                    {
+                        _attBounds[6][1] = dblBollingerMid[i];
+                    }
+
+                    if (_attBounds[7][0] < dblBollingerLow[i])
+                    {
+                        _attBounds[7][0] = dblBollingerLow[i];
+                    }
+                    if (_attBounds[7][1] > dblBollingerLow[i])
+                    {
+                        _attBounds[7][1] = dblBollingerLow[i];
+                    }
+
                 }
 
                 WriteMetaForDT(destFileName + ".meta");
@@ -324,16 +410,16 @@ namespace BUS
                     commonWriter.WriteLine(strLine);
                     // phần ghi dữ liệu cho decision tree
                     strLine = dblLabels[i].ToString() + ", ";
-                    strLine += DetermineDistincValue(closePrices[iPastIndex]) + ", ";
-                    strLine += DetermineDistincValue(dblFastSMAs[iPastIndex]) + ", ";
-                    strLine += DetermineDistincValue(dblLowSMAs[iPastIndex]) + ", ";
-                    strLine += DetermineDistincValue(dblMACD[iPastIndex]) + ", ";
-                    strLine += DetermineDistincValue(dblMACDHist[iPastIndex]) + ", ";
-                    strLine += DetermineDistincValue(dblBollingerUp[iPastIndex]) + ", ";
-                    strLine += DetermineDistincValue(dblBollingerMid[iPastIndex]) + ", ";
-                    strLine += DetermineDistincValue(dblBollingerLow[iPastIndex]) + ", ";
-                    strLine += DetermineDistincValue(dblAroonUps[iPastIndex]) + ", ";
-                    strLine += DetermineDistincValue(dblAroonDowns[iPastIndex]) + ", ";
+                    strLine += DetermineDistincValue(closePrices[iPastIndex], _attBounds[0][0], _attBounds[0][1]) + ", ";
+                    strLine += DetermineDistincValue(dblFastSMAs[iPastIndex], _attBounds[1][0], _attBounds[1][1]) + ", ";
+                    strLine += DetermineDistincValue(dblLowSMAs[iPastIndex], _attBounds[2][0], _attBounds[2][1]) + ", ";
+                    strLine += DetermineDistincValue(dblMACD[iPastIndex], _attBounds[3][0], _attBounds[3][1]) + ", ";
+                    strLine += DetermineDistincValue(dblMACDHist[iPastIndex], _attBounds[4][0], _attBounds[4][1]) + ", ";
+                    strLine += DetermineDistincValue(dblBollingerUp[iPastIndex], _attBounds[5][0], _attBounds[5][1]) + ", ";
+                    strLine += DetermineDistincValue(dblBollingerMid[iPastIndex], _attBounds[6][0], _attBounds[6][1]) + ", ";
+                    strLine += DetermineDistincValue(dblBollingerLow[iPastIndex], _attBounds[7][0], _attBounds[7][1]) + ", ";
+                    strLine += DetermineDistincValue(dblAroonUps[iPastIndex], _attBounds[8][0], _attBounds[8][1]) + ", ";
+                    strLine += DetermineDistincValue(dblAroonDowns[iPastIndex], _attBounds[9][0], _attBounds[9][1]) + ", ";
                     dataDTWriter.WriteLine(strLine);
                 }
                 commonWriter.Close();
@@ -361,45 +447,21 @@ namespace BUS
             return 1;
         }
 
-        private static int DetermineDistincValue(double val)
+        private static int DetermineDistincValue(double val, double max, double min)
         {
-            if (-1 <= val && val < -0.8)
+            double dblRange = (max - min) / NUM_DISTINC_VAL;
+            double dblLowerBound = min;
+            double dblUpperBound = min + dblRange;
+            for (int i = 0; i < NUM_DISTINC_VAL; i++)
             {
-                return 0;
+                if (dblLowerBound <= val && val < dblUpperBound)
+                {
+                    return i;
+                }
+                dblLowerBound = dblUpperBound;
+                dblUpperBound += dblRange;
             }
-            else if( -0.8 <= val && val < -0.6)
-            {
-                return 1;
-            }
-            else if( -0.6 <= val && val < -0.4)
-            {
-                return 2;
-            }
-            else if( -0.4 <= val && val < -0.2)
-            {
-                return 3;
-            }
-            else if( -0.2 <= val && val < 0)
-            {
-                return 4;
-            }
-            else if( 0 <= val && val < 0.2)
-            {
-                return 5;
-            }
-            else if( 0.2 <= val && val < 0.4)
-            {
-                return 6;
-            }
-            else if( 0.4 <= val && val < 0.6)
-            {
-                return 7;
-            }
-            else if( 0.6 <= val && val < 0.8) 
-            {
-                return 8;
-            }
-            return 9;
+            return NUM_DISTINC_VAL - 1;
         }
 
         private static void WriteMetaForDT(string metaFile)

@@ -89,7 +89,7 @@ namespace GUI
             ConverterBUS converter = new ConverterBUS();
             int iPos = strInputFile.LastIndexOf('\\');
             string strFolderPath = strInputFile.Remove(iPos + 1);
-            string strTotalFile = strFolderPath + stockRecordDTO.ID + ".txt";
+            string strTotalFile = strFolderPath + stockRecordDTO.ID;
             int numDaysPredicted = Int32.Parse(cmbNumDaysPredicted.Text);
             int iNumLine = 0;
 
@@ -98,9 +98,14 @@ namespace GUI
             //3. Từ file chứa toàn bộ dữ liệu ta phân phối vào 2 file train và test (dựa vào tỉ lệ bộ train)
             string strTrainFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_train.txt";
             string strTestFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_test.txt";
-            StreamReader reader = new StreamReader(strTotalFile);
+            string strDTTrainFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_train.data";
+            string strDTTestFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_test.data";
+            StreamReader reader = new StreamReader(strTotalFile + ".txt");
+            StreamReader dtReader = new StreamReader(strTotalFile + ".data");
             StreamWriter trainWriter = new StreamWriter(strTrainFile);
             StreamWriter testWriter = new StreamWriter(strTestFile);
+            StreamWriter dtTrainWriter = new StreamWriter(strDTTrainFile);
+            StreamWriter dtTestWriter = new StreamWriter(strDTTestFile);
 
             //int iBound = numDaysPredicted > iNumInputNode ? 2 * numDaysPredicted : numDaysPredicted + iNumInputNode;
             //int iNumLine = dblSource.Length - iBound + 1;
@@ -109,16 +114,23 @@ namespace GUI
             {
                 string strLine = reader.ReadLine();
                 trainWriter.WriteLine(strLine);
+                strLine = dtReader.ReadLine();
+                dtTrainWriter.WriteLine(strLine);
             }
             for (; i < iNumLine; i++)
             {
                 string strLine = reader.ReadLine();
                 testWriter.WriteLine(strLine);
+                strLine = dtReader.ReadLine();
+                dtTestWriter.WriteLine(strLine);
             }
 
             testWriter.Close();
             trainWriter.Close();
+            dtTestWriter.Close();
+            dtTrainWriter.Close();
             reader.Close();
+            dtReader.Close();
 
         }
         /// <summary>
