@@ -93,7 +93,7 @@ namespace GUI
             int numDaysPredicted = Int32.Parse(cmbNumDaysPredicted.Text);
             int iNumLine = 0;
 
-            ConverterBUS.Convert(dblClosePrices, dblVolumes, numDaysPredicted, strTotalFile + ".txt", out iNumLine);
+            ConverterBUS.Convert(dblClosePrices, dblVolumes, numDaysPredicted, strTotalFile, out iNumLine);
 
             //3. Từ file chứa toàn bộ dữ liệu ta phân phối vào 2 file train và test (dựa vào tỉ lệ bộ train)
             string strTrainFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_train.txt";

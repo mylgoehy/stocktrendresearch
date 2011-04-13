@@ -385,7 +385,7 @@ namespace BUS
                 }
 
                 WriteMetaForDT(destFileName + ".meta");
-                TextWriter commonWriter = new StreamWriter(destFileName);
+                TextWriter commonWriter = new StreamWriter(destFileName + ".txt");
                 TextWriter dataDTWriter = new StreamWriter(destFileName + ".data");
                 numLines = 0;
                 for (int i = numDaysPeriod - 1; i < dblLabels.Length; i++)
