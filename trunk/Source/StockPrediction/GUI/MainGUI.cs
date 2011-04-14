@@ -17,6 +17,7 @@ using ZedGraph;
 using BUS.ANN.Backpropagation;
 using BUS.KMeans;
 using System.Text.RegularExpressions;
+using BUS.DecisionTree;
 
 namespace GUI
 {
@@ -98,8 +99,8 @@ namespace GUI
             //3. Từ file chứa toàn bộ dữ liệu ta phân phối vào 2 file train và test (dựa vào tỉ lệ bộ train)
             string strTrainFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_train.txt";
             string strTestFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_test.txt";
-            string strDTTrainFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_train.data";
-            string strDTTestFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_test.data";
+            string strDTTrainFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_train.data.txt";
+            string strDTTestFile = strFolderPath + stockRecordDTO.ID + "_" + numDaysPredicted + "_test.data.txt";
             StreamReader reader = new StreamReader(strTotalFile + ".txt");
             StreamReader dtReader = new StreamReader(strTotalFile + ".data");
             StreamWriter trainWriter = new StreamWriter(strTrainFile);
@@ -268,6 +269,150 @@ namespace GUI
             tlsProgressBar.Value = 0; 
         }
         /// <summary>
+        /// Huấn luyện mô hình ANN - DT
+        /// </summary>        
+        private void TrainANN_DT(bool isBatchMode)
+        {
+            string strTrainFile = null;
+            if (isBatchMode)
+            {
+                //strTrainFile = _trainFilePath;
+            }
+            else
+            {
+                strTrainFile = tbxTrainFilePath.Text;
+            }
+            // Bước 1: Xây dựng mô hình ANN với dữ liệu train
+            //khởi tạo các tham số cho mạng
+            ANNParameterBUS.HiddenNode = int.Parse(tbxANNHiddenNode.Text);
+            ANNParameterBUS.OutputNode = 3;
+            ANNParameterBUS.MaxEpoch = int.Parse(tbxMaxLoops.Text);
+            ANNParameterBUS.LearningRate = double.Parse(tbxLearningRate.Text);
+            ANNParameterBUS.Momentum = double.Parse(tbxMomentum.Text);
+            ANNParameterBUS.Bias = double.Parse(tbxBias.Text);
+
+            //Tiến hành train
+            BackpropagationNetwork bpNetwork;
+            TrainingSet trainSet = new TrainingSet(strTrainFile, ANNParameterBUS.OutputNode);
+            LinearLayer inputLayer = new LinearLayer(trainSet.InputVectorLength);
+            ActivationLayer hidenLayer = null;
+            ActivationLayer outputLayer = null;
+            switch (cmbActivationFunc.SelectedItem.ToString())
+            {
+                case "Sigmoid":
+                    hidenLayer = new SigmoidLayer(ANNParameterBUS.HiddenNode);
+                    outputLayer = new SigmoidLayer(ANNParameterBUS.OutputNode);
+                    break;
+                case "Tanh":
+                    hidenLayer = new TanhLayer(ANNParameterBUS.HiddenNode);
+                    outputLayer = new TanhLayer(ANNParameterBUS.OutputNode);
+                    break;
+                case "Logarithm":
+                    hidenLayer = new LogarithmLayer(ANNParameterBUS.HiddenNode);
+                    outputLayer = new LogarithmLayer(ANNParameterBUS.OutputNode);
+                    break;
+                case "Sine":
+                    hidenLayer = new SineLayer(ANNParameterBUS.HiddenNode);
+                    outputLayer = new SineLayer(ANNParameterBUS.OutputNode);
+                    break;
+            }
+            new BackpropagationConnector(inputLayer, hidenLayer);
+            new BackpropagationConnector(hidenLayer, outputLayer);
+
+            bpNetwork = new BackpropagationNetwork(inputLayer, outputLayer);
+
+            bpNetwork.SetLearningRate(ANNParameterBUS.LearningRate);
+
+            bpNetwork.EndEpochEvent += new TrainingEpochEventHandler(
+                    delegate(object senderNetwork, TrainingEpochEventArgs args)
+                    {
+                        tlsProgressBar.Value = (int)(args.TrainingIteration * 100d / ANNParameterBUS.MaxEpoch);
+                        Application.DoEvents();
+                    });
+            bpNetwork.Learn(trainSet, ANNParameterBUS.MaxEpoch);
+
+            // Bước 2: Thực hiện test trên dữ liệu train với mô hình mới tạo
+            //         và xác định số mẫu test dúng làm đầu vào cho DT gợi là NewDataTrain
+
+            int iPos = strTrainFile.LastIndexOf('.');
+            string dataFile = strTrainFile.Remove(iPos) + ".data.txt";
+
+            iPos = strTrainFile.IndexOf('_');
+            string metaFile = strTrainFile.Remove(iPos) + ".meta";
+            //WriteCorrectSamplesANN2File(CorrectSamples, dataFile); 
+
+            // Bước 3: Thực hiện xây dựng cây DT với dữ liệu học là NewDataTrain            
+            Dataset newDataTrain = new Dataset(metaFile,dataFile);
+            Dataset tempData = new Dataset(metaFile, dataFile);
+            while(true)
+            {
+                if (newDataTrain.TrainingSet.Count != 0)
+                {
+                    newDataTrain.TrainingSet.RemoveAt(0);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            //string metafile = "D:/datasets/New folder/bt6.txt.meta";
+            //string dataFile = "D:/datasets/Basketball.data.txt";
+            //List<int> CorrectSamplesIndex = new List<int>();
+
+            // Ma trận với dòng thứ 1 chứa các giá trị thực và dòng thứ 2 chứa các giá trị dự đoán.
+            double[][] dblActual_Forecast = new double[2][];
+            dblActual_Forecast[0] = new double[trainSet.TrainingSampleCount];
+            dblActual_Forecast[1] = new double[trainSet.TrainingSampleCount];
+
+            // Thực hiện test
+            for (int i = 0; i < trainSet.TrainingSampleCount; i++)
+            {
+                TrainingSample testSample = trainSet[i];
+                dblActual_Forecast[0][i] = ConverterBUS.Convert2Trend(testSample.OutputVector);
+
+                double[] dblTemp = bpNetwork.Run(testSample.InputVector);
+                dblActual_Forecast[1][i] = ConverterBUS.Convert2Trend(dblTemp);
+
+                // Kiểm tra phân lớp đúng để tạo tập NewDataTrain
+                if (dblActual_Forecast[0][i] == dblActual_Forecast[1][i])
+                {
+                    //CorrectSamples.Add(i);
+                    newDataTrain.TrainingSet.Add (tempData.TrainingSet[i]);
+                }
+            }           
+            
+
+            //data = new Dataset(metaFile, dataFile);
+
+            DecisionTreeAlgorithm tree = new DecisionTreeAlgorithm(newDataTrain);
+            tree.SplitFun = DecisionTreeAlgorithm.SPLIT_GAIN;
+            tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_PESSIMISTIC;
+            tree.BuildDTTree();
+            tree.ExtractRules();
+
+            iPos = strTrainFile.LastIndexOf('_');
+            string ruleFile = strTrainFile.Remove(iPos) + ".rules";
+
+            tree.SaveRule2File(ruleFile);
+
+            // Bước 4: Lưu lại mô hình DT
+            iPos = strTrainFile.LastIndexOf('_');
+            string modelFile = strTrainFile.Remove(iPos+1) + "DTModel.txt";
+            tree.SaveModel2File(modelFile);
+        }
+
+        private void WriteCorrectSamplesANN2File(List<TrainingSample> CorrectSamples, string dataFile)
+        {
+            StreamWriter writer = new StreamWriter(dataFile);
+
+            for (int i = 0; i < CorrectSamples.Count; i++)
+            {
+ 
+            }            
+            writer.Close();
+        }
+        /// <summary>
         /// Phần train cho ANN
         /// </summary>
         private void TrainANN(bool isBatchMode)
@@ -427,6 +572,41 @@ namespace GUI
             StatisticTrend2File(strPredictedFiles, strStatisticFile);
             writer.WriteLine("All: " + dblTotalPrecision / samDataBUS.DataLines.Length);
             writer.Close();
+        }
+        /// <summary>
+        /// Phần test cho ANN DT
+        /// </summary>        
+        private void TestANN_DT(bool isBatchMode)
+        {
+            string strModelFile = null;
+            string strTestFile = null;
+            if (isBatchMode)
+            {
+                //strModelFile = _modelFilePath;
+                ///strTestFile = _testFilePath;
+            }
+            else
+            {
+                strModelFile = tbxModelFilePath.Text;
+                strTestFile = tbxTestFilePath.Text;                
+            }
+
+            // Bước 1: Load mô hình DT
+            int iPos = strTestFile.IndexOf('_');
+            string metafile = strTestFile.Remove(iPos) + ".meta";           
+            string datafile = strTestFile;
+
+            DecisionTreeRule rules = new DecisionTreeRule();
+            rules.LoadModelFromFile(strModelFile);
+
+            // Bước 2: Tạo dữ liệu test
+            Dataset testData = new Dataset(metafile, datafile);
+
+            // Bước 3: Thực hiện test
+            int CorrectClassify = rules.ClassifyTest(testData);           
+
+            // Bước 4: Ghi nhận kết quả
+            double rate = (double)CorrectClassify / testData.TrainingSet.Count;
         }
         /// <summary>
         /// Phần test cho ANN
@@ -737,6 +917,10 @@ namespace GUI
                 {
                     TrainANN(false);
                 }
+                else if (rdANNDT.Checked)//Mô hình ANN-DT
+                {
+                    TrainANN_DT(false);
+                }
             }
             catch (Exception ex)
             {
@@ -745,7 +929,7 @@ namespace GUI
             }
             Finish();
         }
-
+        
         private void btnPreprocessBrowser_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDlg = new OpenFileDialog();
@@ -781,6 +965,10 @@ namespace GUI
                 {
                     TestANN(false);
                 }
+                else if (rdANNDT.Checked)
+                {
+                    TestANN_DT(false);
+                }
             }
             catch (Exception ex)
             {
@@ -806,7 +994,6 @@ namespace GUI
             {
                 ShowException(ex.Message);
             }
-
             Finish();
         }
 
@@ -1188,8 +1375,14 @@ namespace GUI
 
         private void rdSOMSVM_CheckedChanged(object sender, EventArgs e)
         {
-            lblNumCluster.Enabled = rdSOMSVM.Checked;
-            nmNumCluster.Enabled = rdSOMSVM.Checked;
+            //lblNumCluster.Enabled = rdSOMSVM.Checked;
+            //nmNumCluster.Enabled = rdSOMSVM.Checked;
+
+            lblNumCluster.Enabled = !rdANNDT.Checked;
+            nmNumCluster.Enabled = !rdANNDT.Checked;
+
+            gbAnnSetting.Enabled = rdANNDT.Checked;
+            gbSVRSetting.Enabled = !rdANNDT.Checked;
         }
 
         private void EnableStepByStepTrainAndTest(bool isEnable)

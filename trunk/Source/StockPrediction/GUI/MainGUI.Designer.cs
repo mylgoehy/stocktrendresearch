@@ -86,7 +86,7 @@
             this.tbxTrainingRatio = new System.Windows.Forms.TextBox();
             this.lblTrainingRatio = new System.Windows.Forms.Label();
             this.gbModelChoice = new System.Windows.Forms.GroupBox();
-            this.rdSOMSVM = new System.Windows.Forms.RadioButton();
+            this.rdANNDT = new System.Windows.Forms.RadioButton();
             this.nmNumCluster = new System.Windows.Forms.NumericUpDown();
             this.cmbNumDaysPredicted = new System.Windows.Forms.ComboBox();
             this.lblNumCluster = new System.Windows.Forms.Label();
@@ -782,7 +782,7 @@
             // 
             // gbModelChoice
             // 
-            this.gbModelChoice.Controls.Add(this.rdSOMSVM);
+            this.gbModelChoice.Controls.Add(this.rdANNDT);
             this.gbModelChoice.Controls.Add(this.nmNumCluster);
             this.gbModelChoice.Controls.Add(this.cmbNumDaysPredicted);
             this.gbModelChoice.Controls.Add(this.lblNumCluster);
@@ -799,18 +799,18 @@
             this.gbModelChoice.TabStop = false;
             this.gbModelChoice.Text = "MODEL CHOICE";
             // 
-            // rdSOMSVM
+            // rdANNDT
             // 
-            this.rdSOMSVM.AutoSize = true;
-            this.rdSOMSVM.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rdSOMSVM.ForeColor = System.Drawing.Color.Black;
-            this.rdSOMSVM.Location = new System.Drawing.Point(256, 26);
-            this.rdSOMSVM.Name = "rdSOMSVM";
-            this.rdSOMSVM.Size = new System.Drawing.Size(75, 17);
-            this.rdSOMSVM.TabIndex = 31;
-            this.rdSOMSVM.Text = "SOM-SVM";
-            this.rdSOMSVM.UseVisualStyleBackColor = true;
-            this.rdSOMSVM.CheckedChanged += new System.EventHandler(this.rdSOMSVM_CheckedChanged);
+            this.rdANNDT.AutoSize = true;
+            this.rdANNDT.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rdANNDT.ForeColor = System.Drawing.Color.Black;
+            this.rdANNDT.Location = new System.Drawing.Point(256, 26);
+            this.rdANNDT.Name = "rdANNDT";
+            this.rdANNDT.Size = new System.Drawing.Size(66, 17);
+            this.rdANNDT.TabIndex = 31;
+            this.rdANNDT.Text = "ANN-DT";
+            this.rdANNDT.UseVisualStyleBackColor = true;
+            this.rdANNDT.CheckedChanged += new System.EventHandler(this.rdSOMSVM_CheckedChanged);
             // 
             // nmNumCluster
             // 
@@ -1125,7 +1125,7 @@
         private System.Windows.Forms.TextBox tbxC;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbxGamma;
-        private System.Windows.Forms.RadioButton rdSOMSVM;
+        private System.Windows.Forms.RadioButton rdANNDT;
         private System.Windows.Forms.RadioButton rdKSVMeans;
         private System.Windows.Forms.NumericUpDown nmNumCluster;
         private System.Windows.Forms.Label lblNumCluster;

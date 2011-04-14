@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DecisionTree;
+using BUS.DecisionTree;
+using System.IO;
 
-namespace DecisionTree
+namespace BUS.DecisionTree
 {
     public class DecisionTreeAlgorithm
     {
@@ -108,7 +109,7 @@ namespace DecisionTree
 
         // Tự khai báo thêm
         DecisionTreeNode _currentRoot;
-        List<string> _listRules;
+        DecisionTreeRule _listRules;
 
         #endregion
 
@@ -148,7 +149,7 @@ namespace DecisionTree
             get { return _currentRoot; }
             set { _currentRoot = value; }
         }
-        public List<string> ListRules
+        public DecisionTreeRule ListRules
         {
             get { return _listRules; }
             set { _listRules = value; }
@@ -187,7 +188,7 @@ namespace DecisionTree
 
             // Viết thêm
 
-            ListRules = new List<string>();
+            ListRules = new DecisionTreeRule();
         }
         #endregion
 
@@ -1400,7 +1401,6 @@ namespace DecisionTree
         public void ExtractRules()
         {
             ExtractRulesFromDTTree(this.Tree.Nodes[0]);
-
         }
 
         public void ExtractRulesFromDTTree(DecisionTreeNode currentRoot)
@@ -1428,9 +1428,11 @@ namespace DecisionTree
             DecisionTreeNode tempParentNode = currentNode;
             DecisionTreeNode tempCurrentNode = currentNode;
 
-            // Xây dựng luật
-            rule = Temp[2] + " \"" + DatasetUse.Attributes[0].Name + "\" = " + "\'"+ currentNode.NodeLabel +"\'"; 
+            Rule newRule = new Rule();
 
+            // Xây dựng luật
+            rule = Temp[2] + " \"" + DatasetUse.Attributes[0].Name + "\" = " + "\'"+ currentNode.NodeLabel +"\'";
+            newRule.AddAttributeTarget(DatasetUse.Attributes[0].Name, currentNode.NodeLabel);
             while (tempCurrentNode.Parent != null)
             {
                 tempParentNode = tempCurrentNode.Parent;
@@ -1446,16 +1448,39 @@ namespace DecisionTree
 
                 rule = Temp[1] + " \"" + tempParentNode.NodeLabel 
                     + "\" = \'" + tempParentNode.ArcLabels[i] + "\' " + rule;
-
+                newRule.AddAttributeCondition(tempParentNode.NodeLabel , tempParentNode.ArcLabels[i].ToString());
                 tempCurrentNode = tempParentNode;
             }            
             rule = rule.Substring(rule.IndexOf(Temp[1]) + Temp[1].Length);
             rule = Temp[0] + rule;
+            newRule.SetRule(rule);
 
+            newRule.AttributeConditions.Reverse();
+            newRule.AttributeConditionValues.Reverse();
+            newRule.AttributeTargets.Reverse();
+            newRule.AttributeTargetValues.Reverse();
 
             // Thêm một luật mới vào danh sách các luật rút ra
-            ListRules.Add(rule);
+            ListRules.ListRules.Add(newRule);
+        }
+        public void SaveRule2File(string fileName)
+        {
+            StreamWriter writer = new StreamWriter(fileName);
+
+            for (int i = 0; i < ListRules.ListRules.Count; i++)
+            {
+                writer.WriteLine(ListRules.ListRules[i].FullRule);
+            }
+            writer.Close();
+        } 
+        public void SaveModel2File(string fileName)
+        {
+            this.ListRules.SaveModel2File(fileName);
         }
         #endregion
+
+
+
+       
     }
 }

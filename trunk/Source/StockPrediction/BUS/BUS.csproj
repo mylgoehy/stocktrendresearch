@@ -99,7 +99,9 @@
     <Compile Include="DecisionTree\DecisionTree.cs" />
     <Compile Include="DecisionTree\DecisionTreeAlgorithm.cs" />
     <Compile Include="DecisionTree\DecisionTreeNode.cs" />
+    <Compile Include="DecisionTree\DecisionTreeRule.cs" />
     <Compile Include="DecisionTree\FileParser.cs" />
+    <Compile Include="DecisionTree\Rule.cs" />
     <Compile Include="IndicatorsBUS.cs" />
     <Compile Include="KMeans\Cluster.cs" />
     <Compile Include="KMeans\Clustering.cs" />
