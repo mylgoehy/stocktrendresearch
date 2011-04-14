@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace DecisionTree
+namespace BUS.DecisionTree
 {
     class FileParsers
     {
@@ -44,7 +44,7 @@ namespace DecisionTree
                     string strTemps = reader.ReadToEnd();
                     reader.Close();
 
-                    string[] strLines = Regex.Split(strTemps, "\r\n");
+                    string[] strLines = Regex.Split(strTemps, "\n");
 
                     for (int i = 0; i < strLines.Length; i++)
                     {
@@ -69,7 +69,7 @@ namespace DecisionTree
                     string strTemps = reader.ReadToEnd();
                     reader.Close();
 
-                    string[] strLines = Regex.Split(strTemps, "\r\n");
+                    string[] strLines = Regex.Split(strTemps, "\n");
                     for (int i = 0; i < strLines.Length; i++)
                     {
                         DataLines.Add(strLines[i]);
