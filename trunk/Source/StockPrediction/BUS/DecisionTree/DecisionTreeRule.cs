@@ -95,8 +95,11 @@ namespace BUS.DecisionTree
                 for(int j = 0 ; j < ListRules.Count; j ++)
                 {
                     bool b = isClassified(example, ListRules[j], testData);// true classified, false not classified
-                    NumExampleCorrect++;
-                    break;
+                    if (b == true)
+                    {
+                        NumExampleCorrect++;
+                        break;
+                    }                    
                 }                
             }
             return NumExampleCorrect;
