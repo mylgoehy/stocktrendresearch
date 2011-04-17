@@ -1437,10 +1437,11 @@ namespace BUS.DecisionTree
             {
                 tempParentNode = tempCurrentNode.Parent;
                 
+                // Kiểm tra đúng cha con
                 int i;
                 for( i = 0 ; i < tempParentNode.Children.Length; i++)
-                {
-                    if(tempParentNode.Children[i].NodeLabel == tempCurrentNode.NodeLabel)
+                {                    
+                    if(tempParentNode.Children[i] == tempCurrentNode)
                     {
                         break;
                     }
