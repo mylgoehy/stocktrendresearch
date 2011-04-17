@@ -282,7 +282,43 @@ namespace GUI
             {
                 strTrainFile = tbxTrainFilePath.Text;
             }
-            // Bước 1: Xây dựng mô hình ANN với dữ liệu train
+
+            // Bước 1: Xây dựng mô hình DT với dữ liệu train
+            int iPos = strTrainFile.LastIndexOf('.');
+            string dataFile = strTrainFile.Remove(iPos) + ".data.txt";
+
+            iPos = strTrainFile.IndexOf('_');
+            string metaFile = strTrainFile.Remove(iPos) + ".meta";
+
+            Dataset dataDTTrain = new Dataset(metaFile, dataFile);
+            DecisionTreeAlgorithm tree = new DecisionTreeAlgorithm(dataDTTrain);
+
+            tree.SplitFun = DecisionTreeAlgorithm.SPLIT_GAIN;
+            tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_PESSIMISTIC;
+
+            tree.BuildDTTree();
+
+            tree.ExtractRules();
+
+            iPos = strTrainFile.LastIndexOf('_');
+            string ruleFile = strTrainFile.Remove(iPos) + ".rules";
+            tree.SaveRule2File(ruleFile);
+
+            // Lưu lại mô hình DT
+            //iPos = strTrainFile.LastIndexOf('_');
+            //string modelFile = strTrainFile.Remove(iPos + 1) + "DTModel.txt";
+            //tree.SaveModel2File(modelFile);
+            
+            // Bước 2: Thực hiện test trên dữ liệu train với mô hình mới tạo
+            //         và xác định số mẫu test dúng làm đầu vào cho AN gợi là NewDataTrain
+            // Thực hiện test lại với dữ liệu train, những mẫu test phân lớp lại đúng
+            // Sẽ là dữ liệu train cho ANN đặt là newANNDataTrain
+            Dataset dataDTTest = dataDTTrain;
+            List<int> CorrectClassifyTests = tree.ListRules.ClassifyAgain(dataDTTest);
+            
+            
+            // Bước 3: Thực hiện xây dựng mô hình ANN với dữ liệu học moi 
+            // Thực hiện test lại với dữ liệu train
             //khởi tạo các tham số cho mạng
             ANNParameterBUS.HiddenNode = int.Parse(tbxANNHiddenNode.Text);
             ANNParameterBUS.OutputNode = 3;
@@ -293,7 +329,18 @@ namespace GUI
 
             //Tiến hành train
             BackpropagationNetwork bpNetwork;
-            TrainingSet trainSet = new TrainingSet(strTrainFile, ANNParameterBUS.OutputNode);
+            TrainingSet tempTrainingSet = new TrainingSet(strTrainFile, ANNParameterBUS.OutputNode);
+            TrainingSet trainSet = new TrainingSet(tempTrainingSet.InputVectorLength, ANNParameterBUS.OutputNode);
+            
+            
+            for(int i = 0; i < CorrectClassifyTests.Count; i++)
+            {
+                
+                int pos =(int) CorrectClassifyTests[i];
+                TrainingSample tsp = (TrainingSample)tempTrainingSet[i];
+                trainSet.Add(tsp);
+            }
+
             LinearLayer inputLayer = new LinearLayer(trainSet.InputVectorLength);
             ActivationLayer hidenLayer = null;
             ActivationLayer outputLayer = null;
@@ -330,76 +377,15 @@ namespace GUI
                         Application.DoEvents();
                     });
             bpNetwork.Learn(trainSet, ANNParameterBUS.MaxEpoch);
-
-            // Bước 2: Thực hiện test trên dữ liệu train với mô hình mới tạo
-            //         và xác định số mẫu test dúng làm đầu vào cho DT gợi là NewDataTrain
-
-            int iPos = strTrainFile.LastIndexOf('.');
-            string dataFile = strTrainFile.Remove(iPos) + ".data.txt";
-
-            iPos = strTrainFile.IndexOf('_');
-            string metaFile = strTrainFile.Remove(iPos) + ".meta";
-            //WriteCorrectSamplesANN2File(CorrectSamples, dataFile); 
-
-            // Bước 3: Thực hiện xây dựng cây DT với dữ liệu học là NewDataTrain            
-            Dataset newDataTrain = new Dataset(metaFile,dataFile);
-            Dataset tempData = new Dataset(metaFile, dataFile);
-            while(true)
-            {
-                if (newDataTrain.TrainingSet.Count != 0)
-                {
-                    newDataTrain.TrainingSet.RemoveAt(0);
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            //string metafile = "D:/datasets/New folder/bt6.txt.meta";
-            //string dataFile = "D:/datasets/Basketball.data.txt";
-            //List<int> CorrectSamplesIndex = new List<int>();
-
-            // Ma trận với dòng thứ 1 chứa các giá trị thực và dòng thứ 2 chứa các giá trị dự đoán.
-            double[][] dblActual_Forecast = new double[2][];
-            dblActual_Forecast[0] = new double[trainSet.TrainingSampleCount];
-            dblActual_Forecast[1] = new double[trainSet.TrainingSampleCount];
-
-            // Thực hiện test
-            for (int i = 0; i < trainSet.TrainingSampleCount; i++)
-            {
-                TrainingSample testSample = trainSet[i];
-                dblActual_Forecast[0][i] = ConverterBUS.Convert2Trend(testSample.OutputVector);
-
-                double[] dblTemp = bpNetwork.Run(testSample.InputVector);
-                dblActual_Forecast[1][i] = ConverterBUS.Convert2Trend(dblTemp);
-
-                // Kiểm tra phân lớp đúng để tạo tập NewDataTrain
-                if (dblActual_Forecast[0][i] == dblActual_Forecast[1][i])
-                {
-                    //CorrectSamples.Add(i);
-                    newDataTrain.TrainingSet.Add (tempData.TrainingSet[i]);
-                }
-            }           
             
-
-            //data = new Dataset(metaFile, dataFile);
-
-            DecisionTreeAlgorithm tree = new DecisionTreeAlgorithm(newDataTrain);
-            tree.SplitFun = DecisionTreeAlgorithm.SPLIT_GAIN;
-            tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_PESSIMISTIC;
-            tree.BuildDTTree();
-            tree.ExtractRules();
-
+            // Bước 4: Lưu lại mô hình ANN  
             iPos = strTrainFile.LastIndexOf('_');
-            string ruleFile = strTrainFile.Remove(iPos) + ".rules";
-
-            tree.SaveRule2File(ruleFile);
-
-            // Bước 4: Lưu lại mô hình DT
-            iPos = strTrainFile.LastIndexOf('_');
-            string modelFile = strTrainFile.Remove(iPos+1) + "DTModel.txt";
-            tree.SaveModel2File(modelFile);
+            string strModelFile = strTrainFile.Remove(iPos + 1) + "model.txt";
+            Stream stream = File.Open(strModelFile, FileMode.Create);
+            BinaryFormatter bformatter = new BinaryFormatter();
+            bformatter.Serialize(stream, bpNetwork);
+            stream.Close();
+            tlsProgressBar.Value = 0;  
         }
 
         private void WriteCorrectSamplesANN2File(List<TrainingSample> CorrectSamples, string dataFile)
@@ -578,35 +564,7 @@ namespace GUI
         /// </summary>        
         private void TestANN_DT(bool isBatchMode)
         {
-            string strModelFile = null;
-            string strTestFile = null;
-            if (isBatchMode)
-            {
-                //strModelFile = _modelFilePath;
-                ///strTestFile = _testFilePath;
-            }
-            else
-            {
-                strModelFile = tbxModelFilePath.Text;
-                strTestFile = tbxTestFilePath.Text;                
-            }
-
-            // Bước 1: Load mô hình DT
-            int iPos = strTestFile.IndexOf('_');
-            string metafile = strTestFile.Remove(iPos) + ".meta";           
-            string datafile = strTestFile;
-
-            DecisionTreeRule rules = new DecisionTreeRule();
-            rules.LoadModelFromFile(strModelFile);
-
-            // Bước 2: Tạo dữ liệu test
-            Dataset testData = new Dataset(metafile, datafile);
-
-            // Bước 3: Thực hiện test
-            int CorrectClassify = rules.ClassifyTest(testData);           
-
-            // Bước 4: Ghi nhận kết quả
-            double rate = (double)CorrectClassify / testData.TrainingSet.Count;
+            this.TestANN(isBatchMode);
         }
         /// <summary>
         /// Phần test cho ANN
