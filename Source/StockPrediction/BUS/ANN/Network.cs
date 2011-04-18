@@ -587,8 +587,7 @@ namespace BUS.ANN
 
                     // Check if we need to stop
                     if (isStopping) { isStopping = false; return; }
-                }
-
+                }                
                 // Training Epoch successfully complete
                 OnEndEpoch(currentIteration, trainingSet);
 

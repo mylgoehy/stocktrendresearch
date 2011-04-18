@@ -43,24 +43,13 @@ namespace BUS.DecisionTree
         }
         #endregion
 
-        #region Constructors
-        /**
-       * Builds a new Dataset.  Creates a FileParser to parse the metadata
-       * and example files for the dataset.
-       *
-       * @param metaFile A file containing the metadata
-       *        for this dataset and a pointer to the actual
-       *        example file.
-       *
-       * @throws InvalidMetaFileException If the
-       *         metadata file contains syntax errors.
-       *
-       * @throws InvalidDataFileException If the data
-       *         (example) file contains syntax errors.
-       *
-       * @throws IOException If the configuration or data file
-       *         cannot be read.
-       */
+        #region Constructors        
+        /// <summary>
+        /// Builds a new Dataset.  Creates a FileParser to parse the metadata
+        /// and example files for the dataset.
+        /// </summary>
+        /// <param name="metaFile">Path meta file</param>
+        /// <param name="dataFile">Path data file</param>
         public Dataset(String metaFile, String dataFile)
         {
             Attributes = new List<Attribute>();
@@ -79,22 +68,16 @@ namespace BUS.DecisionTree
         }
         #endregion
 
-        #region Methods
-        /**
-           * Creates a random testing dataset.  Calling this
-           * method will destroy any previously built testing set.
-           *
-           * @param percentage Percentage of the entire dataset to
-           *        use for testing.
-           *
-           * @param balanced <code>true</code> to create a balanced
-           *        testing set, where the testing set and the
-           *        remaining training set have the same proportion
-           *        of each class.
-           *
-           * @throws IllegalArgumentException If the percentage value
-           *         is < 0 or > 100.
-           */
+        #region Methods        
+        /// <summary>
+        /// Creates a random testing dataset.  Calling this
+        /// method will destroy any previously built testing set.
+        /// </summary>
+        /// <param name="percentage">Percentage of the entire dataset to use for testing.</param>
+        /// <param name="balanced">to create a balanced
+        /// testing set, where the testing set and the
+        /// remaining training set have the same proportion
+        /// of each class.</param>
         public void createRndTestSet(int percentage, bool balanced)
         {
             if (percentage < 0 || percentage > 100)
@@ -152,16 +135,12 @@ namespace BUS.DecisionTree
                     }
                 }
             }
-        }
-        /**
-         * Finds and returns a particular attribute.
-         *
-         * @return An Attribute object with the specified
-         *         name.
-         *
-         * @throws NonexistentAttributeException If
-         *         the attribute does not exist in the dataset.
-         */
+        }        
+        /// <summary>
+        /// Finds and returns a particular attribute.
+        /// </summary>
+        /// <param name="attName">Attribute name</param>
+        /// <returns>Attribute object with the specified name.</returns>
         public Attribute getAttributeByName(String attName)
         {
             // Inefficient linear search of the vector
@@ -177,22 +156,13 @@ namespace BUS.DecisionTree
 
             throw new Exception("Attribute " + attName + " does not exist.");
         }
-        /**
-         * Finds and returns a particular attribute, using the attribute's
-         * location in the internal attributes Vector.
-         *
-         * <p>
-         * This method is primarily available to allow for iteration over all
-         * attributes in the dataset.
-         *
-         * @return An Attribute object stored at the
-         *         specified index in the attributes vector.
-         *
-         * @throws NonexistentAttributeException If
-         *         the attribute does not exist in the dataset
-         *         (i.e. the index is out of range).
-         *
-         */
+        /// <summary>
+        /// Finds and returns a particular attribute, using the attribute's
+        /// location in the internal attributes Vector.
+        /// </summary>
+        /// <param name="attNum">Attribute number</param>
+        /// <returns>An Attribute object stored at the
+        /// specified index in the attributes vector.</returns>
         public Attribute getAttributeByNum(int attNum)
         {
             if (attNum < 0 || attNum >= Attributes.Count())
@@ -200,17 +170,16 @@ namespace BUS.DecisionTree
                 throw new Exception("Attribute at location " + attNum + " does not exist.");
             }
             return (Attribute)Attributes.ElementAt(attNum);
-        }
-        /**
-          * Creates and returns a Vector that contains the names of
-          * all attributes in this data set (including the target
-          * attribute).
-          *
-          * @return A Vector containing Strings which are the
-          *         names of all the attributes (in the order
-          *         that they were parsed from the metadata file -
-          *         target attribute first).
-          */
+        }        
+        /// <summary>
+        /// Creates and returns a Vector that contains the names of
+        /// all attributes in this data set (including the target
+        /// attribute).
+        /// </summary>
+        /// <returns>A Vector containing Strings which are the
+        /// names of all the attributes (in the order
+        /// that they were parsed from the metadata file -
+        /// target attribute first).</returns>
         public List<String> getAttributeNames()
         {
             // Create and fill the vector of names
@@ -221,19 +190,13 @@ namespace BUS.DecisionTree
 
             return names;
         }
-        /**
-         * Finds and returns the position of a particular attribute in the
-         * Dataset's internal storage list.
-         *
-         * @param attName The name of the attribute to locate.
-         *
-         * @return The position of the attribute  in
-         *         the Dataset's internal storage list.
-         *
-         * @throws NonexistentAttributeException If an
-         *         attribute value with the supplied name
-         *         does not exist.
-         */
+        /// <summary>
+        /// Finds and returns the position of a particular attribute in the
+        /// Dataset's internal storage list.
+        /// </summary>
+        /// <param name="attName">The name of the attribute to locate.</param>
+        /// <returns>The position of the attribute  in
+        /// the Dataset's internal storage list.</returns>
         public int getAttributePosition(String attName)
         {
             // Inefficient linear search of the vector
@@ -247,82 +210,53 @@ namespace BUS.DecisionTree
             }
 
             throw new Exception("Attribute named " + attName + " does not exist.");
-        }
-        /**
-          * Returns the number of attributes (including the
-          * target attribute) in this dataset.
-          *
-          * @return The total number of attributes in the
-          *         dataset, including the target attribute.
-          */
+        }        
+        /// <summary>
+        /// Returns the number of attributes (including the
+        /// target attribute) in this dataset.
+        /// </summary>        
         public int getNumAttributes()
         {
             return Attributes.Count;
-        }
-        /**
-         * Returns the number of testing examples currently
-         * in this dataset.
-         *
-         * @return The total number of testing examples in
-         *         the dataset.
-         */
+        }        
+        /// <summary>
+        /// Returns the number of testing examples currently
+        /// in this dataset.
+        /// </summary>        
         public int getNumTestingExamples()
         {
             return TestingSet.Count;
-        }
-        /**
-          * Returns the number of training examples <i>currently</i> in
-          * this dataset.
-          *
-          * @return The total number of training examples in the dataset.
-          */
+        }        
+        /// <summary>
+        /// Returns the number of training examples currently in this dataset.
+        /// </summary>        
         public int getNumTrainingExamples()
         {
             return TrainingSet.Count;
-        }
-        /**
-          * Returns the target attribute for this data set.
-          *
-          * @return An Attribute object for the target attribute
-          *         in this dataset.
-          */
+        }        
+        /// <summary>
+        /// Returns the target attribute for this data set.
+        /// </summary>
         public Attribute getTargetAttribute()
         {
             // The target attribute is always stored at
             // position 0 in the attributes vector.
             return (Attribute)Attributes.ElementAt(0);
-        }
-        /**
-          * Returns a particular testing example from the examples in the
-          * dataset.
-          *
-          * @return The selected example from the testing
-          *         dataset as an integer array.
-          *
-          * @throws IndexOutOfBoundsException If the example
-          *         number is less than zero, or greater than
-          *         the number of testing examples in the
-          *         dataset minus one.
-          */
+        }        
+        /// <summary>
+        /// Returns a particular testing example from the examples in the dataset.
+        /// </summary>
         public int[] getTestingExample(int exampleNum)
         {
             if (exampleNum < 0 || exampleNum >= TestingSet.Count)
                 throw new Exception("Example number " + exampleNum + " does not exist.");
 
             return (int[])TestingSet.ElementAt(exampleNum);
-        }
-        /**
-          * Returns a particular training example from the examples in the
-          * dataset.
-          *
-          * @return The selected example from the training
-          *         dataset as an integer array.
-          *
-          * @throws IndexOutOfBoundsException If the example
-          *         number is less than zero, or greater than
-          *         the number of training examples in the dataset
-          *         minus one.
-          */
+        }        
+        /// <summary>
+        /// Returns a particular training example from the examples in the
+        /// dataset.
+        /// </summary>        
         public int[] getTrainingExample(int exampleNum)
         {
             if (exampleNum < 0 || exampleNum >= TrainingSet.Count)
@@ -330,31 +264,26 @@ namespace BUS.DecisionTree
 
             return (int[])TrainingSet.ElementAt(exampleNum);
         }
-        /**
-          * Returns an iterator over the training examples in the current dataset.
-          *
-          * @return An iterator over all the training examples.
-          */
+        
+        /// <summary>
+        /// Returns an iterator over the training examples in the current dataset.
+        /// </summary>        
         public IEnumerator<int[]> getTrainingExamples()
         {
             return TrainingSet.GetEnumerator();
-        }
-        /**
-         * Returns an iterator over the testing examples in the current dataset.
-         *
-         * @return An iterator over all the testing examples.
-         */
+        }        
+        /// <summary>
+        /// Returns an iterator over the testing examples in the current dataset.
+        /// </summary>                
         public IEnumerator<int[]> getTestingExamples()
         {
             return TestingSet.GetEnumerator();
-        }
-        /**
-          * Moves an example from the training set to
-          * the testing set.  If the supplied example number
-          * is out of range no example is moved.
-          *
-          * @param exampleNum The example to transfer to the testing set.
-          */
+        }        
+        /// <summary>
+        /// Moves an example from the training set to
+        /// the testing set.  If the supplied example number
+        /// is out of range no example is moved.
+        /// </summary>        
         public void moveToTestingSet(int exampleNum)
         {
             if (exampleNum < 0 || exampleNum > (TrainingSet.Count - 1))
@@ -364,14 +293,13 @@ namespace BUS.DecisionTree
 
             TestingSet.Add((int[])TrainingSet.ElementAt(exampleNum));
             TrainingSet.RemoveAt(exampleNum);
-        }
-        /**
-          * Moves an example from the training set to
-          * the testing set.  If the supplied example number
-          * is out of range no example is moved.
-          *
-          * @param exampleNum The example to transfer to the training set.
-          */
+        }        
+        /// <summary>
+        /// Moves an example from the training set to
+        /// the testing set.  If the supplied example number
+        /// is out of range no example is moved.
+        /// </summary>
+        /// <param name="exampleNum">The example to transfer to the training set.</param>
         public void moveToTrainingSet(int exampleNum)
         {
             if (exampleNum < 0 || exampleNum > (TestingSet.Count - 1))
@@ -383,9 +311,8 @@ namespace BUS.DecisionTree
             TestingSet.RemoveAt(exampleNum);
         }
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dataFile"></param>
+        /// parse from data file path
+        /// </summary>        
         public void parseDataFile(string dataFile)
         {
             FileParsers parser = new FileParsers(dataFile, DATAFILE);
@@ -446,5 +373,5 @@ namespace BUS.DecisionTree
             }            
         }
         #endregion
-    }
+        }
 }

@@ -93,39 +93,34 @@ namespace BUS.DecisionTree
                 if (val.CompareTo(valName) == 0) return i;
             }
             return -1;
-        }       
-        /**
-         * Returns the name of this attribute.
-         *
-         * @return The name of this attribute.
-         */        
-        
-        
+        }        
+        /// <summary>
+        /// get the name of this attribute.
+        /// </summary>        
         public String getName()
         {
             return Name;
-        }
-        /**
-         * Provides direct access to the internal statistics
-         * array.  This avoids the overhead of method calls,
-         * but assumes that the caller understands the structure
-         * of the array and can manipulate it accordingly.
-         *
-         * @return The Attribute's 2-D statistics array.
-         */
+        }        
+        /// <summary>
+        /// Provides direct access to the internal statistics
+        /// array.  This avoids the overhead of method calls,
+        /// but assumes that the caller understands the structure
+        /// of the array and can manipulate it accordingly.
+        /// </summary>
+        /// <returns>return The Attribute's 2-D statistics array.</returns>
         public int[][] getStatsArray()
         {
             return Stats;
-        }
-        /**
-         * Creates and returns a vector with the names of all
-         * values for this attribute.
-         *
-         * @return A vector containing Strings which are the
-         *         names of all the attribute values (in the order
-         *         that they were added to the Attribute object).
-         */
-
+        }     
+        /// <summary>
+        /// Creates and returns a vector with the names of all
+        /// values for this attribute.
+        /// </summary>
+        /// <returns>
+        /// A vector containing Strings which are the
+        /// names of all the attribute values (in the order 
+        /// that they were added to the Attribute object).
+        /// </returns>
         public String[] getValueNames()
         {
             // Return the vector of names.
