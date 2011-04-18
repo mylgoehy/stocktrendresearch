@@ -28,7 +28,6 @@ namespace BUS.DecisionTree
         }
         #endregion
 
-
         #region Methods
         public void SaveModel2File(string fileName)
         {

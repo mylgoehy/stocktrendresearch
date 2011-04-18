@@ -875,7 +875,7 @@ namespace GUI
                 {
                     TrainANN(false);
                 }
-                else if (rdANNDT.Checked)//Mô hình ANN-DT
+                else if (rdDTANN.Checked)//Mô hình ANN-DT
                 {
                     TrainANN_DT(false);
                 }
@@ -923,7 +923,7 @@ namespace GUI
                 {
                     TestANN(false);
                 }
-                else if (rdANNDT.Checked)
+                else if (rdDTANN.Checked)
                 {
                     TestANN_DT(false);
                 }
@@ -1336,11 +1336,11 @@ namespace GUI
             //lblNumCluster.Enabled = rdSOMSVM.Checked;
             //nmNumCluster.Enabled = rdSOMSVM.Checked;
 
-            lblNumCluster.Enabled = !rdANNDT.Checked;
-            nmNumCluster.Enabled = !rdANNDT.Checked;
+            lblNumCluster.Enabled = !rdDTANN.Checked;
+            nmNumCluster.Enabled = !rdDTANN.Checked;
 
-            gbAnnSetting.Enabled = rdANNDT.Checked;
-            gbSVRSetting.Enabled = !rdANNDT.Checked;
+            gbAnnSetting.Enabled = rdDTANN.Checked;
+            gbSVRSetting.Enabled = !rdDTANN.Checked;
         }
 
         private void EnableStepByStepTrainAndTest(bool isEnable)
@@ -1420,6 +1420,31 @@ namespace GUI
                 ShowException(ex.Message);
             }
             Finish();
+        }
+
+        private void lblExperimentMode_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblNumCluster_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void nmNumCluster_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
