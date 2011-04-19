@@ -66,7 +66,7 @@ namespace GUI
             if (isBatchMode)
             {
                 strInputFile = tbxBatchInputFile.Text;
-                dblTrainingSetRatio = Convert.ToDouble(tbxBatchTrainingRatio.Text);
+                dblTrainingSetRatio = Convert.ToDouble(tbxTrainingRatio.Text);
             }
             else
             {
@@ -960,7 +960,6 @@ namespace GUI
             //Khởi gán
             cmbNumDaysPredicted.SelectedIndex = 0;
             tbxTrainingRatio.Text = "80";
-            tbxBatchTrainingRatio.Text = "80";
             cmbModelSelection.SelectedIndex = 0;
             cmbActivationFunc.SelectedIndex = 0;
             cmbExperimentMode.SelectedIndex = 0;
@@ -1390,7 +1389,7 @@ namespace GUI
 
         private void btnBatchTrainTest_Click(object sender, EventArgs e)
         {
-            if (tbxBatchInputFile.Text == "" || tbxBatchTrainingRatio.Text == "")
+            if (tbxBatchInputFile.Text == "" || tbxTrainingRatio.Text == "")
             {
                 MessageBox.Show("Error: You must fill all required inputs!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -1420,31 +1419,6 @@ namespace GUI
                 ShowException(ex.Message);
             }
             Finish();
-        }
-
-        private void lblExperimentMode_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void lblNumCluster_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void nmNumCluster_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
