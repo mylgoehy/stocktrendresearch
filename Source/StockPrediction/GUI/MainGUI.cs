@@ -276,7 +276,8 @@ namespace GUI
             string strTrainFile = null;
             if (isBatchMode)
             {
-                //strTrainFile = _trainFilePath;
+                strTrainFile = _trainFilePath;
+
             }
             else
             {
@@ -290,24 +291,49 @@ namespace GUI
             iPos = strTrainFile.IndexOf('_');
             string metaFile = strTrainFile.Remove(iPos) + ".meta";
 
+            // Tạo dữ liệu Train
             Dataset dataDTTrain = new Dataset(metaFile, dataFile);
             DecisionTreeAlgorithm tree = new DecisionTreeAlgorithm(dataDTTrain);
 
-            tree.SplitFun = DecisionTreeAlgorithm.SPLIT_GAIN;
-            tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_PESSIMISTIC;
+            // Đọc các hàm phân chia dữ liệu và tỉa cây
+            switch (cmbSplitFunc.SelectedItem.ToString())
+            {
+                case "Gain":
+                    tree.SplitFun = DecisionTreeAlgorithm.SPLIT_GAIN;
+                    break;
+                case "Gain Ratio":
+                    tree.SplitFun = DecisionTreeAlgorithm.SPLIT_GAIN_RATIO;
+                    break;
+                case "GINI":
+                    tree.SplitFun = DecisionTreeAlgorithm.SPLIT_GINI;
+                    break;
+                case "Random":
+                    tree.SplitFun = DecisionTreeAlgorithm.SPLIT_RANDOM;
+                    break;
+            }
+            switch (cmbPruneFunc.SelectedItem.ToString())
+            {                
+                case "Pessimistic":
+                    tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_PESSIMISTIC;
+                    break;
+                case "Reduced-error":
+                    tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_REDUCED_ERROR;
+                    break;
+                case "None":
+                    tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_NONE;
+                    break;                
+            }            
 
+            // Học, xây dựng lên cây quyết định
             tree.BuildDTTree();
 
+            // Duyệt cây và trích ra tập luật
             tree.ExtractRules();
+
 
             iPos = strTrainFile.LastIndexOf('_');
             string ruleFile = strTrainFile.Remove(iPos) + ".rules";
             tree.SaveRule2File(ruleFile);
-
-            // Lưu lại mô hình DT
-            //iPos = strTrainFile.LastIndexOf('_');
-            //string modelFile = strTrainFile.Remove(iPos + 1) + "DTModel.txt";
-            //tree.SaveModel2File(modelFile);
             
             // Bước 2: Thực hiện test trên dữ liệu train với mô hình mới tạo
             //         và xác định số mẫu test dúng làm đầu vào cho AN gợi là NewDataTrain
@@ -963,6 +989,8 @@ namespace GUI
             cmbModelSelection.SelectedIndex = 0;
             cmbActivationFunc.SelectedIndex = 0;
             cmbExperimentMode.SelectedIndex = 0;
+            cmbPruneFunc.SelectedIndex = 0;
+            cmbSplitFunc.SelectedIndex = 0;
             _trainFilePath = "";
             _testFilePath = "";
             _modelFilePath = "";
@@ -974,18 +1002,13 @@ namespace GUI
             tbxBias.Text = 0.ToString();
             tbxMomentum.Text = 0.01.ToString();
 
-            lblNumCluster.Enabled = false;
-            nmNumCluster.Enabled = false;
             if (rdANN.Checked == true)
             {
                 gbAnnSetting.Enabled = true;
                 gbSVRSetting.Enabled = false;
-            }
-            else
-            {
-                gbAnnSetting.Enabled = false;
-                gbSVRSetting.Enabled = true;
-            }
+                gbDTSetting.Enabled = false;
+                gbKmeansSetting.Enabled = false; 
+            }   
 
             _stockRecordBUS = new StockRecordBUS();
             _stockRecordDTO = null;
@@ -1067,8 +1090,11 @@ namespace GUI
 
         private void rdANN_CheckedChanged(object sender, EventArgs e)
         {
-            gbAnnSetting.Enabled = rdANN.Checked;
-            gbSVRSetting.Enabled = !rdANN.Checked;
+            tabCtrlSettings.SelectedIndex = 0;
+            gbAnnSetting.Enabled = true;
+            gbSVRSetting.Enabled = false;
+            gbDTSetting.Enabled = false;
+            gbKmeansSetting.Enabled = false;
         }
 
         private void cmbStockID_SelectedIndexChanged(object sender, EventArgs e)
@@ -1326,22 +1352,13 @@ namespace GUI
 
         private void rdKSVMeans_CheckedChanged(object sender, EventArgs e)
         {
-            lblNumCluster.Enabled = rdKSVMeans.Checked;
-            nmNumCluster.Enabled = rdKSVMeans.Checked;
+            tabCtrlSettings.SelectedIndex = 1;
+            gbAnnSetting.Enabled = false;
+            gbSVRSetting.Enabled = true;
+            gbDTSetting.Enabled = false;
+            gbKmeansSetting.Enabled = true;
         }
-
-        private void rdSOMSVM_CheckedChanged(object sender, EventArgs e)
-        {
-            //lblNumCluster.Enabled = rdSOMSVM.Checked;
-            //nmNumCluster.Enabled = rdSOMSVM.Checked;
-
-            lblNumCluster.Enabled = !rdDTANN.Checked;
-            nmNumCluster.Enabled = !rdDTANN.Checked;
-
-            gbAnnSetting.Enabled = rdDTANN.Checked;
-            gbSVRSetting.Enabled = !rdDTANN.Checked;
-        }
-
+        
         private void EnableStepByStepTrainAndTest(bool isEnable)
         {
             btnTrain.Enabled = isEnable;
@@ -1413,12 +1430,37 @@ namespace GUI
                     TrainANN(true);
                     TestANN(true);
                 }
+                else
+                {
+                    TrainANN_DT(true);
+                    TestANN_DT(true);
+                }
             }
             catch (Exception ex)
             {
                 ShowException(ex.Message);
             }
             Finish();
+        }
+
+        private void rdDT_ANN_CheckedChanged(object sender, EventArgs e)
+        {
+            //lblNumCluster.Enabled = !rdDTANN.Checked;
+            //nmNumCluster.Enabled = !rdDTANN.Checked;
+            tabCtrlSettings.SelectedIndex = 0;
+            gbAnnSetting.Enabled = true;
+            gbSVRSetting.Enabled = false;
+            gbDTSetting.Enabled = true;
+            gbKmeansSetting.Enabled = false;
+        }
+
+        private void rdSVM_CheckedChanged(object sender, EventArgs e)
+        {
+            tabCtrlSettings.SelectedIndex = 1;
+            gbAnnSetting.Enabled = false;
+            gbSVRSetting.Enabled = true;
+            gbDTSetting.Enabled = false;
+            gbKmeansSetting.Enabled = false;
         }
     }
 }
