@@ -85,8 +85,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.tabSVM_KMeans = new System.Windows.Forms.TabPage();
             this.gbKmeansSetting = new System.Windows.Forms.GroupBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.label8 = new System.Windows.Forms.Label();
+            this.cmbDistanceType = new System.Windows.Forms.ComboBox();
+            this.lblDistanceType = new System.Windows.Forms.Label();
             this.nmNumCluster = new System.Windows.Forms.NumericUpDown();
             this.lblNumCluster = new System.Windows.Forms.Label();
             this.gbSVRSetting = new System.Windows.Forms.GroupBox();
@@ -201,9 +201,9 @@
             this.gbResults.Controls.Add(this.wbResults);
             this.gbResults.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbResults.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.gbResults.Location = new System.Drawing.Point(403, 194);
+            this.gbResults.Location = new System.Drawing.Point(403, 109);
             this.gbResults.Name = "gbResults";
-            this.gbResults.Size = new System.Drawing.Size(365, 342);
+            this.gbResults.Size = new System.Drawing.Size(365, 427);
             this.gbResults.TabIndex = 49;
             this.gbResults.TabStop = false;
             this.gbResults.Text = "RESULTS";
@@ -214,7 +214,7 @@
             this.wbResults.Location = new System.Drawing.Point(3, 16);
             this.wbResults.MinimumSize = new System.Drawing.Size(20, 20);
             this.wbResults.Name = "wbResults";
-            this.wbResults.Size = new System.Drawing.Size(359, 323);
+            this.wbResults.Size = new System.Drawing.Size(359, 408);
             this.wbResults.TabIndex = 0;
             // 
             // lblExperimentMode
@@ -556,7 +556,7 @@
             this.rdDTANN.TabIndex = 31;
             this.rdDTANN.Text = "DT - ANN";
             this.rdDTANN.UseVisualStyleBackColor = true;
-            this.rdDTANN.CheckedChanged += new System.EventHandler(this.rdSOMSVM_CheckedChanged);
+            this.rdDTANN.CheckedChanged += new System.EventHandler(this.rdDT_ANN_CheckedChanged);
             // 
             // tabCtrlSettings
             // 
@@ -748,10 +748,10 @@
             this.cmbPruneFunc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmbPruneFunc.FormattingEnabled = true;
             this.cmbPruneFunc.Items.AddRange(new object[] {
-            "None",
             "Reduced-error",
-            "Pessimistic"});
-            this.cmbPruneFunc.Location = new System.Drawing.Point(235, 18);
+            "Pessimistic",
+            "None"});
+            this.cmbPruneFunc.Location = new System.Drawing.Point(237, 18);
             this.cmbPruneFunc.Name = "cmbPruneFunc";
             this.cmbPruneFunc.Size = new System.Drawing.Size(92, 21);
             this.cmbPruneFunc.TabIndex = 42;
@@ -762,8 +762,8 @@
             this.cmbSplitFunc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmbSplitFunc.FormattingEnabled = true;
             this.cmbSplitFunc.Items.AddRange(new object[] {
-            "Gain",
             "Gain Ratio",
+            "Gain",
             "GINI",
             "Random"});
             this.cmbSplitFunc.Location = new System.Drawing.Point(76, 18);
@@ -787,7 +787,7 @@
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.Color.Black;
-            this.label5.Location = new System.Drawing.Point(170, 22);
+            this.label5.Location = new System.Drawing.Point(171, 22);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(61, 13);
             this.label5.TabIndex = 37;
@@ -807,8 +807,8 @@
             // 
             // gbKmeansSetting
             // 
-            this.gbKmeansSetting.Controls.Add(this.comboBox2);
-            this.gbKmeansSetting.Controls.Add(this.label8);
+            this.gbKmeansSetting.Controls.Add(this.cmbDistanceType);
+            this.gbKmeansSetting.Controls.Add(this.lblDistanceType);
             this.gbKmeansSetting.Controls.Add(this.nmNumCluster);
             this.gbKmeansSetting.Controls.Add(this.lblNumCluster);
             this.gbKmeansSetting.ForeColor = System.Drawing.Color.Green;
@@ -819,34 +819,34 @@
             this.gbKmeansSetting.TabStop = false;
             this.gbKmeansSetting.Text = "Kmeans Setting";
             // 
-            // comboBox2
+            // cmbDistanceType
             // 
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
+            this.cmbDistanceType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbDistanceType.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbDistanceType.FormattingEnabled = true;
+            this.cmbDistanceType.Items.AddRange(new object[] {
             "Manhattan",
             "Euclid"});
-            this.comboBox2.Location = new System.Drawing.Point(221, 18);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(105, 21);
-            this.comboBox2.TabIndex = 41;
+            this.cmbDistanceType.Location = new System.Drawing.Point(224, 17);
+            this.cmbDistanceType.Name = "cmbDistanceType";
+            this.cmbDistanceType.Size = new System.Drawing.Size(105, 21);
+            this.cmbDistanceType.TabIndex = 41;
             // 
-            // label8
+            // lblDistanceType
             // 
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.ForeColor = System.Drawing.Color.Black;
-            this.label8.Location = new System.Drawing.Point(144, 22);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(76, 13);
-            this.label8.TabIndex = 40;
-            this.label8.Text = "Distance Type";
+            this.lblDistanceType.AutoSize = true;
+            this.lblDistanceType.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDistanceType.ForeColor = System.Drawing.Color.Black;
+            this.lblDistanceType.Location = new System.Drawing.Point(139, 22);
+            this.lblDistanceType.Name = "lblDistanceType";
+            this.lblDistanceType.Size = new System.Drawing.Size(76, 13);
+            this.lblDistanceType.TabIndex = 40;
+            this.lblDistanceType.Text = "Distance Type";
             // 
             // nmNumCluster
             // 
             this.nmNumCluster.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nmNumCluster.Location = new System.Drawing.Point(88, 18);
+            this.nmNumCluster.Location = new System.Drawing.Point(87, 17);
             this.nmNumCluster.Minimum = new decimal(new int[] {
             2,
             0,
@@ -866,7 +866,7 @@
             this.lblNumCluster.AutoSize = true;
             this.lblNumCluster.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblNumCluster.ForeColor = System.Drawing.Color.Black;
-            this.lblNumCluster.Location = new System.Drawing.Point(8, 22);
+            this.lblNumCluster.Location = new System.Drawing.Point(6, 22);
             this.lblNumCluster.Name = "lblNumCluster";
             this.lblNumCluster.Size = new System.Drawing.Size(76, 13);
             this.lblNumCluster.TabIndex = 32;
@@ -1035,6 +1035,7 @@
             this.rdSVM.TabIndex = 1;
             this.rdSVM.Text = "SVM";
             this.rdSVM.UseVisualStyleBackColor = true;
+            this.rdSVM.CheckedChanged += new System.EventHandler(this.rdSVM_CheckedChanged);
             // 
             // rdANN
             // 
@@ -1088,7 +1089,7 @@
             this.tabDiagram.Location = new System.Drawing.Point(4, 22);
             this.tabDiagram.Name = "tabDiagram";
             this.tabDiagram.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDiagram.Size = new System.Drawing.Size(776, 593);
+            this.tabDiagram.Size = new System.Drawing.Size(776, 544);
             this.tabDiagram.TabIndex = 1;
             this.tabDiagram.Text = "DIAGRAM";
             // 
@@ -1344,8 +1345,8 @@
         private System.Windows.Forms.ComboBox cmbExperimentMode;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.GroupBox gbKmeansSetting;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.ComboBox cmbDistanceType;
+        private System.Windows.Forms.Label lblDistanceType;
     }
 }
 
