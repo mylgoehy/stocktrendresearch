@@ -148,6 +148,7 @@ namespace GUI
             {
                 strTrainFile = tbxTrainFilePath.Text;
             }
+
             int iPos = strTrainFile.LastIndexOf('_');
             string strMutualPath = strTrainFile.Remove(iPos + 1);
             string strModelFile = strMutualPath + "model.txt";
@@ -196,6 +197,7 @@ namespace GUI
         private void TrainKSVMeans(bool isBatchMode)
         {
             string strTrainFile = null;
+
             if (isBatchMode)
             {
                 strTrainFile = _trainFilePath;
@@ -296,122 +298,133 @@ namespace GUI
             DecisionTreeAlgorithm tree = new DecisionTreeAlgorithm(dataDTTrain);
 
             // Đọc các hàm phân chia dữ liệu và tỉa cây
-            switch (cmbSplitFunc.SelectedItem.ToString())
+            string[] splitFuncs = {"Gain","Gain Ratio","GINI","Random"};
+            string[] pruneFuncs = {"Pessimistic", "Reduced-error", "None"};
+
+            double minErr = -1.0;
+            for (int splitIndex = 0; splitIndex < splitFuncs.Length; splitIndex++)
             {
-                case "Gain":
-                    tree.SplitFun = DecisionTreeAlgorithm.SPLIT_GAIN;
-                    break;
-                case "Gain Ratio":
-                    tree.SplitFun = DecisionTreeAlgorithm.SPLIT_GAIN_RATIO;
-                    break;
-                case "GINI":
-                    tree.SplitFun = DecisionTreeAlgorithm.SPLIT_GINI;
-                    break;
-                case "Random":
-                    tree.SplitFun = DecisionTreeAlgorithm.SPLIT_RANDOM;
-                    break;
-            }
-            switch (cmbPruneFunc.SelectedItem.ToString())
-            {                
-                case "Pessimistic":
-                    tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_PESSIMISTIC;
-                    break;
-                case "Reduced-error":
-                    tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_REDUCED_ERROR;
-                    break;
-                case "None":
-                    tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_NONE;
-                    break;                
-            }            
-
-            // Học, xây dựng lên cây quyết định
-            tree.BuildDTTree();
-
-            // Duyệt cây và trích ra tập luật
-            tree.ExtractRules();
-
-
-            iPos = strTrainFile.LastIndexOf('_');
-            string ruleFile = strTrainFile.Remove(iPos) + ".rules";
-            tree.SaveRule2File(ruleFile);
-            
-            // Bước 2: Thực hiện test trên dữ liệu train với mô hình mới tạo
-            //         và xác định số mẫu test dúng làm đầu vào cho AN gợi là NewDataTrain
-            // Thực hiện test lại với dữ liệu train, những mẫu test phân lớp lại đúng
-            // Sẽ là dữ liệu train cho ANN đặt là newANNDataTrain
-            Dataset dataDTTest = dataDTTrain;
-            List<int> CorrectClassifyTests = tree.ListRules.ClassifyAgain(dataDTTest);
-            
-            
-            // Bước 3: Thực hiện xây dựng mô hình ANN với dữ liệu học moi 
-            // Thực hiện test lại với dữ liệu train
-            //khởi tạo các tham số cho mạng
-            ANNParameterBUS.HiddenNode = int.Parse(tbxANNHiddenNode.Text);
-            ANNParameterBUS.OutputNode = 3;
-            ANNParameterBUS.MaxEpoch = int.Parse(tbxMaxLoops.Text);
-            ANNParameterBUS.LearningRate = double.Parse(tbxLearningRate.Text);
-            ANNParameterBUS.Momentum = double.Parse(tbxMomentum.Text);
-            ANNParameterBUS.Bias = double.Parse(tbxBias.Text);
-
-            //Tiến hành train
-            BackpropagationNetwork bpNetwork;
-            TrainingSet tempTrainingSet = new TrainingSet(strTrainFile, ANNParameterBUS.OutputNode);
-            TrainingSet trainSet = new TrainingSet(tempTrainingSet.InputVectorLength, ANNParameterBUS.OutputNode);
-            
-            
-            for(int i = 0; i < CorrectClassifyTests.Count; i++)
-            {
-                
-                int pos =(int) CorrectClassifyTests[i];
-                TrainingSample tsp = (TrainingSample)tempTrainingSet[i];
-                trainSet.Add(tsp);
-            }
-
-            LinearLayer inputLayer = new LinearLayer(trainSet.InputVectorLength);
-            ActivationLayer hidenLayer = null;
-            ActivationLayer outputLayer = null;
-            switch (cmbActivationFunc.SelectedItem.ToString())
-            {
-                case "Sigmoid":
-                    hidenLayer = new SigmoidLayer(ANNParameterBUS.HiddenNode);
-                    outputLayer = new SigmoidLayer(ANNParameterBUS.OutputNode);
-                    break;
-                case "Tanh":
-                    hidenLayer = new TanhLayer(ANNParameterBUS.HiddenNode);
-                    outputLayer = new TanhLayer(ANNParameterBUS.OutputNode);
-                    break;
-                case "Logarithm":
-                    hidenLayer = new LogarithmLayer(ANNParameterBUS.HiddenNode);
-                    outputLayer = new LogarithmLayer(ANNParameterBUS.OutputNode);
-                    break;
-                case "Sine":
-                    hidenLayer = new SineLayer(ANNParameterBUS.HiddenNode);
-                    outputLayer = new SineLayer(ANNParameterBUS.OutputNode);
-                    break;
-            }
-            new BackpropagationConnector(inputLayer, hidenLayer);
-            new BackpropagationConnector(hidenLayer, outputLayer);
-
-            bpNetwork = new BackpropagationNetwork(inputLayer, outputLayer);
-
-            bpNetwork.SetLearningRate(ANNParameterBUS.LearningRate);
-
-            bpNetwork.EndEpochEvent += new TrainingEpochEventHandler(
-                    delegate(object senderNetwork, TrainingEpochEventArgs args)
+                switch (splitFuncs[splitIndex].ToString())
+                {
+                    case "Gain":
+                        tree.SplitFun = DecisionTreeAlgorithm.SPLIT_GAIN;
+                        break;
+                    case "Gain Ratio":
+                        tree.SplitFun = DecisionTreeAlgorithm.SPLIT_GAIN_RATIO;
+                        break;
+                    case "GINI":
+                        tree.SplitFun = DecisionTreeAlgorithm.SPLIT_GINI;
+                        break;
+                    case "Random":
+                        tree.SplitFun = DecisionTreeAlgorithm.SPLIT_RANDOM;
+                        break;
+                }
+                for (int pruneIndex = 0; pruneIndex < pruneFuncs.Length; pruneIndex++)
+                {
+                    switch (pruneFuncs[pruneIndex].ToString())
                     {
-                        tlsProgressBar.Value = (int)(args.TrainingIteration * 100d / ANNParameterBUS.MaxEpoch);
-                        Application.DoEvents();
-                    });
-            bpNetwork.Learn(trainSet, ANNParameterBUS.MaxEpoch);
-            
-            // Bước 4: Lưu lại mô hình ANN  
-            iPos = strTrainFile.LastIndexOf('_');
-            string strModelFile = strTrainFile.Remove(iPos + 1) + "model.txt";
-            Stream stream = File.Open(strModelFile, FileMode.Create);
-            BinaryFormatter bformatter = new BinaryFormatter();
-            bformatter.Serialize(stream, bpNetwork);
-            stream.Close();
-            tlsProgressBar.Value = 0;  
+                        case "Pessimistic":
+                            tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_PESSIMISTIC;
+                            break;
+                        case "Reduced-error":
+                            tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_REDUCED_ERROR;
+                            break;
+                        case "None":
+                            tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_NONE;
+                            break;
+                    }
+                    // Học, xây dựng lên cây quyết định
+                    tree.BuildDTTree();
+
+                    // Duyệt cây và trích ra tập luật
+                    tree.ExtractRules();
+
+
+                    iPos = strTrainFile.LastIndexOf('_');
+                    string ruleFile = strTrainFile.Remove(iPos) + ".rules";
+                    tree.SaveRule2File(ruleFile);
+
+                    // Bước 2: Thực hiện test trên dữ liệu train với mô hình mới tạo
+                    //         và xác định số mẫu test dúng làm đầu vào cho AN gợi là NewDataTrain
+                    // Thực hiện test lại với dữ liệu train, những mẫu test phân lớp lại đúng
+                    // Sẽ là dữ liệu train cho ANN đặt là newANNDataTrain
+                    Dataset dataDTTest = dataDTTrain;
+                    List<int> CorrectClassifyTests = tree.ListRules.ClassifyAgain(dataDTTest);
+
+
+                    // Bước 3: Thực hiện xây dựng mô hình ANN với dữ liệu học moi 
+                    // Thực hiện test lại với dữ liệu train
+                    //khởi tạo các tham số cho mạng
+                    ANNParameterBUS.HiddenNode = int.Parse(tbxANNHiddenNode.Text);
+                    ANNParameterBUS.OutputNode = 3;
+                    ANNParameterBUS.MaxEpoch = int.Parse(tbxMaxLoops.Text);
+                    ANNParameterBUS.LearningRate = double.Parse(tbxLearningRate.Text);
+                    ANNParameterBUS.Momentum = double.Parse(tbxMomentum.Text);
+                    ANNParameterBUS.Bias = double.Parse(tbxBias.Text);
+
+                    //Tiến hành train
+                    BackpropagationNetwork bpNetwork;
+                    TrainingSet tempTrainingSet = new TrainingSet(strTrainFile, ANNParameterBUS.OutputNode);
+                    TrainingSet trainSet = new TrainingSet(tempTrainingSet.InputVectorLength, ANNParameterBUS.OutputNode);
+
+
+                    for (int i = 0; i < CorrectClassifyTests.Count; i++)
+                    {
+                        int pos = (int)CorrectClassifyTests[i];
+                        TrainingSample tsp = (TrainingSample)tempTrainingSet[i];
+                        trainSet.Add(tsp);
+                    }
+
+                    LinearLayer inputLayer = new LinearLayer(trainSet.InputVectorLength);
+                    ActivationLayer hidenLayer = null;
+                    ActivationLayer outputLayer = null;
+                    switch (cmbActivationFunc.SelectedItem.ToString())
+                    {
+                        case "Sigmoid":
+                            hidenLayer = new SigmoidLayer(ANNParameterBUS.HiddenNode);
+                            outputLayer = new SigmoidLayer(ANNParameterBUS.OutputNode);
+                            break;
+                        case "Tanh":
+                            hidenLayer = new TanhLayer(ANNParameterBUS.HiddenNode);
+                            outputLayer = new TanhLayer(ANNParameterBUS.OutputNode);
+                            break;
+                        case "Logarithm":
+                            hidenLayer = new LogarithmLayer(ANNParameterBUS.HiddenNode);
+                            outputLayer = new LogarithmLayer(ANNParameterBUS.OutputNode);
+                            break;
+                        case "Sine":
+                            hidenLayer = new SineLayer(ANNParameterBUS.HiddenNode);
+                            outputLayer = new SineLayer(ANNParameterBUS.OutputNode);
+                            break;
+                    }
+                    new BackpropagationConnector(inputLayer, hidenLayer);
+                    new BackpropagationConnector(hidenLayer, outputLayer);
+
+                    bpNetwork = new BackpropagationNetwork(inputLayer, outputLayer);
+
+                    bpNetwork.SetLearningRate(ANNParameterBUS.LearningRate);
+
+                    bpNetwork.EndEpochEvent += new TrainingEpochEventHandler(
+                            delegate(object senderNetwork, TrainingEpochEventArgs args)
+                            {
+                                tlsProgressBar.Value = (int)(args.TrainingIteration * 100d / ANNParameterBUS.MaxEpoch);
+                                Application.DoEvents();
+                            });
+                    bpNetwork.Learn(trainSet, ANNParameterBUS.MaxEpoch);
+                    if (minErr < 0 || minErr < bpNetwork.MeanSquaredError)
+                    {
+                        // Bước 4: Lưu lại mô hình ANN  
+                        iPos = strTrainFile.LastIndexOf('_');
+                        string strModelFile = strTrainFile.Remove(iPos + 1) + "model.txt";
+                        Stream stream = File.Open(strModelFile, FileMode.Create);
+                        BinaryFormatter bformatter = new BinaryFormatter();
+                        bformatter.Serialize(stream, bpNetwork);
+                        stream.Close();
+                        tlsProgressBar.Value = 0;
+                    }
+                }
+                
+            }            
         }
 
         private void WriteCorrectSamplesANN2File(List<TrainingSample> CorrectSamples, string dataFile)
