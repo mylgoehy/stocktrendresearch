@@ -411,8 +411,10 @@ namespace GUI
                                 Application.DoEvents();
                             });
                     bpNetwork.Learn(trainSet, ANNParameterBUS.MaxEpoch);
-                    if (minErr < 0 || minErr < bpNetwork.MeanSquaredError)
+                    if (minErr < 0 || minErr > bpNetwork.MeanSquaredError)
                     {
+                        minErr = bpNetwork.MeanSquaredError;
+
                         // Bước 4: Lưu lại mô hình ANN  
                         iPos = strTrainFile.LastIndexOf('_');
                         string strModelFile = strTrainFile.Remove(iPos + 1) + "model.txt";
