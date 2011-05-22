@@ -320,7 +320,7 @@ namespace BUS.DecisionTree
             int numSample = parser.DataLines.Count;
             
             String[] rawSample;
-            for (int i = 0; i < numSample; i++)
+            for (int i = 0; i < numSample -1; i++)
             {
                 rawSample = parser.extractDataSample(i);
 
