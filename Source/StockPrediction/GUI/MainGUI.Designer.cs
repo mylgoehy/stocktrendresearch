@@ -119,6 +119,9 @@
             this.staMainProgress = new System.Windows.Forms.StatusStrip();
             this.tlsProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.tlsStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.cbChoseData = new System.Windows.Forms.CheckBox();
+            this.tbxChoseFolder = new System.Windows.Forms.TextBox();
+            this.btnChoseFolder = new System.Windows.Forms.Button();
             this.tabMain.SuspendLayout();
             this.tabExperiment.SuspendLayout();
             this.gbResults.SuspendLayout();
@@ -153,6 +156,9 @@
             // tabExperiment
             // 
             this.tabExperiment.BackColor = System.Drawing.Color.Transparent;
+            this.tabExperiment.Controls.Add(this.tbxChoseFolder);
+            this.tabExperiment.Controls.Add(this.btnChoseFolder);
+            this.tabExperiment.Controls.Add(this.cbChoseData);
             this.tabExperiment.Controls.Add(this.label7);
             this.tabExperiment.Controls.Add(this.cmbExpStockID);
             this.tabExperiment.Controls.Add(this.gbResults);
@@ -177,7 +183,7 @@
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.ForeColor = System.Drawing.Color.Black;
-            this.label7.Location = new System.Drawing.Point(240, 20);
+            this.label7.Location = new System.Drawing.Point(236, 21);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(57, 13);
             this.label7.TabIndex = 51;
@@ -188,13 +194,11 @@
             this.cmbExpStockID.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbExpStockID.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmbExpStockID.FormattingEnabled = true;
-            this.cmbExpStockID.Items.AddRange(new object[] {
-            "Step-by-step",
-            "Batch"});
-            this.cmbExpStockID.Location = new System.Drawing.Point(303, 15);
+            this.cmbExpStockID.Location = new System.Drawing.Point(296, 15);
             this.cmbExpStockID.Name = "cmbExpStockID";
-            this.cmbExpStockID.Size = new System.Drawing.Size(81, 21);
+            this.cmbExpStockID.Size = new System.Drawing.Size(88, 21);
             this.cmbExpStockID.TabIndex = 50;
+            this.cmbExpStockID.SelectedIndexChanged += new System.EventHandler(this.cmbExpStockID_SelectedIndexChanged);
             // 
             // gbResults
             // 
@@ -397,7 +401,7 @@
             "Batch"});
             this.cmbExperimentMode.Location = new System.Drawing.Point(125, 15);
             this.cmbExperimentMode.Name = "cmbExperimentMode";
-            this.cmbExperimentMode.Size = new System.Drawing.Size(95, 21);
+            this.cmbExperimentMode.Size = new System.Drawing.Size(105, 21);
             this.cmbExperimentMode.TabIndex = 47;
             this.cmbExperimentMode.SelectedIndexChanged += new System.EventHandler(this.cmbExperimentMode_SelectedIndexChanged);
             // 
@@ -1096,7 +1100,7 @@
             // lblTo
             // 
             this.lblTo.AutoSize = true;
-            this.lblTo.Location = new System.Drawing.Point(506, 20);
+            this.lblTo.Location = new System.Drawing.Point(13, 74);
             this.lblTo.Name = "lblTo";
             this.lblTo.Size = new System.Drawing.Size(20, 13);
             this.lblTo.TabIndex = 29;
@@ -1105,7 +1109,7 @@
             // lblFrom
             // 
             this.lblFrom.AutoSize = true;
-            this.lblFrom.Location = new System.Drawing.Point(362, 21);
+            this.lblFrom.Location = new System.Drawing.Point(13, 48);
             this.lblFrom.Name = "lblFrom";
             this.lblFrom.Size = new System.Drawing.Size(30, 13);
             this.lblFrom.TabIndex = 28;
@@ -1114,7 +1118,7 @@
             // lblStockID
             // 
             this.lblStockID.AutoSize = true;
-            this.lblStockID.Location = new System.Drawing.Point(165, 22);
+            this.lblStockID.Location = new System.Drawing.Point(8, 10);
             this.lblStockID.Name = "lblStockID";
             this.lblStockID.Size = new System.Drawing.Size(49, 13);
             this.lblStockID.TabIndex = 27;
@@ -1123,7 +1127,7 @@
             // dtpTo
             // 
             this.dtpTo.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpTo.Location = new System.Drawing.Point(530, 18);
+            this.dtpTo.Location = new System.Drawing.Point(74, 68);
             this.dtpTo.Name = "dtpTo";
             this.dtpTo.Size = new System.Drawing.Size(81, 20);
             this.dtpTo.TabIndex = 25;
@@ -1132,7 +1136,7 @@
             // dtpFrom
             // 
             this.dtpFrom.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpFrom.Location = new System.Drawing.Point(398, 18);
+            this.dtpFrom.Location = new System.Drawing.Point(74, 42);
             this.dtpFrom.Name = "dtpFrom";
             this.dtpFrom.Size = new System.Drawing.Size(81, 20);
             this.dtpFrom.TabIndex = 24;
@@ -1141,16 +1145,16 @@
             // cmbStockID
             // 
             this.cmbStockID.FormattingEnabled = true;
-            this.cmbStockID.Location = new System.Drawing.Point(231, 18);
+            this.cmbStockID.Location = new System.Drawing.Point(74, 6);
             this.cmbStockID.Name = "cmbStockID";
-            this.cmbStockID.Size = new System.Drawing.Size(91, 21);
+            this.cmbStockID.Size = new System.Drawing.Size(81, 21);
             this.cmbStockID.TabIndex = 23;
             this.cmbStockID.SelectedIndexChanged += new System.EventHandler(this.cmbStockID_SelectedIndexChanged);
             // 
             // zg1
             // 
             this.zg1.EditButtons = System.Windows.Forms.MouseButtons.Left;
-            this.zg1.Location = new System.Drawing.Point(26, 45);
+            this.zg1.Location = new System.Drawing.Point(169, 33);
             this.zg1.Name = "zg1";
             this.zg1.PanModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.None)));
             this.zg1.ScrollGrace = 0;
@@ -1160,7 +1164,7 @@
             this.zg1.ScrollMinX = 0;
             this.zg1.ScrollMinY = 0;
             this.zg1.ScrollMinY2 = 0;
-            this.zg1.Size = new System.Drawing.Size(725, 410);
+            this.zg1.Size = new System.Drawing.Size(607, 320);
             this.zg1.TabIndex = 1;
             // 
             // lblBackTitle
@@ -1206,6 +1210,39 @@
             // 
             this.tlsStatus.Name = "tlsStatus";
             this.tlsStatus.Size = new System.Drawing.Size(0, 17);
+            // 
+            // cbChoseData
+            // 
+            this.cbChoseData.AutoSize = true;
+            this.cbChoseData.Location = new System.Drawing.Point(405, 20);
+            this.cbChoseData.Name = "cbChoseData";
+            this.cbChoseData.Size = new System.Drawing.Size(80, 17);
+            this.cbChoseData.TabIndex = 52;
+            this.cbChoseData.Text = "Chose data";
+            this.cbChoseData.UseVisualStyleBackColor = true;
+            this.cbChoseData.CheckedChanged += new System.EventHandler(this.cbChoseData_CheckedChanged);
+            // 
+            // tbxChoseFolder
+            // 
+            this.tbxChoseFolder.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbxChoseFolder.ForeColor = System.Drawing.Color.Black;
+            this.tbxChoseFolder.Location = new System.Drawing.Point(491, 18);
+            this.tbxChoseFolder.Name = "tbxChoseFolder";
+            this.tbxChoseFolder.Size = new System.Drawing.Size(244, 20);
+            this.tbxChoseFolder.TabIndex = 53;
+            // 
+            // btnChoseFolder
+            // 
+            this.btnChoseFolder.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnChoseFolder.ForeColor = System.Drawing.Color.Black;
+            this.btnChoseFolder.Image = ((System.Drawing.Image)(resources.GetObject("btnChoseFolder.Image")));
+            this.btnChoseFolder.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnChoseFolder.Location = new System.Drawing.Point(741, 15);
+            this.btnChoseFolder.Name = "btnChoseFolder";
+            this.btnChoseFolder.Size = new System.Drawing.Size(24, 24);
+            this.btnChoseFolder.TabIndex = 54;
+            this.btnChoseFolder.UseVisualStyleBackColor = true;
+            this.btnChoseFolder.Click += new System.EventHandler(this.btnChoseFolder_Click);
             // 
             // MainGUI
             // 
@@ -1347,6 +1384,9 @@
         private System.Windows.Forms.GroupBox gbKmeansSetting;
         private System.Windows.Forms.ComboBox cmbDistanceType;
         private System.Windows.Forms.Label lblDistanceType;
+        private System.Windows.Forms.CheckBox cbChoseData;
+        private System.Windows.Forms.TextBox tbxChoseFolder;
+        private System.Windows.Forms.Button btnChoseFolder;
     }
 }
 
