@@ -18,6 +18,7 @@ using BUS.ANN.Backpropagation;
 using BUS.KMeans;
 using System.Text.RegularExpressions;
 using BUS.DecisionTree;
+using System.Diagnostics;
 
 namespace GUI
 {
@@ -42,6 +43,13 @@ namespace GUI
         private string _modelFilePath;
 
         private double _accDTANNBefore = 0.0;
+
+        private string _resultShow = string.Empty;
+        private List<double > _costTimes = new List<double>();// phần tử thứ 0: thời gian xử lý dữ liêu
+                                                            // phần tử thứ 1: thời gian huấn luyện
+                                                            // phần tử thứ 2: thời gian kiểm thử
+
+        private string _defautFolder;
         #endregion
 
         public MainGUI()
@@ -57,7 +65,9 @@ namespace GUI
             
             writer = new StreamWriter(fileName);
             writer.WriteLine("Correct Predicted:\t" + Result.ToString() + "%");
-            writer.Close();            
+            writer.Close();
+
+            _resultShow += "<font color = \"red\">ACCURACY = " + Result.ToString() + "%</font><br>";
         }
 
         private void Preprocess(bool isBatchMode)
@@ -143,24 +153,30 @@ namespace GUI
             {
                 string strLine = reader.ReadLine();
                 trainWriter.WriteLine(strLine);
-                if (i < iSudDevideLine)// Phân bổ cho tập train con
-                {
-                    SubTrainWriter.WriteLine(strLine);
-                }
-                else// Phân bổ cho tập test con
-                {
-                    SubTestWriter.WriteLine(strLine);
-                }
+                if (rdDTANN.Checked == true)
+                {                    
+                    if (i < iSudDevideLine)// Phân bổ cho tập train con
+                    {
+                        SubTrainWriter.WriteLine(strLine);
+                    }
+                    else// Phân bổ cho tập test con
+                    {
+                        SubTestWriter.WriteLine(strLine);
+                    }
+                }                
 
                 strLine = dtReader.ReadLine();
                 dtTrainWriter.WriteLine(strLine);
-                if (i < iSudDevideLine)// Phân bổ cho tập train con
+                if (rdDTANN.Checked == true)
                 {
-                    dtannSubTrainWriter.WriteLine(strLine);
-                }
-                else// Phân bổ cho tập test con
-                {
-                    dtannSubTestWriter.WriteLine(strLine);
+                    if (i < iSudDevideLine)// Phân bổ cho tập train con
+                    {
+                        dtannSubTrainWriter.WriteLine(strLine);
+                    }
+                    else// Phân bổ cho tập test con
+                    {
+                        dtannSubTestWriter.WriteLine(strLine);
+                    }
                 }
             }
             for (; i < iNumLine; i++)
@@ -178,10 +194,13 @@ namespace GUI
             reader.Close();
             dtReader.Close();
 
-            SubTrainWriter.Close();
-            SubTestWriter.Close();
-            dtannSubTrainWriter.Close();
-            dtannSubTestWriter.Close();
+            if (rdDTANN.Checked == true)
+            {
+                SubTrainWriter.Close();
+                SubTestWriter.Close();
+                dtannSubTrainWriter.Close();
+                dtannSubTestWriter.Close();
+            }
         }
         /// <summary>
         /// Phần train cho SVM
@@ -769,7 +788,11 @@ namespace GUI
             Problem prob = Problem.Read(strTestFile);
             Model model = Model.Read(strModelFile);
             double dblPrecision = Prediction.Predict(prob, strPredictedFile, model, ckbProbEstimate.Checked);
+            
+            _resultShow += "<font color = \"red\">ACCURACY = " + dblPrecision.ToString() +"%</font><br>";
+
             StatisticTrend2File(strPredictedFile, strStatisticFile);
+
             StreamWriter writer = new StreamWriter(strMutualPath + "performance.txt");
             writer.WriteLine(dblPrecision);
             writer.Close();
@@ -825,10 +848,11 @@ namespace GUI
                 {
                     dblTotalPrecision += dblPrecision * clustering.Clusters[i].NumSample;
                 }
-            }
-            StatisticTrend2File(strPredictedFiles, strStatisticFile);
+            }            
             writer.WriteLine("All: " + dblTotalPrecision / samDataBUS.DataLines.Length);
             writer.Close();
+            _resultShow += "<font color = \"red\">ACCURACY = " + (dblTotalPrecision / samDataBUS.DataLines.Length).ToString() + "%</font><br>";
+            StatisticTrend2File(strPredictedFiles, strStatisticFile);
         }
         /// <summary>
         /// Phần test cho ANN DT
@@ -886,11 +910,11 @@ namespace GUI
             }
 
             // Ghi kết quả dự đoán xuống file
-            bpNetwork.Write2PredictFile(dblActual_Forecast, strPredictedFile);
+            bpNetwork.Write2PredictFile(dblActual_Forecast, strPredictedFile);            
+            // Ghi kết quả độ chính xác dự đoán được xuống file
+            WriteAccurancy2File(strMutualPath + "PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);
             // Thực hiện thống kế theo ma trận xu hướng và ghi xuống file
             StatisticTrend2File(strPredictedFile, strStatisticFile);
-            // Ghi kết quả độ chính xác dự đoán được xuống file
-            WriteAccurancy2File(strMutualPath + "PerformanceMeasure.txt", dblActual_Forecast[0], dblActual_Forecast[1]);          
         }
 
 
@@ -991,17 +1015,25 @@ namespace GUI
             }
 
             // Thực hiện ghi kết quả thống kê xuống file
+            double dblSERate;
+            int tempCount = 0;
             string[] strLables = { "Uptrend", "Notrend", "Downtrend" };
             for (int i = 0; i < tables.Length; i++)
             {
                 strTemp = "";
                 strTemp += strLables[i] + "\t";
                 for (int j = 0; j < tables.Length; j++)
-                {
+                {                    
                     strTemp += tables[i][j].ToString() + "\t";
-                }
+                    if ((i == 0 && j == 2) || (i == 2 && j == 0))
+                    {
+                        tempCount += tables[i][j];
+                    }
+                }                
                 writer.WriteLine(strTemp);
             }
+            dblSERate = (double)tempCount / 2;
+            _resultShow += "<font color = \"red\">SERate = " + dblSERate.ToString() + "%</font><br>";
             writer.Close();
         }
 
@@ -1100,6 +1132,8 @@ namespace GUI
                         break;
                 }
             }
+            double dblSERate;
+            int tempCount = 0;
             string[] strLables = { "Uptrend", "Notrend", "Downtrend" };
             for (int i = 0; i < tables.Length; i++)
             {
@@ -1108,14 +1142,32 @@ namespace GUI
                 for (int j = 0; j < tables.Length; j++)
                 {
                     strTemp += tables[i][j].ToString() + "\t";
+
+                    if ((i == 0 && j == 2) || (i == 2 && j == 0))
+                    {
+                        tempCount += tables[i][j];
+                    }
                 }
                 writer.WriteLine(strTemp);
             }
+            dblSERate = (double)tempCount / 2;
+            _resultShow += "<font color = \"red\">SERate = " + dblSERate.ToString() + "%</font><br>";
             writer.Close();
         }
 
         private void Finish()
         {
+            if (cmbExperimentMode.SelectedItem.ToString() == "Batch")
+            {
+                _resultShow += "   Thời gian tiền xử lý dữ liệu: " + _costTimes[0].ToString() + " mili giây <br>";
+                _resultShow += "   Thời gian huấn luyện mô hình: " + _costTimes[1].ToString() + " mili giây <br>";
+                _resultShow += "   Thời gian tiền kiểm thử mô hình: " + _costTimes[2].ToString() + " mili giây <br>";
+            }
+            else
+            {
+ 
+            }
+            wbResults.DocumentText = _resultShow;
             MessageBox.Show("Finish!", "Message", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -1134,6 +1186,9 @@ namespace GUI
 
             try
             {
+                Stopwatch st = new Stopwatch();
+
+                st.Start();
                 if (rdSVM.Checked)
                 {
                     TrainSVM(false);
@@ -1150,6 +1205,9 @@ namespace GUI
                 {
                     TrainANN_DT(false);
                 }
+                st.Stop();
+                _resultShow += "Thời gian huấn luyện mô hình: " + st.ElapsedMilliseconds.ToString() + " mili giây <br>";
+                wbResults.DocumentText = _resultShow;
             }
             catch (Exception ex)
             {
@@ -1182,6 +1240,8 @@ namespace GUI
 
             try
             {
+                Stopwatch st = new Stopwatch();
+                st.Start();
                 if (rdSVM.Checked)
                 {
                     TestSVM(false);
@@ -1199,6 +1259,9 @@ namespace GUI
                     TestANN_DT(false);                  
                 }
                 _accDTANNBefore = 0.0;
+                st.Stop();
+                //_resultShow += "   Thời gian tiền kiểm thử mô hình: " + st.ElapsedMilliseconds.ToString() + " mili giây <br>";
+                wbResults.DocumentText = _resultShow;
             }
             catch (Exception ex)
             {
@@ -1215,16 +1278,21 @@ namespace GUI
                 MessageBox.Show("Error: You must fill all required inputs!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
+            Stopwatch st = new Stopwatch();
             try
             {
+                st.Start();
                 Preprocess(false);
+                st.Stop();                
             }
             catch (Exception ex)
             {
                 ShowException(ex.Message);
             }
-            Finish();
+            _resultShow += "Thời gian tiền xử lý dữ liệu: " + st.ElapsedMilliseconds.ToString() + " mili giây <br>";
+            wbResults.DocumentText = _resultShow;
+            MessageBox.Show("Finish!", "Message", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //Finish();
         }
 
         private void MainGUI_Load(object sender, EventArgs e)
@@ -1237,6 +1305,7 @@ namespace GUI
             cmbExperimentMode.SelectedIndex = 0;
             cmbPruneFunc.SelectedIndex = 0;
             cmbSplitFunc.SelectedIndex = 0;
+            
             _trainFilePath = "";
             _testFilePath = "";
             _modelFilePath = "";
@@ -1259,6 +1328,51 @@ namespace GUI
             _stockRecordBUS = new StockRecordBUS();
             _stockRecordDTO = null;
             _stockPath = "";
+            
+            tbxChoseFolder.Visible = false;
+            btnChoseFolder.Visible = false;
+
+             _defautFolder = (System.Reflection.Assembly.GetExecutingAssembly().GetModules()[0].FullyQualifiedName).Replace(System.Reflection.Assembly.GetExecutingAssembly().GetModules()[0].Name, "");
+             _defautFolder += "Data\\";
+
+            LoadStockIdFromFolder(_defautFolder);           
+        }
+
+        private void LoadStockIdFromFolder(string defautFolder)
+        {            
+            if (cmbExpStockID.Items.Count != 0)
+            {
+                cmbExpStockID.Items.Clear();
+            }
+
+            string[] files = Directory.GetFiles(defautFolder);
+            if (files.Length != 0)
+            {
+                    for (int i = 0; i < files.Length; i++)
+                    {
+                        if (isCsvFile(files[i]) == true)
+                        {
+                            int startIndex = files[i].LastIndexOf("\\") + 1;
+                            int length = files[i].IndexOf(".") - startIndex;
+                            string temp = files[i].Substring(startIndex, length);
+                            cmbExpStockID.Items.Add(temp.ToUpper());
+                        }
+                    }
+                    if (cmbExpStockID.Items.Count != 0)
+                    {
+                        cmbExpStockID.SelectedIndex = 0;
+                    }
+            }
+        }
+
+        private bool isCsvFile(string filePath)
+        {
+            //kiểm tra phải đúng thư mục dữ liệu không
+            int startIndexEx = filePath.LastIndexOf(".") + 1;
+            string tempEx = filePath.Substring(startIndexEx, 3);
+            if (tempEx == "csv")
+                return true;
+            return false;
         }
 
         private void CreateGraph(ZedGraphControl zgc)
@@ -1620,7 +1734,7 @@ namespace GUI
             if (cmbExperimentMode.SelectedItem.ToString() == "Batch")
             {
                 gbBatchTrainTest.Enabled = true;
-                EnableStepByStepTrainAndTest(false);
+                EnableStepByStepTrainAndTest(false);                
             }
             else
             {
@@ -1660,26 +1774,66 @@ namespace GUI
 
             try
             {
+                Stopwatch st = new Stopwatch();
+
+                st.Start();
                 Preprocess(true);
+                st.Stop();
+                _costTimes.Add(st.ElapsedMilliseconds);
+
+                st.Reset();
                 if (rdSVM.Checked)
                 {
+                    st.Start();
                     TrainSVM(true);
+                    st.Stop();
+                    _costTimes.Add(st.ElapsedMilliseconds);
+                    st.Reset();
+
+                    st.Start();
                     TestSVM(true);
+                    st.Stop();
+                    _costTimes.Add(st.ElapsedMilliseconds);
                 }
                 else if (rdKSVMeans.Checked)
                 {
+                    st.Start();
                     TrainKSVMeans(true);
+                    st.Stop();
+                    _costTimes.Add(st.ElapsedMilliseconds);
+                    st.Reset();
+
+                    st.Start();
                     TestKSVMeans(true);
+                    st.Stop();
+                    _costTimes.Add(st.ElapsedMilliseconds);
+                    
                 }
                 else if (rdANN.Checked)//Mô hình ANN
                 {
+                    st.Start();
                     TrainANN(true);
+                    st.Stop();
+                    _costTimes.Add(st.ElapsedMilliseconds);
+                    st.Reset();
+
+                    st.Start();
                     TestANN(true);
+                    st.Stop();
+                    _costTimes.Add(st.ElapsedMilliseconds);
                 }
                 else
-                {                     
+                {
+                    st.Start();
                     TrainANN_DT(true);
-                    TestANN_DT(true);   
+                    st.Stop();
+                    _costTimes.Add(st.ElapsedMilliseconds);
+                    st.Reset();
+
+                    st.Start();
+                    TestANN_DT(true);  
+                    st.Stop();
+                    _costTimes.Add(st.ElapsedMilliseconds);
                 }
             }
             catch (Exception ex)
@@ -1707,6 +1861,66 @@ namespace GUI
             gbSVRSetting.Enabled = true;
             gbDTSetting.Enabled = false;
             gbKmeansSetting.Enabled = false;
+        }
+
+        private void cbChoseData_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbChoseData.Checked == true)
+            {
+                tbxChoseFolder.Visible = true;
+                btnChoseFolder.Visible = true;
+            }
+            else
+            {
+
+                tbxChoseFolder.Visible = false;
+                btnChoseFolder.Visible = false;
+                tbxChoseFolder.Text = "";
+                _defautFolder = (System.Reflection.Assembly.GetExecutingAssembly().GetModules()[0].FullyQualifiedName).Replace(System.Reflection.Assembly.GetExecutingAssembly().GetModules()[0].Name, "");
+                _defautFolder += "Data\\";
+                LoadStockIdFromFolder(_defautFolder);
+            }
+        }
+
+        private void btnChoseFolder_Click(object sender, EventArgs e)
+        {            
+            FolderBrowserDialog selectFolder = new FolderBrowserDialog ();
+            if (selectFolder.ShowDialog() == DialogResult.OK)
+            {
+                _defautFolder = selectFolder.SelectedPath + "\\";
+            }
+            tbxChoseFolder.Text = _defautFolder;
+            LoadStockIdFromFolder(_defautFolder);
+        }
+
+        private void cmbExpStockID_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbExpStockID.SelectedIndex >=0)
+            {
+                string stockId = cmbExpStockID.SelectedItem.ToString().ToLower();
+
+                if (cmbExperimentMode.SelectedItem.ToString() == "Batch")
+                {
+                    tbxBatchInputFile.Text = _defautFolder + stockId + ".csv";
+                    _trainFilePath = _defautFolder + stockId + "_" + cmbNumDaysPredicted.Text + "_train.txt";
+                    _testFilePath = _defautFolder + stockId + "_" + cmbNumDaysPredicted.Text + "_test.txt";
+                    _modelFilePath = _defautFolder + stockId + "_" + cmbNumDaysPredicted.Text + "_model.txt";
+                }
+                else
+                {
+                    tbxCsvFilePath.Text = _defautFolder + stockId + ".csv";
+                    tbxTrainFilePath.Text = _defautFolder + stockId + "_" + cmbNumDaysPredicted.Text + "_train.txt";
+                    tbxTestFilePath.Text = _defautFolder + stockId + "_" + cmbNumDaysPredicted.Text + "_test.txt";
+                    tbxModelFilePath.Text = _defautFolder + stockId + "_" + cmbNumDaysPredicted.Text + "_model.txt";
+                }                
+            }
+            else
+            {
+                tbxBatchInputFile.Text = "";
+                _trainFilePath = "";
+                _testFilePath = "";
+                _modelFilePath = "";
+            }
         }
     }
 }
