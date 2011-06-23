@@ -32,6 +32,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainGUI));
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabExperiment = new System.Windows.Forms.TabPage();
+            this.tbxChoseFolder = new System.Windows.Forms.TextBox();
+            this.btnChoseFolder = new System.Windows.Forms.Button();
+            this.cbChoseData = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.cmbExpStockID = new System.Windows.Forms.ComboBox();
             this.gbResults = new System.Windows.Forms.GroupBox();
@@ -106,7 +109,7 @@
             this.rdANN = new System.Windows.Forms.RadioButton();
             this.label10 = new System.Windows.Forms.Label();
             this.rdKSVMeans = new System.Windows.Forms.RadioButton();
-            this.tabDiagram = new System.Windows.Forms.TabPage();
+            this.tabApplication = new System.Windows.Forms.TabPage();
             this.lblTo = new System.Windows.Forms.Label();
             this.lblFrom = new System.Windows.Forms.Label();
             this.lblStockID = new System.Windows.Forms.Label();
@@ -119,9 +122,15 @@
             this.staMainProgress = new System.Windows.Forms.StatusStrip();
             this.tlsProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.tlsStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.cbChoseData = new System.Windows.Forms.CheckBox();
-            this.tbxChoseFolder = new System.Windows.Forms.TextBox();
-            this.btnChoseFolder = new System.Windows.Forms.Button();
+            this.gbStockChart = new System.Windows.Forms.GroupBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.cmbSAStockID = new System.Windows.Forms.ComboBox();
+            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.cbSAOneDay = new System.Windows.Forms.CheckBox();
+            this.cbSAFiveDay = new System.Windows.Forms.CheckBox();
+            this.btnSAPredict = new System.Windows.Forms.Button();
             this.tabMain.SuspendLayout();
             this.tabExperiment.SuspendLayout();
             this.gbResults.SuspendLayout();
@@ -138,15 +147,17 @@
             this.gbKmeansSetting.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).BeginInit();
             this.gbSVRSetting.SuspendLayout();
-            this.tabDiagram.SuspendLayout();
+            this.tabApplication.SuspendLayout();
             this.staMainProgress.SuspendLayout();
+            this.gbStockChart.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabMain
             // 
             this.tabMain.Controls.Add(this.tabExperiment);
-            this.tabMain.Controls.Add(this.tabDiagram);
-            this.tabMain.Location = new System.Drawing.Point(0, 55);
+            this.tabMain.Controls.Add(this.tabApplication);
+            this.tabMain.Location = new System.Drawing.Point(0, 52);
             this.tabMain.Name = "tabMain";
             this.tabMain.SelectedIndex = 0;
             this.tabMain.Size = new System.Drawing.Size(784, 570);
@@ -177,6 +188,39 @@
             this.tabExperiment.Size = new System.Drawing.Size(776, 544);
             this.tabExperiment.TabIndex = 0;
             this.tabExperiment.Text = "EXPERIMENT";
+            // 
+            // tbxChoseFolder
+            // 
+            this.tbxChoseFolder.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbxChoseFolder.ForeColor = System.Drawing.Color.Black;
+            this.tbxChoseFolder.Location = new System.Drawing.Point(491, 18);
+            this.tbxChoseFolder.Name = "tbxChoseFolder";
+            this.tbxChoseFolder.Size = new System.Drawing.Size(244, 20);
+            this.tbxChoseFolder.TabIndex = 53;
+            // 
+            // btnChoseFolder
+            // 
+            this.btnChoseFolder.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnChoseFolder.ForeColor = System.Drawing.Color.Black;
+            this.btnChoseFolder.Image = ((System.Drawing.Image)(resources.GetObject("btnChoseFolder.Image")));
+            this.btnChoseFolder.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnChoseFolder.Location = new System.Drawing.Point(741, 15);
+            this.btnChoseFolder.Name = "btnChoseFolder";
+            this.btnChoseFolder.Size = new System.Drawing.Size(24, 24);
+            this.btnChoseFolder.TabIndex = 54;
+            this.btnChoseFolder.UseVisualStyleBackColor = true;
+            this.btnChoseFolder.Click += new System.EventHandler(this.btnChoseFolder_Click);
+            // 
+            // cbChoseData
+            // 
+            this.cbChoseData.AutoSize = true;
+            this.cbChoseData.Location = new System.Drawing.Point(405, 20);
+            this.cbChoseData.Name = "cbChoseData";
+            this.cbChoseData.Size = new System.Drawing.Size(80, 17);
+            this.cbChoseData.TabIndex = 52;
+            this.cbChoseData.Text = "Chose data";
+            this.cbChoseData.UseVisualStyleBackColor = true;
+            this.cbChoseData.CheckedChanged += new System.EventHandler(this.cbChoseData_CheckedChanged);
             // 
             // label7
             // 
@@ -388,6 +432,7 @@
             this.btnTest.Size = new System.Drawing.Size(80, 35);
             this.btnTest.TabIndex = 6;
             this.btnTest.Text = "Test";
+            this.btnTest.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnTest.UseVisualStyleBackColor = true;
             this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
             // 
@@ -463,6 +508,7 @@
             this.btnTrain.Size = new System.Drawing.Size(80, 35);
             this.btnTrain.TabIndex = 6;
             this.btnTrain.Text = "Train";
+            this.btnTrain.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnTrain.UseVisualStyleBackColor = true;
             this.btnTrain.Click += new System.EventHandler(this.btnTrain_Click);
             // 
@@ -503,6 +549,7 @@
             this.btnPreprocess.Size = new System.Drawing.Size(80, 35);
             this.btnPreprocess.TabIndex = 7;
             this.btnPreprocess.Text = "  Preprocess";
+            this.btnPreprocess.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnPreprocess.UseVisualStyleBackColor = true;
             this.btnPreprocess.Click += new System.EventHandler(this.btnPreprocess_Click);
             // 
@@ -805,7 +852,7 @@
             this.tabSVM_KMeans.Location = new System.Drawing.Point(4, 22);
             this.tabSVM_KMeans.Name = "tabSVM_KMeans";
             this.tabSVM_KMeans.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSVM_KMeans.Size = new System.Drawing.Size(347, 158);
+            this.tabSVM_KMeans.Size = new System.Drawing.Size(349, 158);
             this.tabSVM_KMeans.TabIndex = 1;
             this.tabSVM_KMeans.Text = "SVM";
             // 
@@ -1001,9 +1048,7 @@
             this.cmbNumDaysPredicted.FormattingEnabled = true;
             this.cmbNumDaysPredicted.Items.AddRange(new object[] {
             "1",
-            "5",
-            "10",
-            "30"});
+            "5"});
             this.cmbNumDaysPredicted.Location = new System.Drawing.Point(113, 49);
             this.cmbNumDaysPredicted.Name = "cmbNumDaysPredicted";
             this.cmbNumDaysPredicted.Size = new System.Drawing.Size(37, 21);
@@ -1080,27 +1125,25 @@
             this.rdKSVMeans.UseVisualStyleBackColor = true;
             this.rdKSVMeans.CheckedChanged += new System.EventHandler(this.rdKSVMeans_CheckedChanged);
             // 
-            // tabDiagram
+            // tabApplication
             // 
-            this.tabDiagram.BackColor = System.Drawing.Color.Transparent;
-            this.tabDiagram.Controls.Add(this.lblTo);
-            this.tabDiagram.Controls.Add(this.lblFrom);
-            this.tabDiagram.Controls.Add(this.lblStockID);
-            this.tabDiagram.Controls.Add(this.dtpTo);
-            this.tabDiagram.Controls.Add(this.dtpFrom);
-            this.tabDiagram.Controls.Add(this.cmbStockID);
-            this.tabDiagram.Controls.Add(this.zg1);
-            this.tabDiagram.Location = new System.Drawing.Point(4, 22);
-            this.tabDiagram.Name = "tabDiagram";
-            this.tabDiagram.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDiagram.Size = new System.Drawing.Size(776, 544);
-            this.tabDiagram.TabIndex = 1;
-            this.tabDiagram.Text = "DIAGRAM";
+            this.tabApplication.BackColor = System.Drawing.Color.Transparent;
+            this.tabApplication.Controls.Add(this.webBrowser1);
+            this.tabApplication.Controls.Add(this.groupBox1);
+            this.tabApplication.Controls.Add(this.gbStockChart);
+            this.tabApplication.Location = new System.Drawing.Point(4, 22);
+            this.tabApplication.Name = "tabApplication";
+            this.tabApplication.Padding = new System.Windows.Forms.Padding(3);
+            this.tabApplication.Size = new System.Drawing.Size(776, 544);
+            this.tabApplication.TabIndex = 1;
+            this.tabApplication.Text = "APPLICATION";
             // 
             // lblTo
             // 
             this.lblTo.AutoSize = true;
-            this.lblTo.Location = new System.Drawing.Point(13, 74);
+            this.lblTo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTo.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.lblTo.Location = new System.Drawing.Point(336, 22);
             this.lblTo.Name = "lblTo";
             this.lblTo.Size = new System.Drawing.Size(20, 13);
             this.lblTo.TabIndex = 29;
@@ -1109,7 +1152,9 @@
             // lblFrom
             // 
             this.lblFrom.AutoSize = true;
-            this.lblFrom.Location = new System.Drawing.Point(13, 48);
+            this.lblFrom.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFrom.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.lblFrom.Location = new System.Drawing.Point(169, 22);
             this.lblFrom.Name = "lblFrom";
             this.lblFrom.Size = new System.Drawing.Size(30, 13);
             this.lblFrom.TabIndex = 28;
@@ -1118,7 +1163,9 @@
             // lblStockID
             // 
             this.lblStockID.AutoSize = true;
-            this.lblStockID.Location = new System.Drawing.Point(8, 10);
+            this.lblStockID.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblStockID.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.lblStockID.Location = new System.Drawing.Point(4, 22);
             this.lblStockID.Name = "lblStockID";
             this.lblStockID.Size = new System.Drawing.Size(49, 13);
             this.lblStockID.TabIndex = 27;
@@ -1126,8 +1173,9 @@
             // 
             // dtpTo
             // 
+            this.dtpTo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpTo.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpTo.Location = new System.Drawing.Point(74, 68);
+            this.dtpTo.Location = new System.Drawing.Point(391, 16);
             this.dtpTo.Name = "dtpTo";
             this.dtpTo.Size = new System.Drawing.Size(81, 20);
             this.dtpTo.TabIndex = 25;
@@ -1135,8 +1183,9 @@
             // 
             // dtpFrom
             // 
+            this.dtpFrom.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpFrom.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpFrom.Location = new System.Drawing.Point(74, 42);
+            this.dtpFrom.Location = new System.Drawing.Point(224, 16);
             this.dtpFrom.Name = "dtpFrom";
             this.dtpFrom.Size = new System.Drawing.Size(81, 20);
             this.dtpFrom.TabIndex = 24;
@@ -1144,8 +1193,9 @@
             // 
             // cmbStockID
             // 
+            this.cmbStockID.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cmbStockID.FormattingEnabled = true;
-            this.cmbStockID.Location = new System.Drawing.Point(74, 6);
+            this.cmbStockID.Location = new System.Drawing.Point(59, 15);
             this.cmbStockID.Name = "cmbStockID";
             this.cmbStockID.Size = new System.Drawing.Size(81, 21);
             this.cmbStockID.TabIndex = 23;
@@ -1154,7 +1204,7 @@
             // zg1
             // 
             this.zg1.EditButtons = System.Windows.Forms.MouseButtons.Left;
-            this.zg1.Location = new System.Drawing.Point(169, 33);
+            this.zg1.Location = new System.Drawing.Point(6, 47);
             this.zg1.Name = "zg1";
             this.zg1.PanModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.None)));
             this.zg1.ScrollGrace = 0;
@@ -1164,7 +1214,7 @@
             this.zg1.ScrollMinX = 0;
             this.zg1.ScrollMinY = 0;
             this.zg1.ScrollMinY2 = 0;
-            this.zg1.Size = new System.Drawing.Size(607, 320);
+            this.zg1.Size = new System.Drawing.Size(761, 318);
             this.zg1.TabIndex = 1;
             // 
             // lblBackTitle
@@ -1211,38 +1261,115 @@
             this.tlsStatus.Name = "tlsStatus";
             this.tlsStatus.Size = new System.Drawing.Size(0, 17);
             // 
-            // cbChoseData
+            // gbStockChart
             // 
-            this.cbChoseData.AutoSize = true;
-            this.cbChoseData.Location = new System.Drawing.Point(405, 20);
-            this.cbChoseData.Name = "cbChoseData";
-            this.cbChoseData.Size = new System.Drawing.Size(80, 17);
-            this.cbChoseData.TabIndex = 52;
-            this.cbChoseData.Text = "Chose data";
-            this.cbChoseData.UseVisualStyleBackColor = true;
-            this.cbChoseData.CheckedChanged += new System.EventHandler(this.cbChoseData_CheckedChanged);
+            this.gbStockChart.Controls.Add(this.zg1);
+            this.gbStockChart.Controls.Add(this.lblTo);
+            this.gbStockChart.Controls.Add(this.cmbStockID);
+            this.gbStockChart.Controls.Add(this.lblFrom);
+            this.gbStockChart.Controls.Add(this.dtpFrom);
+            this.gbStockChart.Controls.Add(this.lblStockID);
+            this.gbStockChart.Controls.Add(this.dtpTo);
+            this.gbStockChart.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.gbStockChart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.gbStockChart.Location = new System.Drawing.Point(3, 6);
+            this.gbStockChart.Name = "gbStockChart";
+            this.gbStockChart.Size = new System.Drawing.Size(770, 372);
+            this.gbStockChart.TabIndex = 30;
+            this.gbStockChart.TabStop = false;
+            this.gbStockChart.Text = "Stock chart";
             // 
-            // tbxChoseFolder
+            // groupBox1
             // 
-            this.tbxChoseFolder.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbxChoseFolder.ForeColor = System.Drawing.Color.Black;
-            this.tbxChoseFolder.Location = new System.Drawing.Point(491, 18);
-            this.tbxChoseFolder.Name = "tbxChoseFolder";
-            this.tbxChoseFolder.Size = new System.Drawing.Size(244, 20);
-            this.tbxChoseFolder.TabIndex = 53;
+            this.groupBox1.Controls.Add(this.btnSAPredict);
+            this.groupBox1.Controls.Add(this.cbSAFiveDay);
+            this.groupBox1.Controls.Add(this.cbSAOneDay);
+            this.groupBox1.Controls.Add(this.label9);
+            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.cmbSAStockID);
+            this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.groupBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.groupBox1.Location = new System.Drawing.Point(3, 384);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(765, 154);
+            this.groupBox1.TabIndex = 31;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Stock Advice";
             // 
-            // btnChoseFolder
+            // cmbSAStockID
             // 
-            this.btnChoseFolder.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnChoseFolder.ForeColor = System.Drawing.Color.Black;
-            this.btnChoseFolder.Image = ((System.Drawing.Image)(resources.GetObject("btnChoseFolder.Image")));
-            this.btnChoseFolder.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnChoseFolder.Location = new System.Drawing.Point(741, 15);
-            this.btnChoseFolder.Name = "btnChoseFolder";
-            this.btnChoseFolder.Size = new System.Drawing.Size(24, 24);
-            this.btnChoseFolder.TabIndex = 54;
-            this.btnChoseFolder.UseVisualStyleBackColor = true;
-            this.btnChoseFolder.Click += new System.EventHandler(this.btnChoseFolder_Click);
+            this.cmbSAStockID.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbSAStockID.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.cmbSAStockID.FormattingEnabled = true;
+            this.cmbSAStockID.Location = new System.Drawing.Point(138, 29);
+            this.cmbSAStockID.Name = "cmbSAStockID";
+            this.cmbSAStockID.Size = new System.Drawing.Size(114, 21);
+            this.cmbSAStockID.TabIndex = 0;
+            // 
+            // webBrowser1
+            // 
+            this.webBrowser1.Location = new System.Drawing.Point(277, 403);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.Size = new System.Drawing.Size(485, 129);
+            this.webBrowser1.TabIndex = 1;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.label8.Location = new System.Drawing.Point(7, 34);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(103, 13);
+            this.label8.TabIndex = 1;
+            this.label8.Text = "Chose your stock ID";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.label9.Location = new System.Drawing.Point(7, 66);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(114, 13);
+            this.label9.TabIndex = 2;
+            this.label9.Text = "How it\'s trend will be in";
+            // 
+            // cbSAOneDay
+            // 
+            this.cbSAOneDay.AutoSize = true;
+            this.cbSAOneDay.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbSAOneDay.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.cbSAOneDay.Location = new System.Drawing.Point(138, 64);
+            this.cbSAOneDay.Name = "cbSAOneDay";
+            this.cbSAOneDay.Size = new System.Drawing.Size(54, 17);
+            this.cbSAOneDay.TabIndex = 3;
+            this.cbSAOneDay.Text = "1 Day";
+            this.cbSAOneDay.UseVisualStyleBackColor = true;
+            // 
+            // cbSAFiveDay
+            // 
+            this.cbSAFiveDay.AutoSize = true;
+            this.cbSAFiveDay.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbSAFiveDay.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.cbSAFiveDay.Location = new System.Drawing.Point(199, 64);
+            this.cbSAFiveDay.Name = "cbSAFiveDay";
+            this.cbSAFiveDay.Size = new System.Drawing.Size(59, 17);
+            this.cbSAFiveDay.TabIndex = 4;
+            this.cbSAFiveDay.Text = "5 Days";
+            this.cbSAFiveDay.UseVisualStyleBackColor = true;
+            // 
+            // btnSAPredict
+            // 
+            this.btnSAPredict.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSAPredict.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.btnSAPredict.Location = new System.Drawing.Point(90, 107);
+            this.btnSAPredict.Name = "btnSAPredict";
+            this.btnSAPredict.Size = new System.Drawing.Size(75, 23);
+            this.btnSAPredict.TabIndex = 5;
+            this.btnSAPredict.Text = "Predict";
+            this.btnSAPredict.UseVisualStyleBackColor = true;
             // 
             // MainGUI
             // 
@@ -1284,10 +1411,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.nmNumCluster)).EndInit();
             this.gbSVRSetting.ResumeLayout(false);
             this.gbSVRSetting.PerformLayout();
-            this.tabDiagram.ResumeLayout(false);
-            this.tabDiagram.PerformLayout();
+            this.tabApplication.ResumeLayout(false);
             this.staMainProgress.ResumeLayout(false);
             this.staMainProgress.PerformLayout();
+            this.gbStockChart.ResumeLayout(false);
+            this.gbStockChart.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1297,7 +1427,7 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TabControl tabMain;
-        private System.Windows.Forms.TabPage tabDiagram;
+        private System.Windows.Forms.TabPage tabApplication;
         private System.Windows.Forms.TabPage tabExperiment;
         private System.Windows.Forms.GroupBox gbSVRSetting;
         private System.Windows.Forms.TextBox tbxNumFold;
@@ -1387,6 +1517,15 @@
         private System.Windows.Forms.CheckBox cbChoseData;
         private System.Windows.Forms.TextBox tbxChoseFolder;
         private System.Windows.Forms.Button btnChoseFolder;
+        private System.Windows.Forms.GroupBox gbStockChart;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.WebBrowser webBrowser1;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.ComboBox cmbSAStockID;
+        private System.Windows.Forms.CheckBox cbSAFiveDay;
+        private System.Windows.Forms.CheckBox cbSAOneDay;
+        private System.Windows.Forms.Button btnSAPredict;
     }
 }
 
