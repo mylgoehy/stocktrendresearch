@@ -34,7 +34,7 @@ namespace GUI
 
         private StockRecordDTO _stockRecordDTO;
         private StockRecordBUS _stockRecordBUS;
-        private string _stockPath;
+        private string _stockAppPath;
         private double _pricePredict = 0;
         private double _trendPredict = 0;
 
@@ -1327,7 +1327,7 @@ namespace GUI
 
             _stockRecordBUS = new StockRecordBUS();
             _stockRecordDTO = null;
-            _stockPath = "";
+            _stockAppPath = "";
             
             tbxChoseFolder.Visible = false;
             btnChoseFolder.Visible = false;
@@ -1381,7 +1381,7 @@ namespace GUI
             myPane.CurveList.Clear();
             
             // Set the titles and axis labels
-            myPane.Title.Text = "Stock Chart";
+            myPane.Title.Text = "Stock Chart " + _stockRecordDTO.ID.ToString();
             myPane.XAxis.Title.Text = "Time";
             myPane.YAxis.Title.Text = "Price";
 
@@ -1461,8 +1461,8 @@ namespace GUI
         {
             if (cmbStockID.SelectedItem != null)
             {
-                _stockPath = "Excel" + "\\" + cmbStockID.SelectedItem.ToString() + ".csv";
-                _stockRecordDTO = _stockRecordBUS.LoadData(_stockPath);
+                _stockAppPath = _defautFolder + cmbStockID.SelectedItem.ToString() + ".csv";
+                _stockRecordDTO = _stockRecordBUS.LoadData(_stockAppPath);
                 dtpFrom.Value = ((EntryDTO)_stockRecordDTO.Entries[0]).Date;
                 dtpTo.Value = ((EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1]).Date;
                 //dtpInputDay.Value = ((EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1]).Date;
@@ -1661,11 +1661,10 @@ namespace GUI
 
         private void tabOption_Selected(object sender, TabControlEventArgs e)
         {
-
             try
             {
                 //Load tất cả mã chứng khoán lên combobox
-                string[] fileNames = Directory.GetFiles("Excel");
+                string[] fileNames = Directory.GetFiles(_defautFolder);
                 cmbStockID.Items.Clear();
                 for (int i = 0; i < fileNames.Length; i++)
                 {
@@ -1674,7 +1673,6 @@ namespace GUI
 
                     cmbStockID.Items.Add(strTemp);
                 }
-
                 if (cmbStockID.Items.Count > 0)
                 {
                     cmbStockID.SelectedIndex = 0;
@@ -1721,12 +1719,13 @@ namespace GUI
         
         private void EnableStepByStepTrainAndTest(bool isEnable)
         {
-            btnTrain.Enabled = isEnable;
-            btnTrainBrowser.Enabled = isEnable;
-            tbxTrainFilePath.Enabled = isEnable;
-            lblTrainingFile.Enabled = isEnable;
+            //btnTrain.Enabled = isEnable;
+            //btnTrainBrowser.Enabled = isEnable;
+            //tbxTrainFilePath.Enabled = isEnable;
+            //lblTrainingFile.Enabled = isEnable;
             gbTest.Enabled = isEnable;
             gbPreprocess.Enabled = isEnable;
+            gbTraining.Enabled = isEnable;
         }
 
         private void cmbExperimentMode_SelectedIndexChanged(object sender, EventArgs e)
