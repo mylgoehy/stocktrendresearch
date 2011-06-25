@@ -132,6 +132,7 @@
     <Compile Include="SVM\SVMExtensions.cs" />
     <Compile Include="SVM\TemporaryCulture.cs" />
     <Compile Include="SVM\Training.cs" />
+    <Compile Include="UpdateDataBUS.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAO\DAO.csproj">
