@@ -50,6 +50,10 @@ namespace GUI
                                                             // phần tử thứ 2: thời gian kiểm thử
 
         private string _defautFolder;
+        private string _updateFolder;
+
+        private StockRecordDTO _stockSARecordDTO;
+        private StockRecordBUS _stockSARecordBUS;
         #endregion
 
         public MainGUI()
@@ -67,7 +71,7 @@ namespace GUI
             writer.WriteLine("Correct Predicted:\t" + Result.ToString() + "%");
             writer.Close();
 
-            _resultShow += "<font color = \"red\">ACCURACY = " + Result.ToString() + "%</font><br>";
+            _resultShow += "<font color = \"blue\">Accuracy = " + Result.ToString() + "%</font><br>";
         }
 
         private void Preprocess(bool isBatchMode)
@@ -389,10 +393,7 @@ namespace GUI
                     break;
                 case "Reduced-error":
                     tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_REDUCED_ERROR;
-                    break;
-                case "None":
-                    tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_NONE;
-                    break;
+                    break;                
             }
             // Học, xây dựng lên cây quyết định
             tree.BuildDTTree();
@@ -487,7 +488,7 @@ namespace GUI
         {
             // Đọc các hàm phân chia dữ liệu và tỉa cây
             string[] splitFuncs = { "Gain", "Gain Ratio", "GINI", "Random" };
-            string[] pruneFuncs = { "Pessimistic", "Reduced-error", "None" };
+            string[] pruneFuncs = { "Pessimistic", "Reduced-error"};
 
             int isplitFuncsKeep = 0;
             int ipruneFuncsKeep = 0;
@@ -592,9 +593,6 @@ namespace GUI
                     break;
                 case "Reduced-error":
                     tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_REDUCED_ERROR;
-                    break;
-                case "None":
-                    tree.PruneAlg = DecisionTreeAlgorithm.PRUNING_NONE;
                     break;
             }
             // Học, xây dựng lên cây quyết định
@@ -789,7 +787,7 @@ namespace GUI
             Model model = Model.Read(strModelFile);
             double dblPrecision = Prediction.Predict(prob, strPredictedFile, model, ckbProbEstimate.Checked);
             
-            _resultShow += "<font color = \"red\">ACCURACY = " + dblPrecision.ToString() +"%</font><br>";
+            _resultShow += "<font color = \"blue\">Accuracy = " + dblPrecision.ToString() +"%</font><br>";
 
             StatisticTrend2File(strPredictedFile, strStatisticFile);
 
@@ -851,7 +849,7 @@ namespace GUI
             }            
             writer.WriteLine("All: " + dblTotalPrecision / samDataBUS.DataLines.Length);
             writer.Close();
-            _resultShow += "<font color = \"red\">ACCURACY = " + (dblTotalPrecision / samDataBUS.DataLines.Length).ToString() + "%</font><br>";
+            _resultShow += "<font color = \"blue\">Accuracy = " + (dblTotalPrecision / samDataBUS.DataLines.Length).ToString() + "%</font><br>";
             StatisticTrend2File(strPredictedFiles, strStatisticFile);
         }
         /// <summary>
@@ -1159,15 +1157,16 @@ namespace GUI
         {
             if (cmbExperimentMode.SelectedItem.ToString() == "Batch")
             {
-                _resultShow += "   Thời gian tiền xử lý dữ liệu: " + _costTimes[0].ToString() + " mili giây <br>";
-                _resultShow += "   Thời gian huấn luyện mô hình: " + _costTimes[1].ToString() + " mili giây <br>";
-                _resultShow += "   Thời gian tiền kiểm thử mô hình: " + _costTimes[2].ToString() + " mili giây <br>";
+                _resultShow += "   Thời gian tiền xử lý dữ liệu: " + (_costTimes[0] / 100).ToString() + " giây <br>";
+                _resultShow += "   Thời gian huấn luyện mô hình: " + (_costTimes[1] / 100).ToString() + " giây <br>";
+                _resultShow += "   Thời gian tiền kiểm thử mô hình: " + (_costTimes[2]/100).ToString() + " giây <br>";
             }
             else
             {
  
             }
             wbResults.DocumentText = _resultShow;
+            _resultShow = string.Empty;
             MessageBox.Show("Finish!", "Message", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -1206,7 +1205,7 @@ namespace GUI
                     TrainANN_DT(false);
                 }
                 st.Stop();
-                _resultShow += "Thời gian huấn luyện mô hình: " + st.ElapsedMilliseconds.ToString() + " mili giây <br>";
+                _resultShow += "Thời gian huấn luyện mô hình: " + (st.ElapsedMilliseconds / 100).ToString() + " giây <br>";
                 wbResults.DocumentText = _resultShow;
             }
             catch (Exception ex)
@@ -1214,7 +1213,7 @@ namespace GUI
                 ShowException(ex.Message);
                 throw;
             }
-            Finish();
+            //Finish();
         }
         
         private void btnPreprocessBrowser_Click(object sender, EventArgs e)
@@ -1260,15 +1259,14 @@ namespace GUI
                 }
                 _accDTANNBefore = 0.0;
                 st.Stop();
-                //_resultShow += "   Thời gian tiền kiểm thử mô hình: " + st.ElapsedMilliseconds.ToString() + " mili giây <br>";
+                _resultShow += "   Thời gian tiền kiểm thử mô hình: " + (st.ElapsedMilliseconds/100).ToString() + " giây <br>";
                 wbResults.DocumentText = _resultShow;
             }
             catch (Exception ex)
             {
                 ShowException(ex.Message);
             }
-
-            Finish();          
+            //Finish();          
         }
 
         private void btnPreprocess_Click(object sender, EventArgs e)
@@ -1281,6 +1279,7 @@ namespace GUI
             Stopwatch st = new Stopwatch();
             try
             {
+                _resultShow = "Mã :<font color=\"green\"> " + cmbExpStockID.SelectedItem.ToString() + "</font><br>";
                 st.Start();
                 Preprocess(false);
                 st.Stop();                
@@ -1289,7 +1288,7 @@ namespace GUI
             {
                 ShowException(ex.Message);
             }
-            _resultShow += "Thời gian tiền xử lý dữ liệu: " + st.ElapsedMilliseconds.ToString() + " mili giây <br>";
+            _resultShow += "Thời gian tiền xử lý dữ liệu: " + (st.ElapsedMilliseconds/100).ToString() + " giây <br>";
             wbResults.DocumentText = _resultShow;
             MessageBox.Show("Finish!", "Message", MessageBoxButtons.OK, MessageBoxIcon.Information);
             //Finish();
@@ -1305,6 +1304,7 @@ namespace GUI
             cmbExperimentMode.SelectedIndex = 0;
             cmbPruneFunc.SelectedIndex = 0;
             cmbSplitFunc.SelectedIndex = 0;
+            cmbSAStockID.SelectedIndex = 0;
             
             _trainFilePath = "";
             _testFilePath = "";
@@ -1327,13 +1327,19 @@ namespace GUI
 
             _stockRecordBUS = new StockRecordBUS();
             _stockRecordDTO = null;
+
+            _stockSARecordBUS = new StockRecordBUS();
+            _stockSARecordDTO = null;
+
             _stockAppPath = "";
             
             tbxChoseFolder.Visible = false;
             btnChoseFolder.Visible = false;
 
              _defautFolder = (System.Reflection.Assembly.GetExecutingAssembly().GetModules()[0].FullyQualifiedName).Replace(System.Reflection.Assembly.GetExecutingAssembly().GetModules()[0].Name, "");
+             _updateFolder = _defautFolder + "DataUpdate\\";
              _defautFolder += "Data\\";
+            
 
             LoadStockIdFromFolder(_defautFolder);           
         }
@@ -1381,7 +1387,7 @@ namespace GUI
             myPane.CurveList.Clear();
             
             // Set the titles and axis labels
-            myPane.Title.Text = "Stock Chart " + _stockRecordDTO.ID.ToString();
+            myPane.Title.Text = "Stock History Chart " + _stockSARecordDTO.ID.ToString();
             myPane.XAxis.Title.Text = "Time";
             myPane.YAxis.Title.Text = "Price";
 
@@ -1391,7 +1397,7 @@ namespace GUI
             DateTime from = dtpFrom.Value;
             DateTime to = dtpTo.Value;
 
-            foreach (EntryDTO entryDTO in _stockRecordDTO.Entries)
+            foreach (EntryDTO entryDTO in _stockSARecordDTO.Entries)
             {
                 if (entryDTO.Date.Subtract(from).Days >= 0 && entryDTO.Date.Subtract(to).Days <= 0)
                 {
@@ -1461,10 +1467,10 @@ namespace GUI
         {
             if (cmbStockID.SelectedItem != null)
             {
-                _stockAppPath = _defautFolder + cmbStockID.SelectedItem.ToString() + ".csv";
-                _stockRecordDTO = _stockRecordBUS.LoadData(_stockAppPath);
-                dtpFrom.Value = ((EntryDTO)_stockRecordDTO.Entries[0]).Date;
-                dtpTo.Value = ((EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1]).Date;
+                _stockAppPath = _updateFolder + cmbStockID.SelectedItem.ToString() + ".csv";
+                _stockSARecordDTO = _stockSARecordBUS.LoadData(_stockAppPath);
+                dtpFrom.Value = ((EntryDTO)_stockSARecordDTO.Entries[0]).Date;
+                dtpTo.Value = ((EntryDTO)_stockSARecordDTO.Entries[_stockSARecordDTO.Entries.Count - 1]).Date;
                 //dtpInputDay.Value = ((EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1]).Date;
                 CreateGraph(zg1);
             }            
@@ -1664,24 +1670,50 @@ namespace GUI
             try
             {
                 //Load tất cả mã chứng khoán lên combobox
-                string[] fileNames = Directory.GetFiles(_defautFolder);
+                string[] fileNames = Directory.GetFiles(_updateFolder);
                 cmbStockID.Items.Clear();
                 for (int i = 0; i < fileNames.Length; i++)
                 {
-                    string strTemp = fileNames[i].Substring(fileNames[i].LastIndexOf('\\') + 1);
-                    strTemp = strTemp.Remove(strTemp.IndexOf('.')).ToUpper();
+                    if (isCsvFile(fileNames[i]) == true)
+                    {
+                        string strTemp = fileNames[i].Substring(fileNames[i].LastIndexOf('\\') + 1);
+                        strTemp = strTemp.Remove(strTemp.IndexOf('.')).ToUpper();
 
-                    cmbStockID.Items.Add(strTemp);
+                        cmbStockID.Items.Add(strTemp);
+                    }
                 }
                 if (cmbStockID.Items.Count > 0)
                 {
                     cmbStockID.SelectedIndex = 0;
                 }
+                // Kiểm tra dữ liệu đã cập nhật chưa
+                if (isDataUpdated() == false)
+                {
+                    cmbSAStockID.SelectedIndex = cmbSAStockID.Items.Count - 1;
+                    MessageBox.Show("Data out of date, please update before!");
+                }
+
             }
             catch (Exception ex)
             {
                 ShowException(ex.Message);
             }
+        }
+
+        private bool isDataUpdated()
+        {
+            for (int i = 0; i < cmbSAStockID.Items.Count -1; i++)
+            {
+                StreamReader sr = new StreamReader(_updateFolder + cmbSAStockID.Items[i].ToString().ToLower() + "_lastupdate.txt");
+                string dt = sr.ReadLine();
+                DateTime lastdate = Convert.ToDateTime(dt);
+                DateTime currentdate = DateTime.Now;
+                if (currentdate.Date.DayOfYear - lastdate.Date.DayOfYear > 1)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private void dtpFrom_ValueChanged(object sender, EventArgs e)
@@ -1774,8 +1806,8 @@ namespace GUI
             try
             {
                 Stopwatch st = new Stopwatch();
-
-                st.Start();
+                _resultShow = "Mã :<font color=\"green\"> " + cmbExpStockID.SelectedItem.ToString() + "</font><br>";
+                st.Start();                
                 Preprocess(true);
                 st.Stop();
                 _costTimes.Add(st.ElapsedMilliseconds);
@@ -1898,20 +1930,17 @@ namespace GUI
             {
                 string stockId = cmbExpStockID.SelectedItem.ToString().ToLower();
 
-                if (cmbExperimentMode.SelectedItem.ToString() == "Batch")
-                {
+                
                     tbxBatchInputFile.Text = _defautFolder + stockId + ".csv";
                     _trainFilePath = _defautFolder + stockId + "_" + cmbNumDaysPredicted.Text + "_train.txt";
                     _testFilePath = _defautFolder + stockId + "_" + cmbNumDaysPredicted.Text + "_test.txt";
                     _modelFilePath = _defautFolder + stockId + "_" + cmbNumDaysPredicted.Text + "_model.txt";
-                }
-                else
-                {
+             
                     tbxCsvFilePath.Text = _defautFolder + stockId + ".csv";
                     tbxTrainFilePath.Text = _defautFolder + stockId + "_" + cmbNumDaysPredicted.Text + "_train.txt";
                     tbxTestFilePath.Text = _defautFolder + stockId + "_" + cmbNumDaysPredicted.Text + "_test.txt";
                     tbxModelFilePath.Text = _defautFolder + stockId + "_" + cmbNumDaysPredicted.Text + "_model.txt";
-                }                
+                               
             }
             else
             {
@@ -1921,5 +1950,58 @@ namespace GUI
                 _modelFilePath = "";
             }
         }
+
+        private void btnUpdateData_Click(object sender, EventArgs e)
+        {          
+            List<string> listStockIdUpdate = new List<string>();
+            listStockIdUpdate = getListStockUpdate();
+
+            UpdateDataBUS updateData = new UpdateDataBUS();
+            updateData.doUpdate(listStockIdUpdate, _updateFolder);
+
+            //Ghi nhận ngày cuối của dữ liệu:
+            SaveLastUpdateDate(listStockIdUpdate);
+            MessageBox.Show("Finish!", "Message", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            
+        }
+
+        private void SaveLastUpdateDate(List<string> listStockIdUpdate)
+        {
+            StockRecordBUS srbuss = new StockRecordBUS();
+
+            for (int i = 0; i < listStockIdUpdate.Count; i++)
+            {
+                StockRecordDTO srdto = srbuss.LoadData(_updateFolder + listStockIdUpdate[i].ToLower() + ".csv");
+                EntryDTO entry = (EntryDTO)srdto.Entries[srdto.Entries.Count - 1];
+                StreamWriter rw = new StreamWriter(_updateFolder + listStockIdUpdate[i].ToLower() + "_lastupdate.txt");
+                rw.WriteLine(entry.Date.ToString());
+                rw.Close();
+            }
+        }
+
+        private List<string> getListStockUpdate()
+        {
+            List<string> listStockIdUpdate = new List<string>();
+            if (cmbSAStockID.SelectedItem.ToString() == "All")
+            {
+                for (int i = 0; i < cmbSAStockID.Items.Count - 1; i++)
+                {
+                    string stockId = cmbSAStockID.Items[i].ToString();
+                    listStockIdUpdate.Add(stockId);
+                }
+            }
+            else
+            {
+                string stockId = cmbSAStockID.SelectedItem.ToString();
+                listStockIdUpdate.Add(stockId);
+            }
+            return listStockIdUpdate;
+        }
+
+        private void btnSAPredict_Click(object sender, EventArgs e)
+        {
+
+        }
+        
     }
 }
