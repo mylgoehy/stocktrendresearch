@@ -110,7 +110,7 @@
             this.label10 = new System.Windows.Forms.Label();
             this.rdKSVMeans = new System.Windows.Forms.RadioButton();
             this.tabApplication = new System.Windows.Forms.TabPage();
-            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+            this.wbSAResult = new System.Windows.Forms.WebBrowser();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnUpdateData = new System.Windows.Forms.Button();
             this.dtpChoseCurrentDate = new System.Windows.Forms.DateTimePicker();
@@ -1131,7 +1131,7 @@
             // tabApplication
             // 
             this.tabApplication.BackColor = System.Drawing.Color.Transparent;
-            this.tabApplication.Controls.Add(this.webBrowser1);
+            this.tabApplication.Controls.Add(this.wbSAResult);
             this.tabApplication.Controls.Add(this.groupBox1);
             this.tabApplication.Controls.Add(this.gbStockChart);
             this.tabApplication.Location = new System.Drawing.Point(4, 22);
@@ -1141,13 +1141,13 @@
             this.tabApplication.TabIndex = 1;
             this.tabApplication.Text = "APPLICATION";
             // 
-            // webBrowser1
+            // wbSAResult
             // 
-            this.webBrowser1.Location = new System.Drawing.Point(277, 403);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(485, 129);
-            this.webBrowser1.TabIndex = 1;
+            this.wbSAResult.Location = new System.Drawing.Point(277, 403);
+            this.wbSAResult.MinimumSize = new System.Drawing.Size(20, 20);
+            this.wbSAResult.Name = "wbSAResult";
+            this.wbSAResult.Size = new System.Drawing.Size(485, 129);
+            this.wbSAResult.TabIndex = 1;
             // 
             // groupBox1
             // 
@@ -1266,16 +1266,76 @@
             this.cmbSAStockID.FormattingEnabled = true;
             this.cmbSAStockID.Items.AddRange(new object[] {
             "AGF",
+            "BBC",
+            "BMI",
+            "BMP",
             "BT6",
+            "CII",
+            "CYC",
+            "DCT",
+            "DHA",
+            "FMC",
+            "FPT",
             "GIL",
             "GMD",
             "HAP",
+            "HAS",
+            "HTV",
+            "ITA",
+            "KDC",
             "KHA",
+            "KHP",
             "LAF",
+            "AGF",
+            "BBC",
+            "BMI",
+            "BMP",
+            "BT6",
+            "CII",
+            "CYC",
+            "DCT",
+            "DHA",
+            "FMC",
+            "FPT",
+            "GIL",
+            "GMD",
+            "HAP",
+            "HAS",
+            "HTV",
+            "ITA",
+            "KDC",
+            "KHA",
+            "KHP",
+            "LAF",
+            "LBM",
+            "MCV",
+            "MHC",
+            "NKD",
+            "PGC",
+            "PNC",
+            "PPC",
+            "PVD",
+            "RAL",
             "REE",
             "SAM",
+            "SAV",
+            "SFC",
+            "SJS",
+            "SMC",
+            "SSC",
+            "STB",
+            "TBC",
+            "TDH",
+            "TMS",
+            "TNA",
             "TRI",
-            "^VNINDEX",
+            "TS4",
+            "TTP",
+            "TYA",
+            "VFC",
+            "VIP",
+            "VNM",
+            "VSH",
             "All"});
             this.cmbSAStockID.Location = new System.Drawing.Point(138, 29);
             this.cmbSAStockID.Name = "cmbSAStockID";
@@ -1571,7 +1631,7 @@
         private System.Windows.Forms.Button btnChoseFolder;
         private System.Windows.Forms.GroupBox gbStockChart;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.WebBrowser webBrowser1;
+        private System.Windows.Forms.WebBrowser wbSAResult;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ComboBox cmbSAStockID;

@@ -2,23 +2,23 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using DTO;
-using BUS;
-using BUS.SVM;
-using BUS.ANN;
-using ZedGraph;
-using BUS.ANN.Backpropagation;
-using BUS.KMeans;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using BUS;
+using BUS.ANN;
+using BUS.ANN.Backpropagation;
 using BUS.DecisionTree;
-using System.Diagnostics;
+using BUS.KMeans;
+using BUS.SVM;
+using DTO;
+using ZedGraph;
 
 namespace GUI
 {
@@ -51,6 +51,7 @@ namespace GUI
 
         private string _defautFolder;
         private string _updateFolder;
+        private string _trainModel;
 
         private StockRecordDTO _stockSARecordDTO;
         private StockRecordBUS _stockSARecordBUS;
@@ -92,6 +93,9 @@ namespace GUI
             //1. Đọc dữ liệu từ file .csv vào mảng và tiền xử lý
             StockRecordBUS stockRecordBUS = new StockRecordBUS();
             StockRecordDTO stockRecordDTO = stockRecordBUS.LoadData(strInputFile);
+
+            _stockRecordDTO = stockRecordDTO;
+            
             double[] dblClosePrices = new double[stockRecordDTO.Entries.Count];
             double[] dblVolumes = new double[stockRecordDTO.Entries.Count];
             int i = 0;
@@ -827,12 +831,14 @@ namespace GUI
                 strSVMModelFiles[i] = strMutualPath + "model" + (i + 1).ToString() + ".txt";
                 strPredictedFiles[i] = strMutualPath + "predict" + (i + 1).ToString() + ".txt";
             }
+
             // Thực hiện cluster
-            SampleDataBUS samDataBUS = new SampleDataBUS();
+            SampleDataBUS samDataBUS = new SampleDataBUS();            
             samDataBUS.Read(strTestFile);
             Clustering clustering = new Clustering(samDataBUS.Samples, DistanceType.Manhattan);
             clustering.Run(strClusterModelFile, true);
             samDataBUS.WriteIntoCluster(strClusterResultFiles, clustering.SampleData.ClusterIndices);
+
             // Thực hiện test SVM
             StreamWriter writer = new StreamWriter(strMutualPath + "performance.txt");
             double dblTotalPrecision = 0;
@@ -1282,7 +1288,15 @@ namespace GUI
                 _resultShow = "Mã :<font color=\"green\"> " + cmbExpStockID.SelectedItem.ToString() + "</font><br>";
                 st.Start();
                 Preprocess(false);
-                st.Stop();                
+                st.Stop();
+                EntryDTO tempEntryFrom = (EntryDTO)_stockRecordDTO.Entries[0];
+                EntryDTO tempEntryTo = (EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1];
+
+                string tempDateFrom = tempEntryFrom.Date.Day + "/" + tempEntryFrom.Date.Month +"/"+tempEntryFrom.Date.Year;
+                string tempDateTo = tempEntryTo.Date.Day + "/" + tempEntryTo.Date.Month + "/" + tempEntryTo.Date.Year;
+                _resultShow += "Dữ liệu lầy từ ngày: <font color=\"green\">" + tempDateFrom + "</font> đến: <font color=\"green\">" + tempDateTo + "</font><br>";
+                st.Stop();
+
             }
             catch (Exception ex)
             {
@@ -1337,8 +1351,9 @@ namespace GUI
             btnChoseFolder.Visible = false;
 
              _defautFolder = (System.Reflection.Assembly.GetExecutingAssembly().GetModules()[0].FullyQualifiedName).Replace(System.Reflection.Assembly.GetExecutingAssembly().GetModules()[0].Name, "");
-             _updateFolder = _defautFolder + "DataUpdate\\";
-             _defautFolder += "Data\\";
+             _updateFolder = _defautFolder + "DataUpdate\\";             
+             _trainModel = _defautFolder + "AppModel\\";
+             _defautFolder = _defautFolder + "Data\\";
             
 
             LoadStockIdFromFolder(_defautFolder);           
@@ -1692,7 +1707,6 @@ namespace GUI
                     cmbSAStockID.SelectedIndex = cmbSAStockID.Items.Count - 1;
                     MessageBox.Show("Data out of date, please update before!");
                 }
-
             }
             catch (Exception ex)
             {
@@ -1701,14 +1715,22 @@ namespace GUI
         }
 
         private bool isDataUpdated()
-        {
+        {            
             for (int i = 0; i < cmbSAStockID.Items.Count -1; i++)
             {
-                StreamReader sr = new StreamReader(_updateFolder + cmbSAStockID.Items[i].ToString().ToLower() + "_lastupdate.txt");
-                string dt = sr.ReadLine();
-                DateTime lastdate = Convert.ToDateTime(dt);
-                DateTime currentdate = DateTime.Now;
-                if (currentdate.Date.DayOfYear - lastdate.Date.DayOfYear > 1)
+                try
+                {
+                    StreamReader sr = new StreamReader(_updateFolder + cmbSAStockID.Items[i].ToString().ToLower() + "_lastupdate.txt");
+                    string dt = sr.ReadLine();
+                    DateTime lastdate = Convert.ToDateTime(dt);
+                    DateTime currentdate = DateTime.Now;
+                    if ((currentdate.Date.DayOfYear - lastdate.Date.DayOfYear > 1 && DateTime.Now.DayOfWeek != DayOfWeek.Sunday) //dữ liệu quá 2 này trừ ngày CN thì update
+                        || (DateTime.Now.Hour > 21 && DateTime.Now.DayOfWeek != DayOfWeek.Sunday && DateTime.Now.DayOfWeek != DayOfWeek.Saturday))//update trong ngày sau 21h trừ cn và t7
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception ex)//bất kỳ sự cố nào thì cập nhật lại dữ liệu
                 {
                     return false;
                 }
@@ -1808,9 +1830,16 @@ namespace GUI
                 Stopwatch st = new Stopwatch();
                 _resultShow = "Mã :<font color=\"green\"> " + cmbExpStockID.SelectedItem.ToString() + "</font><br>";
                 st.Start();                
-                Preprocess(true);
+                Preprocess(true);                                
                 st.Stop();
-                _costTimes.Add(st.ElapsedMilliseconds);
+                _costTimes.Add(st.ElapsedMilliseconds);                
+
+                EntryDTO tempEntryFrom = (EntryDTO)_stockRecordDTO.Entries[0];
+                EntryDTO tempEntryTo = (EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1];
+
+                string tempDateFrom = tempEntryFrom.Date.Day + "/" + tempEntryFrom.Date.Month + "/" + tempEntryFrom.Date.Year;
+                string tempDateTo = tempEntryTo.Date.Day + "/" + tempEntryTo.Date.Month + "/" + tempEntryTo.Date.Year;
+                _resultShow += "Dữ liệu lầy từ ngày: <font color=\"green\">" + tempDateFrom + "</font> đến: <font color=\"green\">" + tempDateTo + "</font><br>";
 
                 st.Reset();
                 if (rdSVM.Checked)
@@ -1929,8 +1958,7 @@ namespace GUI
             if (cmbExpStockID.SelectedIndex >=0)
             {
                 string stockId = cmbExpStockID.SelectedItem.ToString().ToLower();
-
-                
+                                
                     tbxBatchInputFile.Text = _defautFolder + stockId + ".csv";
                     _trainFilePath = _defautFolder + stockId + "_" + cmbNumDaysPredicted.Text + "_train.txt";
                     _testFilePath = _defautFolder + stockId + "_" + cmbNumDaysPredicted.Text + "_test.txt";
@@ -2000,7 +2028,195 @@ namespace GUI
 
         private void btnSAPredict_Click(object sender, EventArgs e)
         {
+            DateTime choseDate = dtpChoseCurrentDate.Value;
+            string result = string.Empty;
+            if (cbSAOneDay.Checked == true && cbSAFiveDay.Checked == true)
+            {
+               
+            }
+            else if (cbSAOneDay.Checked == true)
+            {
+                try
+                {
+                    // Tạo giá trị đầu vào cho mô hình dự đoán
+                    // thứ tự trong mảng sẽ là:
+                    // 0 closePrices, 1 FastSMAs, 2 LowSMAs, 3 MACD, 4 MACDHist, 
+                    // 5 BollingerUp, 6 BollingerMid, 7 BollingerLow, 8 AroonUps,
+                    // 9 AroonDowns
+                    double[] inputValue4Predicts = MakeInputPramater(choseDate, 1);
+                    // Thực hiện dự đoán
+                    if (inputValue4Predicts != null)
+                    {
+                        int modelType = 0;//0 DT-ANN, 1 K-SVMeans
+                        result = doPrediction(inputValue4Predicts, 1, modelType);
+                        // Đưa ra nhận xét
+                        //wbSAResult.DocumentText = result.ToString();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
 
+            }
+            else if (cbSAFiveDay.Checked == true)
+            {
+                try
+                {
+                    // Tạo giá trị đầu vào cho mô hình dự đoán
+                    // thứ tự trong mảng sẽ là:
+                    // 0 closePrices, 1 FastSMAs, 2 LowSMAs, 3 MACD, 4 MACDHist, 
+                    // 5 BollingerUp, 6 BollingerMid, 7 BollingerLow, 8 AroonUps,
+                    // 9 AroonDowns
+                    double[] inputValue4Predicts = MakeInputPramater(choseDate, 5);
+
+                    if (inputValue4Predicts != null)
+                    {
+                        // Thực hiện dự đoán
+                        int modelType = 1;//0 DT-ANN, 1 K-SVMeans
+                        result = doPrediction(inputValue4Predicts, 5, modelType);                                                
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please, check type of next day prediction! one day or five day or both of them");
+            }
+            // Đưa ra nhận xét
+            wbSAResult.DocumentText = result.ToString();
+        }
+
+        private string doPrediction(double[] inputValue4Predicts, int numDayPredict,int modelType)
+        {
+            string result = string.Empty;
+            string strModelFile = null;
+            string strTestFile = null;
+
+            if (modelType == 0)//DT-ANN
+            {
+                strModelFile = _trainModel + "DT-ANN\\" + cmbStockID.SelectedItem.ToString()+ "_" + numDayPredict.ToString() + "_model.txt";
+                // Load model lên
+                BackpropagationNetwork bpNetwork;
+                Stream stream = File.Open(strModelFile, FileMode.Open);
+                BinaryFormatter bformatter = new BinaryFormatter();
+                bpNetwork = (BackpropagationNetwork)bformatter.Deserialize(stream);
+                stream.Close();
+
+                // Tạo tập mẫu để test
+                TrainingSample testSample = new TrainingSample(inputValue4Predicts);
+                
+                // Thực hiện test           
+                double[] dblTemp = bpNetwork.Run(testSample.InputVector);
+                result = ConverterBUS.Convert2Trend(dblTemp).ToString();
+            }
+            else
+            {
+                //strModelFile = _trainModel + "K-SVMeans\\"; //+cmbStockID.SelectedItem.ToString() + "_" + numDayPredict.ToString() + "_model.txt";
+                string strMutualPath = _trainModel + "K-SVMeans\\" +cmbStockID.SelectedItem.ToString() + "_" + numDayPredict.ToString();
+                string strClusterModelFile = strMutualPath + "__clusterModel.txt"; 
+
+                // Thực hiện cluster
+                SampleDataBUS samDataBUS = new SampleDataBUS();
+                samDataBUS.Samples = new double[1][];
+                samDataBUS.Samples[0] = inputValue4Predicts;
+
+                //samDataBUS.Read(strTestFile);
+                Clustering clustering = new Clustering(samDataBUS.Samples, DistanceType.Manhattan);
+                clustering.Run(strClusterModelFile, true);
+
+                int clusterIndex = clustering.SampleData.ClusterIndices[0];
+
+                string strSVMModelFiles = strMutualPath + "_model" + (++clusterIndex).ToString() + ".txt";
+               
+                Model model = Model.Read(strSVMModelFiles);
+               
+                Node[] nodes = new Node[10];
+                
+                for (int i = 0; i < 10; i++)
+                {
+                    nodes[i] = new Node(i, inputValue4Predicts[i]);
+                }
+
+                double[] predictProbability = Prediction.PredictProbability(model, nodes);
+
+                //khoi tao label 3 pt
+                int[] labels = new int[3];                
+                Procedures.svm_get_labels(model, labels);
+
+                
+                for (int j = 0; j < labels.Length; j++)
+                {
+                    result += labels[j].ToString()+" : " +predictProbability[j].ToString() +"%\n";
+                }                
+            }
+
+            return result;
+        }
+
+        private double[] MakeInputPramater(DateTime choseDate, int numDate)
+        {
+            double[] pramaters = null;
+            if (choseDate.Date.DayOfWeek == DayOfWeek.Saturday || choseDate.Date.DayOfWeek == DayOfWeek.Sunday)
+            {
+                DialogResult dlResult = MessageBox.Show("Have no data on saturday and sunday", "It's important Notification", MessageBoxButtons.OK);
+                if (dlResult == DialogResult.OK)
+                {
+                    return pramaters;
+                }
+            }
+            else
+            {
+                // tìm ngày
+                double[] dblClosePrices = new double[_stockSARecordDTO.Entries.Count];
+                double[] dblVolumes = new double[_stockSARecordDTO.Entries.Count];
+                int dateIndex = -1;
+                int i = 0;
+                foreach (EntryDTO entryDTO in _stockSARecordDTO.Entries)
+                {
+                    dblClosePrices[i] = entryDTO.ClosePrice;
+                    dblVolumes[i] = entryDTO.Volume;
+                    if (isEqualDate(entryDTO.Date, choseDate) == true && i >= ConverterBUS.LOW_PERIOD)
+                    {
+                        dateIndex = i;
+                    }
+                    i++;
+                }
+
+                if (dateIndex == -1)
+                {
+
+                    string dateFrom = ((EntryDTO)_stockSARecordDTO.Entries[ConverterBUS.LOW_PERIOD]).Date.ToString();
+                    string dateTo = ((EntryDTO)_stockSARecordDTO.Entries[_stockSARecordDTO.Entries.Count - 1]).Date.ToString();
+                    DialogResult dlResult = MessageBox.Show("please chose date between: " + dateFrom + " and " + dateTo, "It's important Notification", MessageBoxButtons.OK);
+                    if (dlResult == DialogResult.OK)
+                    {
+                        return pramaters;
+                    }
+                }
+
+                // xác định chỉ mục quá khứ dựa vào chu kỳ
+                int numDaysPeriod = numDate;
+                int pastIndex = dateIndex - numDaysPeriod;
+
+                // Tạo tham số đầu vào
+                ConverterBUS converter = new ConverterBUS();
+                pramaters = ConverterBUS.MakeInputPramater(dblClosePrices, dblVolumes, numDaysPeriod, pastIndex);
+            }
+            return pramaters;
+        }
+
+        private bool isEqualDate(DateTime dateTime, DateTime choseDate)
+        {
+            bool result = false;
+            if (dateTime.Day == choseDate.Day && dateTime.Month == choseDate.Month && dateTime.Year == choseDate.Year)
+            {
+                result = true;
+            }
+            return result;
         }
         
     }
