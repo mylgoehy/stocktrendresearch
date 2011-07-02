@@ -15,7 +15,7 @@ namespace BUS
         #region Attributes
         static int NUM_DISTINC_VAL = 10;
 		static int FAST_PERIOD = 25;
-        static int LOW_PERIOD = 65;
+        public static int LOW_PERIOD = 65;
         /// <summary>
         /// Mảng các cận trên và dưới của từng thuộc tính
         /// </summary>
@@ -500,5 +500,169 @@ namespace BUS
         }
         #endregion
 
+
+        public static double[] MakeInputPramater(double[] closePrices, double[] volumes, int numDaysPeriod, int pastIndex)
+        {
+            double[] pramaters = null;
+            try
+            {
+                double[] dblFastSMAs = IndicatorsBUS.CalculateSMA(closePrices, FAST_PERIOD);
+                double[] dblLowSMAs = IndicatorsBUS.CalculateSMA(closePrices, LOW_PERIOD);
+                //// Chỉ có thể đánh nhãn khi giá trị tại đó xác định được SMA low
+                //int[] dblLabels = new int[closePrices.Length - LOW_PERIOD];
+
+                //for (int i = 0; i < dblLabels.Length; i++)
+                //{
+                //    dblLabels[i] = IndicatorsBUS.DetermineTrend(closePrices, dblFastSMAs, dblLowSMAs, i + LOW_PERIOD, 5, 1);
+                //}
+                // Tính chỉ số aroon với period bằng 2 lần số ngày cần dự đoán, nếu dự đoán 1 ngày thì period = 5
+                int iAroonPeriod = (numDaysPeriod < 5) ? 5 : numDaysPeriod * 2;
+                double[] dblAroonUps = IndicatorsBUS.CalculateAroon(closePrices, iAroonPeriod, true);
+                double[] dblAroonDowns = IndicatorsBUS.CalculateAroon(closePrices, iAroonPeriod, false);
+
+                double[] dblMACD = IndicatorsBUS.CalculateMACDHist(closePrices, 12, 26, 1);
+                double[] dblMACDHist = IndicatorsBUS.CalculateMACDHist(closePrices, 12, 26, 9);
+                double[] dblBollingerUp = IndicatorsBUS.CalculateBollingerband(closePrices, 20, 2, true);
+                double[] dblBollingerMid = IndicatorsBUS.CalculateSMA(closePrices, 20);
+                double[] dblBollingerLow = IndicatorsBUS.CalculateBollingerband(closePrices, 20, 2, false);
+                double[] dblRSI = IndicatorsBUS.CalculateRSI(closePrices, iAroonPeriod);
+                // Scale các chỉ số (ngoại trừ Aroon) về -1 1
+                double dblMax = 0;
+                double dblMaxVol = 0;
+                // Tìm trị tuyệt đối lớn nhất. Nhận xét, ta chỉ cần tìm trên closePrices và BollingerUp là đủ
+                for (int i = 0; i < closePrices.Length; i++)
+                {
+                    if (Math.Abs(dblBollingerUp[i]) > dblMax)
+                    {
+                        dblMax = Math.Abs(dblBollingerUp[i]);
+                    }
+                    if (Math.Abs(closePrices[i]) > dblMax)
+                    {
+                        dblMax = Math.Abs(closePrices[i]);
+                    }
+                    if (volumes[i] > dblMaxVol)
+                    {
+                        dblMaxVol = volumes[i];
+                    }
+                }
+                _attBounds = new double[10][]; // 10 là số thuộc tính - số chiều, 2 là cận trên và dưới
+                for (int i = 0; i < _attBounds.Length; i++)
+                {
+                    _attBounds[i] = new double[2];
+                    _attBounds[i][0] = -1;  // khởi gán cận trên
+                    _attBounds[i][1] = 1;   // khởi gán cận dưới
+                }
+                _attBounds[8][0] = _attBounds[9][0] = 1;    // cận trên cho Aroonup và AroonDown
+                _attBounds[8][1] = _attBounds[9][1] = 0;    // cận dưới cho AroonUp và AroonDown
+                // Scale và tìm cận trên và dưới
+                for (int i = 0; i < closePrices.Length; i++)
+                {
+                    //volumes[i] = volumes[i] / dblMaxVol;
+                    closePrices[i] = closePrices[i] / dblMax;
+                    dblFastSMAs[i] = dblFastSMAs[i] / dblMax;
+                    dblLowSMAs[i] = dblLowSMAs[i] / dblMax;
+                    dblMACD[i] = dblMACD[i] / dblMax;
+                    dblMACDHist[i] = dblMACDHist[i] / dblMax;
+                    dblBollingerUp[i] = dblBollingerUp[i] / dblMax;
+                    dblBollingerMid[i] = dblBollingerMid[i] / dblMax;
+                    dblBollingerLow[i] = dblBollingerLow[i] / dblMax;
+
+                    if (_attBounds[0][0] < closePrices[i])
+                    {
+                        _attBounds[0][0] = closePrices[i];
+                    }
+                    if (_attBounds[0][1] > closePrices[i])
+                    {
+                        _attBounds[0][1] = closePrices[i];
+                    }
+
+                    if (_attBounds[1][0] < dblFastSMAs[i])
+                    {
+                        _attBounds[1][0] = dblFastSMAs[i];
+                    }
+                    if (_attBounds[1][1] > dblFastSMAs[i])
+                    {
+                        _attBounds[1][1] = dblFastSMAs[i];
+                    }
+
+                    if (_attBounds[2][0] < dblLowSMAs[i])
+                    {
+                        _attBounds[2][0] = dblLowSMAs[i];
+                    }
+                    if (_attBounds[2][1] > dblLowSMAs[i])
+                    {
+                        _attBounds[2][1] = dblLowSMAs[i];
+                    }
+
+                    if (_attBounds[3][0] < dblMACD[i])
+                    {
+                        _attBounds[3][0] = dblMACD[i];
+                    }
+                    if (_attBounds[3][1] > dblMACD[i])
+                    {
+                        _attBounds[3][1] = dblMACD[i];
+                    }
+
+                    if (_attBounds[4][0] < dblMACDHist[i])
+                    {
+                        _attBounds[4][0] = dblMACDHist[i];
+                    }
+                    if (_attBounds[4][1] > dblMACDHist[i])
+                    {
+                        _attBounds[4][1] = dblMACDHist[i];
+                    }
+
+                    if (_attBounds[5][0] < dblBollingerUp[i])
+                    {
+                        _attBounds[5][0] = dblBollingerUp[i];
+                    }
+                    if (_attBounds[5][1] > dblBollingerUp[i])
+                    {
+                        _attBounds[5][1] = dblBollingerUp[i];
+                    }
+
+                    if (_attBounds[6][0] < dblBollingerMid[i])
+                    {
+                        _attBounds[6][0] = dblBollingerMid[i];
+                    }
+                    if (_attBounds[6][1] > dblBollingerMid[i])
+                    {
+                        _attBounds[6][1] = dblBollingerMid[i];
+                    }
+
+                    if (_attBounds[7][0] < dblBollingerLow[i])
+                    {
+                        _attBounds[7][0] = dblBollingerLow[i];
+                    }
+                    if (_attBounds[7][1] > dblBollingerLow[i])
+                    {
+                        _attBounds[7][1] = dblBollingerLow[i];
+                    }
+
+                }
+
+                int iPastIndex = pastIndex;
+   
+                pramaters = new double[10];
+
+                pramaters[0] = closePrices[iPastIndex];
+                pramaters[1] = dblFastSMAs[iPastIndex];
+                pramaters[2] = dblLowSMAs[iPastIndex];
+                pramaters[3] = dblMACD[iPastIndex];
+                pramaters[4] = dblMACDHist[iPastIndex];
+                pramaters[5] = dblBollingerUp[iPastIndex];
+                pramaters[6] = dblBollingerMid[iPastIndex];
+                pramaters[7] = dblBollingerLow[iPastIndex];
+                pramaters[8] = dblAroonUps[iPastIndex];
+                pramaters[9] = dblAroonDowns[iPastIndex];
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return pramaters;
+            //throw new NotImplementedException();
+        }
     }
 }

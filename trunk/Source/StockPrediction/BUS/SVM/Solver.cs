@@ -1024,7 +1024,7 @@ namespace BUS.SVM
         }
     }
 
-    internal class Procedures
+    public class Procedures
     {
         private static bool _verbose;
         public static bool IsVerbose
