@@ -1,0 +1,40 @@
+﻿// 1 lần tăng
+nên mua ngay
+không nên mua
+không nên mua
+// 2 lần tăng
+nên mua ngay
+không nên mua
+không nên mua
+// 3 lần tăng
+không nên mua
+không nên mua
+không nên mua
+// 1 lần giảm
+nên mua
+không nên mua
+không nên mua
+// 2 lần giảm
+nên mua
+nên mua
+không nên mua
+// 3 lần giảm
+nên mua
+nên mua
+không nên mua
+// 2 tăng 1 giảm
+nên mua
+không nên mua
+không nên mua
+// 2 giảm 1 tăng
+nên mua
+không nên mua
+không nên mua
+// 1 tăng 1 giảm
+nên mua
+không nên mua
+không nên mua
+// không nên mua tăng giảm
+nên mua
+không nên mua
+không nên mua

@@ -112,6 +112,7 @@
     <Compile Include="SampleDataBUS.cs" />
     <Compile Include="StepTrainingBUS.cs" />
     <Compile Include="StockRecordBUS.cs" />
+    <Compile Include="SuggestionBUS.cs" />
     <Compile Include="SupportClass.cs" />
     <Compile Include="SVM\Cache.cs" />
     <Compile Include="SVM\CrossEpochEventArgs.cs" />

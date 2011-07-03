@@ -508,13 +508,7 @@ namespace BUS
             {
                 double[] dblFastSMAs = IndicatorsBUS.CalculateSMA(closePrices, FAST_PERIOD);
                 double[] dblLowSMAs = IndicatorsBUS.CalculateSMA(closePrices, LOW_PERIOD);
-                //// Chỉ có thể đánh nhãn khi giá trị tại đó xác định được SMA low
-                //int[] dblLabels = new int[closePrices.Length - LOW_PERIOD];
-
-                //for (int i = 0; i < dblLabels.Length; i++)
-                //{
-                //    dblLabels[i] = IndicatorsBUS.DetermineTrend(closePrices, dblFastSMAs, dblLowSMAs, i + LOW_PERIOD, 5, 1);
-                //}
+                
                 // Tính chỉ số aroon với period bằng 2 lần số ngày cần dự đoán, nếu dự đoán 1 ngày thì period = 5
                 int iAroonPeriod = (numDaysPeriod < 5) ? 5 : numDaysPeriod * 2;
                 double[] dblAroonUps = IndicatorsBUS.CalculateAroon(closePrices, iAroonPeriod, true);
@@ -663,6 +657,34 @@ namespace BUS
             }
             return pramaters;
             //throw new NotImplementedException();
+        }
+
+        public static int[] GetPastTrend(double[] closePrices, double[] volumes, int currIndex)
+        {
+            int[] result = null;
+            try
+            {
+                double[] dblFastSMAs = IndicatorsBUS.CalculateSMA(closePrices, FAST_PERIOD);
+                double[] dblLowSMAs = IndicatorsBUS.CalculateSMA(closePrices, LOW_PERIOD);
+                // Chỉ có thể đánh nhãn khi giá trị tại đó xác định được SMA low
+                int[] dblLabels = new int[closePrices.Length - LOW_PERIOD];
+
+                for (int i = 0; i < dblLabels.Length; i++)
+                {
+                    dblLabels[i] = IndicatorsBUS.DetermineTrend(closePrices, dblFastSMAs, dblLowSMAs, i + LOW_PERIOD, 5, 1);
+                }
+                result = new int[3];
+
+                result[0] = dblLabels[currIndex - LOW_PERIOD-10];
+                result[1] = dblLabels[currIndex - LOW_PERIOD - 5];
+                result[2] = dblLabels[currIndex - LOW_PERIOD];
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return result;
         }
     }
 }
