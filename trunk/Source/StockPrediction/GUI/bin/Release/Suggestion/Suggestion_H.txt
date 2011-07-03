@@ -1,0 +1,40 @@
+﻿// 1 lần tăng
+giữ hoặc bán ở cuối chu kỳ
+giữ
+giữ
+// 2 lần tăng
+bán ở cuối chu kỳ
+bán ở cuối chu kỳ
+bán ngay
+// 3 lần tăng
+bán ở cuối chu kỳ
+bán ngay
+bán ngay
+// 1 lần giảm
+giữ
+giữ
+bán ngay
+// 2 lần giảm
+giữ
+giữ hoặc bán ở cuối chu kỳ
+bán ngay
+// 3 lần giảm
+bán ở cuối chu kỳ
+bán ngay
+bán ngay
+// 2 tăng 1 giảm
+bán ở cuối chu kỳ
+giữ
+giữ
+// 2 giảm 1 tăng
+giữ
+giữ hoặc bán ở cuối chu kỳ
+bán ngay
+// 1 tăng 1 giảm
+giữ
+giữ
+giữ
+// không tăng giảm
+giữ
+giữ
+bán

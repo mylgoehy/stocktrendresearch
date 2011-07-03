@@ -52,6 +52,7 @@ namespace GUI
         private string _defautFolder;
         private string _updateFolder;
         private string _trainModel;
+        private string _suggestionFolder;
 
         private StockRecordDTO _stockSARecordDTO;
         private StockRecordBUS _stockSARecordBUS;
@@ -1318,7 +1319,8 @@ namespace GUI
             cmbExperimentMode.SelectedIndex = 0;
             cmbPruneFunc.SelectedIndex = 0;
             cmbSplitFunc.SelectedIndex = 0;
-            cmbSAStockID.SelectedIndex = 0;
+            cmbChoseMethods.SelectedIndex = 0;
+            //cmbSAStockID.SelectedIndex = 0;
             
             _trainFilePath = "";
             _testFilePath = "";
@@ -1353,6 +1355,7 @@ namespace GUI
              _defautFolder = (System.Reflection.Assembly.GetExecutingAssembly().GetModules()[0].FullyQualifiedName).Replace(System.Reflection.Assembly.GetExecutingAssembly().GetModules()[0].Name, "");
              _updateFolder = _defautFolder + "DataUpdate\\";             
              _trainModel = _defautFolder + "AppModel\\";
+             _suggestionFolder = _defautFolder + "Suggestion\\";
              _defautFolder = _defautFolder + "Data\\";
             
 
@@ -1488,6 +1491,8 @@ namespace GUI
                 dtpTo.Value = ((EntryDTO)_stockSARecordDTO.Entries[_stockSARecordDTO.Entries.Count - 1]).Date;
                 //dtpInputDay.Value = ((EntryDTO)_stockRecordDTO.Entries[_stockRecordDTO.Entries.Count - 1]).Date;
                 CreateGraph(zg1);
+
+                cmbSAStockID.SelectedIndex = cmbStockID.SelectedIndex;
             }            
         }
 
@@ -1695,8 +1700,10 @@ namespace GUI
                         strTemp = strTemp.Remove(strTemp.IndexOf('.')).ToUpper();
 
                         cmbStockID.Items.Add(strTemp);
-                    }
+                        cmbSAStockID.Items.Add(strTemp);
+                    }                    
                 }
+                cmbSAStockID.Items.Add("Select All");
                 if (cmbStockID.Items.Count > 0)
                 {
                     cmbStockID.SelectedIndex = 0;
@@ -1985,12 +1992,65 @@ namespace GUI
             listStockIdUpdate = getListStockUpdate();
 
             UpdateDataBUS updateData = new UpdateDataBUS();
-            updateData.doUpdate(listStockIdUpdate, _updateFolder);
+            //updateData.doUpdate(listStockIdUpdate, _updateFolder);
 
             //Ghi nhận ngày cuối của dữ liệu:
-            SaveLastUpdateDate(listStockIdUpdate);
+            //SaveLastUpdateDate(listStockIdUpdate);
+
+            //Chuyển dữ liệu train qua folder Data
+            CreateDataTrainAfter(100, listStockIdUpdate);
+
             MessageBox.Show("Finish!", "Message", MessageBoxButtons.OK, MessageBoxIcon.Information);
             
+        }
+
+        private void CreateDataTrainAfter(int numDay, List<string> listStockIdUpdate)
+        {
+            try
+            {
+                //lấy ngày cuối cùng được ghi nhận cập nhật dữ liệu train
+                StreamReader reader = new StreamReader(_defautFolder + "lastcopy.txt");
+                string line = reader.ReadLine();
+                reader.Close();
+
+                DateTime lastDate = Convert.ToDateTime(line);
+                lastDate.AddDays(100);
+                if (DateTime.Now.Date.CompareTo(lastDate) >= 0)//thực hiện chép dữ liệu
+                {
+                    for (int i = 0; i < listStockIdUpdate.Count; i++)
+                    {
+                        string srcFile = _updateFolder + listStockIdUpdate[i].ToLower() + ".csv";
+                        string destFile = _defautFolder + listStockIdUpdate[i].ToLower() + ".csv";
+
+                        StreamReader rd = new StreamReader(srcFile);
+                        StreamWriter wt = new StreamWriter(destFile);
+
+                        int count = 0;
+                        while (count < 1117)//4 năm
+                        {
+                            string tmepline;
+                            tmepline = rd.ReadLine();
+                            if (tmepline != null)
+                            {
+                                wt.WriteLine(tmepline);
+                                count++;
+                            }
+                            else break;
+
+                        }
+
+                        rd.Close();
+                        wt.Close();
+                    }
+                    StreamWriter writer = new StreamWriter(_defautFolder + "lastcopy.txt");
+                    writer.WriteLine(DateTime.Now.ToString());
+                    writer.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         private void SaveLastUpdateDate(List<string> listStockIdUpdate)
@@ -2000,6 +2060,7 @@ namespace GUI
             for (int i = 0; i < listStockIdUpdate.Count; i++)
             {
                 StockRecordDTO srdto = srbuss.LoadData(_updateFolder + listStockIdUpdate[i].ToLower() + ".csv");
+                //listStockIdUpdate[i] = _updateFolder + listStockIdUpdate[i].ToLower() + ".csv";
                 EntryDTO entry = (EntryDTO)srdto.Entries[srdto.Entries.Count - 1];
                 StreamWriter rw = new StreamWriter(_updateFolder + listStockIdUpdate[i].ToLower() + "_lastupdate.txt");
                 rw.WriteLine(entry.Date.ToString());
@@ -2010,7 +2071,7 @@ namespace GUI
         private List<string> getListStockUpdate()
         {
             List<string> listStockIdUpdate = new List<string>();
-            if (cmbSAStockID.SelectedItem.ToString() == "All")
+            if (cmbSAStockID.SelectedItem.ToString() == "Select All")
             {
                 for (int i = 0; i < cmbSAStockID.Items.Count - 1; i++)
                 {
@@ -2028,71 +2089,110 @@ namespace GUI
 
         private void btnSAPredict_Click(object sender, EventArgs e)
         {
+            string stringSuggestion=string.Empty;
+
+            int modelType = 1;//0 DT-ANN, 1 K-SVMeans
+            if (cmbChoseMethods.SelectedItem.ToString() == "No Estimating Trend")
+            {
+                modelType = 0;
+            }
+
             DateTime choseDate = dtpChoseCurrentDate.Value;
-            string result = string.Empty;
-            if (cbSAOneDay.Checked == true && cbSAFiveDay.Checked == true)
+            if (choseDate.Date.DayOfWeek == DayOfWeek.Saturday || choseDate.Date.DayOfWeek == DayOfWeek.Sunday)
             {
-               
-            }
-            else if (cbSAOneDay.Checked == true)
-            {
-                try
-                {
-                    // Tạo giá trị đầu vào cho mô hình dự đoán
-                    // thứ tự trong mảng sẽ là:
-                    // 0 closePrices, 1 FastSMAs, 2 LowSMAs, 3 MACD, 4 MACDHist, 
-                    // 5 BollingerUp, 6 BollingerMid, 7 BollingerLow, 8 AroonUps,
-                    // 9 AroonDowns
-                    double[] inputValue4Predicts = MakeInputPramater(choseDate, 1);
-                    // Thực hiện dự đoán
-                    if (inputValue4Predicts != null)
-                    {
-                        int modelType = 0;//0 DT-ANN, 1 K-SVMeans
-                        result = doPrediction(inputValue4Predicts, 1, modelType);
-                        // Đưa ra nhận xét
-                        //wbSAResult.DocumentText = result.ToString();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
-
-            }
-            else if (cbSAFiveDay.Checked == true)
-            {
-                try
-                {
-                    // Tạo giá trị đầu vào cho mô hình dự đoán
-                    // thứ tự trong mảng sẽ là:
-                    // 0 closePrices, 1 FastSMAs, 2 LowSMAs, 3 MACD, 4 MACDHist, 
-                    // 5 BollingerUp, 6 BollingerMid, 7 BollingerLow, 8 AroonUps,
-                    // 9 AroonDowns
-                    double[] inputValue4Predicts = MakeInputPramater(choseDate, 5);
-
-                    if (inputValue4Predicts != null)
-                    {
-                        // Thực hiện dự đoán
-                        int modelType = 1;//0 DT-ANN, 1 K-SVMeans
-                        result = doPrediction(inputValue4Predicts, 5, modelType);                                                
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
+                MessageBox.Show("Have no data on saturday and sunday");                
             }
             else
             {
-                MessageBox.Show("Please, check type of next day prediction! one day or five day or both of them");
-            }
-            // Đưa ra nhận xét
-            wbSAResult.DocumentText = result.ToString();
-        }
+                double[] resultPrediction = null;
 
-        private string doPrediction(double[] inputValue4Predicts, int numDayPredict,int modelType)
+                if (cbSAOneDay.Checked == true && cbSAFiveDay.Checked == true)
+                {
+                    double[] inputValue4Predicts = MakeInputPramater(choseDate, 1);
+
+                    // Thực hiện dự đoán 1 ngày
+                    if (inputValue4Predicts != null)
+                    {
+                        resultPrediction = doPrediction(inputValue4Predicts, 1, modelType);
+                        int[] pastTrend = GetPastTrend(choseDate);
+
+                        stringSuggestion = MakeSuggestionString(resultPrediction, pastTrend, 1, modelType);
+                    }
+
+                    inputValue4Predicts = MakeInputPramater(choseDate, 5);
+
+                    // Thực hiện dự đoán 5 ngày
+                    if (inputValue4Predicts != null)
+                    {
+                        resultPrediction = doPrediction(inputValue4Predicts, 5, modelType);
+                        int[] pastTrend = GetPastTrend(choseDate);
+                        stringSuggestion += "<br><br>";
+                        stringSuggestion += MakeSuggestionString(resultPrediction, pastTrend, 5, modelType);
+                    }
+                }
+                else if (cbSAOneDay.Checked == true)
+                {
+                    try
+                    {
+                        // Tạo giá trị đầu vào cho mô hình dự đoán
+                        // thứ tự trong mảng sẽ là:
+                        // 0 closePrices, 1 FastSMAs, 2 LowSMAs, 3 MACD, 4 MACDHist, 
+                        // 5 BollingerUp, 6 BollingerMid, 7 BollingerLow, 8 AroonUps,
+                        // 9 AroonDowns
+                        double[] inputValue4Predicts = MakeInputPramater(choseDate, 1);
+                        
+                        // Thực hiện dự đoán
+                        if (inputValue4Predicts != null)
+                        {                            
+                            resultPrediction = doPrediction(inputValue4Predicts, 1, modelType);
+                            int[] pastTrend = GetPastTrend(choseDate);
+
+                            stringSuggestion = MakeSuggestionString(resultPrediction, pastTrend, 1, modelType);                            
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                    }
+                }
+                else if (cbSAFiveDay.Checked == true)
+                {
+                    try
+                    {
+                        // Tạo giá trị đầu vào cho mô hình dự đoán
+                        // thứ tự trong mảng sẽ là:
+                        // 0 closePrices, 1 FastSMAs, 2 LowSMAs, 3 MACD, 4 MACDHist, 
+                        // 5 BollingerUp, 6 BollingerMid, 7 BollingerLow, 8 AroonUps,
+                        // 9 AroonDowns
+                        double[] inputValue4Predicts = MakeInputPramater(choseDate, 5);
+
+                        // Thực hiện dự đoán
+                        if (inputValue4Predicts != null)
+                        {
+                            resultPrediction = doPrediction(inputValue4Predicts, 5, modelType);
+                            int[] pastTrend = GetPastTrend(choseDate);
+
+                            stringSuggestion = MakeSuggestionString(resultPrediction, pastTrend, 5, modelType);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please, check type of next day prediction! one day or five day or both of them");
+                }
+                // Hiển thị nhận xét
+                wbSAResult.DocumentText = stringSuggestion;                
+            }
+        }        
+
+        private double[] doPrediction(double[] inputValue4Predicts, int numDayPredict,int modelType)
         {
-            string result = string.Empty;
+            double[] result = null;
             string strModelFile = null;
             string strTestFile = null;
 
@@ -2111,7 +2211,9 @@ namespace GUI
                 
                 // Thực hiện test           
                 double[] dblTemp = bpNetwork.Run(testSample.InputVector);
-                result = ConverterBUS.Convert2Trend(dblTemp).ToString();
+                result = new double[1];
+
+                result[0] = ConverterBUS.Convert2Trend(dblTemp);
             }
             else
             {
@@ -2147,65 +2249,69 @@ namespace GUI
                 int[] labels = new int[3];                
                 Procedures.svm_get_labels(model, labels);
 
-                
+
+                result = new double[3];
+
                 for (int j = 0; j < labels.Length; j++)
                 {
-                    result += labels[j].ToString()+" : " +predictProbability[j].ToString() +"%\n";
+                    if (labels[j] == 1)
+                    {
+                        result[0] = predictProbability[j];
+                    }
+                    else if (labels[j] == 0)
+                    {
+                        result[1] = predictProbability[j];
+                    }
+                    else
+                    {
+                        result[2] = predictProbability[j];
+                    }
                 }                
             }
-
             return result;
         }
 
         private double[] MakeInputPramater(DateTime choseDate, int numDate)
         {
             double[] pramaters = null;
-            if (choseDate.Date.DayOfWeek == DayOfWeek.Saturday || choseDate.Date.DayOfWeek == DayOfWeek.Sunday)
+                        
+            double[] dblClosePrices = new double[_stockSARecordDTO.Entries.Count];
+            double[] dblVolumes = new double[_stockSARecordDTO.Entries.Count];
+            int dateIndex = -1;
+            int i = 0;
+
+            // tìm ngày
+            foreach (EntryDTO entryDTO in _stockSARecordDTO.Entries)
             {
-                DialogResult dlResult = MessageBox.Show("Have no data on saturday and sunday", "It's important Notification", MessageBoxButtons.OK);
+                dblClosePrices[i] = entryDTO.ClosePrice;
+                dblVolumes[i] = entryDTO.Volume;
+                if (isEqualDate(entryDTO.Date, choseDate) == true && i >= ConverterBUS.LOW_PERIOD)
+                {
+                    dateIndex = i;
+                }
+                i++;
+            }
+
+            if (dateIndex == -1)
+            {
+
+                string dateFrom = ((EntryDTO)_stockSARecordDTO.Entries[ConverterBUS.LOW_PERIOD]).Date.ToString();
+                string dateTo = ((EntryDTO)_stockSARecordDTO.Entries[_stockSARecordDTO.Entries.Count - 1]).Date.ToString();
+                DialogResult dlResult = MessageBox.Show("please chose date between: " + dateFrom + " and " + dateTo, "It's important Notification", MessageBoxButtons.OK);
                 if (dlResult == DialogResult.OK)
                 {
                     return pramaters;
                 }
             }
-            else
-            {
-                // tìm ngày
-                double[] dblClosePrices = new double[_stockSARecordDTO.Entries.Count];
-                double[] dblVolumes = new double[_stockSARecordDTO.Entries.Count];
-                int dateIndex = -1;
-                int i = 0;
-                foreach (EntryDTO entryDTO in _stockSARecordDTO.Entries)
-                {
-                    dblClosePrices[i] = entryDTO.ClosePrice;
-                    dblVolumes[i] = entryDTO.Volume;
-                    if (isEqualDate(entryDTO.Date, choseDate) == true && i >= ConverterBUS.LOW_PERIOD)
-                    {
-                        dateIndex = i;
-                    }
-                    i++;
-                }
 
-                if (dateIndex == -1)
-                {
+            // xác định chỉ mục quá khứ dựa vào chu kỳ
+            int numDaysPeriod = numDate;
+            int pastIndex = dateIndex - numDaysPeriod;
 
-                    string dateFrom = ((EntryDTO)_stockSARecordDTO.Entries[ConverterBUS.LOW_PERIOD]).Date.ToString();
-                    string dateTo = ((EntryDTO)_stockSARecordDTO.Entries[_stockSARecordDTO.Entries.Count - 1]).Date.ToString();
-                    DialogResult dlResult = MessageBox.Show("please chose date between: " + dateFrom + " and " + dateTo, "It's important Notification", MessageBoxButtons.OK);
-                    if (dlResult == DialogResult.OK)
-                    {
-                        return pramaters;
-                    }
-                }
+            // Tạo tham số đầu vào
+            ConverterBUS converter = new ConverterBUS();
+            pramaters = ConverterBUS.MakeInputPramater(dblClosePrices, dblVolumes, numDaysPeriod, pastIndex);
 
-                // xác định chỉ mục quá khứ dựa vào chu kỳ
-                int numDaysPeriod = numDate;
-                int pastIndex = dateIndex - numDaysPeriod;
-
-                // Tạo tham số đầu vào
-                ConverterBUS converter = new ConverterBUS();
-                pramaters = ConverterBUS.MakeInputPramater(dblClosePrices, dblVolumes, numDaysPeriod, pastIndex);
-            }
             return pramaters;
         }
 
@@ -2217,6 +2323,143 @@ namespace GUI
                 result = true;
             }
             return result;
+        }
+
+        private int[] GetPastTrend(DateTime choseDate)
+        {
+            int[] pastTrend = null;
+
+            double[] dblClosePrices = new double[_stockSARecordDTO.Entries.Count];
+            double[] dblVolumes = new double[_stockSARecordDTO.Entries.Count];
+            
+            int dateIndex = -1;
+            int i = 0;
+
+            // tìm ngày
+            foreach (EntryDTO entryDTO in _stockSARecordDTO.Entries)
+            {
+                dblClosePrices[i] = entryDTO.ClosePrice;
+                dblVolumes[i] = entryDTO.Volume;
+                if (isEqualDate(entryDTO.Date, choseDate) == true && i >= ConverterBUS.LOW_PERIOD)
+                {
+                    dateIndex = i;
+                }
+                i++;
+            }
+
+            if (dateIndex == -1)
+            {
+                string dateFrom = ((EntryDTO)_stockSARecordDTO.Entries[ConverterBUS.LOW_PERIOD]).Date.ToString();
+                string dateTo = ((EntryDTO)_stockSARecordDTO.Entries[_stockSARecordDTO.Entries.Count - 1]).Date.ToString();
+                MessageBox.Show("please chose date between: " + dateFrom + " and " + dateTo);
+            }
+            else
+            {
+                //int numDaysPeriod = numDate;
+                int currIndex = dateIndex;
+                // Tạo tham số đầu vào
+                ConverterBUS converter = new ConverterBUS();
+                pastTrend = ConverterBUS.GetPastTrend(dblClosePrices, dblVolumes, currIndex);
+            }
+            return pastTrend;            
+        }
+
+        private string MakeSuggestionString(double[] resultPrediction, int[] pastTrend, int numNextDay, int modelType)
+        {
+            string sSuggestString = string.Empty;
+            int iNumUp = 0;
+            int iNumDown = 0;
+            int iType = 0;
+
+            int iPredict = 0;
+            string sPastStatement = "không có xu hướng rõ rệt";
+            string sPredictStatement = "không có xu hướng";
+
+            for (int i = 0; i < pastTrend.Length; i++)
+            {
+                if (pastTrend[i] == 1)
+                {
+                    iNumUp++;
+                }
+                else if (pastTrend[i] == -1)
+                {
+                    iNumDown++;
+                }
+            }
+
+            if (iNumUp > 0 && iNumDown == 0)
+            {
+                iType = 1;
+                sPastStatement = "có xu hướng tăng";
+            }
+            else if (iNumUp == 0 && iNumDown > 0)
+            {
+                iType = -1;
+                sPastStatement = "có xu hướng giảm";
+            }
+
+            if (modelType == 1)
+            {
+                string sResult = "Dự đoán " + numNextDay.ToString() + " kế tiếp:<br>";
+                sResult += "Xu hướng tăng: <font color =\"green\">{0}% </font><br>";
+                sResult += "Không có xu hướng rõ rệt: <font color =\"browse\">{1}%</font><br>";
+                sResult += "Xu hướng giảm: <font color =\"red\">{2}%</font><br><br>";
+
+                sResult = string.Format(sResult, resultPrediction[0], resultPrediction[1], resultPrediction[2]);
+                
+                if (resultPrediction[0] > resultPrediction[1] && resultPrediction[0] > resultPrediction[2])
+                {
+                    iPredict = 1;
+                    sPredictStatement = "có xu hướng tăng";
+                }
+                else if (resultPrediction[2] > resultPrediction[0] && resultPrediction[2] > resultPrediction[1])
+                {
+                    iPredict = -1;
+                    sPredictStatement = "có xu hướng giảm";
+                }
+
+                sSuggestString += sResult;
+            }
+            else
+            {
+                if ((int)resultPrediction[0] == 1)
+                {
+                    iPredict = 1;
+                    sPredictStatement = "có xu hướng tăng";
+                }
+                else if ((int)resultPrediction[0] == -1)
+                {
+                    iPredict = -1;
+                    sPredictStatement = "có xu hướng giảm";
+                }
+            }
+
+            SuggestionBUS suggestBUS = new SuggestionBUS();
+            string sugHaveFile = _suggestionFolder + "Suggestion_H.txt";
+            string sugNotHaveFile = _suggestionFolder + "Suggestion_N.txt";
+            suggestBUS.LoadData(sugHaveFile, sugNotHaveFile);
+
+            string[] sSuggests = suggestBUS.GetSuggestion(iNumUp, iNumDown, iPredict, iType);
+
+           
+            sSuggestString += "Cổ phiếu <font color =\"green\">" + cmbStockID.SelectedItem.ToString() + "</font>";
+            sSuggestString += " trong 10 ngày quá khứ <font color =\"green\">{0}</font>, dự đoán chu kỳ <font color =\"green\">" + numNextDay.ToString() + "</font>";
+            sSuggestString += " ngày tiếp theo sẽ <font color =\"green\">{1}</font>.<br>Nếu đang sỡ hữu cổ phiếu, bạn nên <font color =\"red\">{2}</font>.<br>Nếu chưa sở hữu cổ phiếu, bạn <font color =\"red\">{3}</font>.";
+
+            sSuggestString = string.Format(sSuggestString, sPastStatement, sPredictStatement, sSuggests[0], sSuggests[1]);
+            return sSuggestString;
+        }
+
+        private void cmbSAStockID_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbSAStockID.SelectedIndex == cmbSAStockID.Items.Count - 1)
+            {
+                cmbStockID.SelectedIndex = cmbStockID.Items.Count - 1;
+            }
+            else
+            {
+                cmbStockID.SelectedIndex = cmbSAStockID.SelectedIndex;
+            }
         }
         
     }
